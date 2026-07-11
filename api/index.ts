@@ -5,7 +5,7 @@ import path from 'path';
 import { neon } from '@neondatabase/serverless';
 import jwt from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
-import firebaseConfig from './firebase-applet-config.json';
+import firebaseConfig from '../firebase-applet-config.json';
 
 dotenv.config();
 
@@ -283,9 +283,16 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(distPath, 'index.html'));
 });
 
-// Start listening
-initDb().then(() => {
-  app.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
+// Start listening if running locally
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  initDb().then(() => {
+    app.listen(port, () => {
+      console.log(`Server listening on port ${port}`);
+    });
   });
-});
+} else {
+  // Serverless environment initialization
+  initDb();
+}
+
+export default app;
