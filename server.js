@@ -11,15 +11,8 @@ var __require = /* @__PURE__ */ ((x2) => typeof require !== "undefined" ? requir
   if (typeof require !== "undefined") return require.apply(this, arguments);
   throw Error('Dynamic require of "' + x2 + '" is not supported');
 });
-var __esm = (fn, res) => function __init() {
-  return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
-};
 var __commonJS = (cb, mod) => function __require2() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
-};
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
 };
 var __copyProps = (to, from, except, desc) => {
   if (from && typeof from === "object" || typeof from === "function") {
@@ -37,7 +30,6 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // node_modules/depd/index.js
 var require_depd = __commonJS({
@@ -56,7 +48,7 @@ var require_depd = __commonJS({
       }
       return false;
     }
-    function convertDataDescriptorToAccessor(obj, prop, message2) {
+    function convertDataDescriptorToAccessor(obj, prop, message) {
       var descriptor = Object.getOwnPropertyDescriptor(obj, prop);
       var value = descriptor.value;
       descriptor.get = function getter() {
@@ -96,8 +88,8 @@ var require_depd = __commonJS({
       var stack = getStack();
       var site = callSiteLocation(stack[1]);
       var file = site[0];
-      function deprecate(message2) {
-        log.call(deprecate, message2);
+      function deprecate(message) {
+        log.call(deprecate, message);
       }
       deprecate._file = file;
       deprecate._ignored = isignored(namespace);
@@ -126,7 +118,7 @@ var require_depd = __commonJS({
       var str = process.env.TRACE_DEPRECATION || "";
       return containsNamespace(str, namespace);
     }
-    function log(message2, site) {
+    function log(message, site) {
       var haslisteners = eehaslisteners(process, "deprecation");
       if (!haslisteners && this._ignored) {
         return;
@@ -165,7 +157,7 @@ var require_depd = __commonJS({
         return;
       }
       this._warned[key] = true;
-      var msg = message2;
+      var msg = message;
       if (!msg) {
         msg = callSite === depSite || !callSite.name ? defaultMessage(depSite) : defaultMessage(callSite);
       }
@@ -251,7 +243,7 @@ var require_depd = __commonJS({
     function prepareObjectStackTrace(obj, stack) {
       return stack;
     }
-    function wrapfunction(fn, message2) {
+    function wrapfunction(fn, message) {
       if (typeof fn !== "function") {
         throw new TypeError("argument fn must be a function");
       }
@@ -266,10 +258,10 @@ var require_depd = __commonJS({
         "message",
         "site",
         '"use strict"\nreturn function (' + args + ") {log.call(deprecate, message, site)\nreturn fn.apply(this, arguments)\n}"
-      )(fn, log, this, message2, site);
+      )(fn, log, this, message, site);
       return deprecatedfn;
     }
-    function wrapproperty(obj, prop, message2) {
+    function wrapproperty(obj, prop, message) {
       if (!obj || typeof obj !== "object" && typeof obj !== "function") {
         throw new TypeError("argument obj must be object");
       }
@@ -285,25 +277,25 @@ var require_depd = __commonJS({
       var site = callSiteLocation(stack[1]);
       site.name = prop;
       if ("value" in descriptor) {
-        descriptor = convertDataDescriptorToAccessor(obj, prop, message2);
+        descriptor = convertDataDescriptorToAccessor(obj, prop, message);
       }
       var get = descriptor.get;
       var set = descriptor.set;
       if (typeof get === "function") {
         descriptor.get = function getter() {
-          log.call(deprecate, message2, site);
+          log.call(deprecate, message, site);
           return get.apply(this, arguments);
         };
       }
       if (typeof set === "function") {
         descriptor.set = function setter() {
-          log.call(deprecate, message2, site);
+          log.call(deprecate, message, site);
           return set.apply(this, arguments);
         };
       }
       Object.defineProperty(obj, prop, descriptor);
     }
-    function DeprecationError(namespace, message2, stack) {
+    function DeprecationError(namespace, message, stack) {
       var error = new Error();
       var stackString;
       Object.defineProperty(error, "constructor", {
@@ -312,7 +304,7 @@ var require_depd = __commonJS({
       Object.defineProperty(error, "message", {
         configurable: true,
         enumerable: false,
-        value: message2,
+        value: message,
         writable: true
       });
       Object.defineProperty(error, "name", {
@@ -660,9 +652,9 @@ var require_statuses = __commonJS({
     function createMessageToStatusCodeMap(codes2) {
       var map = {};
       Object.keys(codes2).forEach(function forEachCode(code) {
-        var message2 = codes2[code];
+        var message = codes2[code];
         var status2 = Number(code);
-        map[message2.toLowerCase()] = status2;
+        map[message.toLowerCase()] = status2;
       });
       return map;
     }
@@ -671,10 +663,10 @@ var require_statuses = __commonJS({
         return Number(code);
       });
     }
-    function getStatusCode(message2) {
-      var msg = message2.toLowerCase();
+    function getStatusCode(message) {
+      var msg = message.toLowerCase();
       if (!Object.prototype.hasOwnProperty.call(status.code, msg)) {
-        throw new Error('invalid status message: "' + message2 + '"');
+        throw new Error('invalid status message: "' + message + '"');
       }
       return status.code[msg];
     }
@@ -827,8 +819,8 @@ var require_http_errors = __commonJS({
     }
     function createClientErrorConstructor(HttpError, name, code) {
       var className = toClassName(name);
-      function ClientError(message2) {
-        var msg = message2 != null ? message2 : statuses.message[code];
+      function ClientError(message) {
+        var msg = message != null ? message : statuses.message[code];
         var err = new Error(msg);
         Error.captureStackTrace(err, ClientError);
         setPrototypeOf(err, ClientError.prototype);
@@ -866,8 +858,8 @@ var require_http_errors = __commonJS({
     }
     function createServerErrorConstructor(HttpError, name, code) {
       var className = toClassName(name);
-      function ServerError(message2) {
-        var msg = message2 != null ? message2 : statuses.message[code];
+      function ServerError(message) {
+        var msg = message != null ? message : statuses.message[code];
         var err = new Error(msg);
         Error.captureStackTrace(err, ServerError);
         setPrototypeOf(err, ServerError.prototype);
@@ -1049,12 +1041,12 @@ var require_debug = __commonJS({
     function createDebug(namespace) {
       function debug() {
         if (!debug.enabled) return;
-        var self2 = debug;
+        var self = debug;
         var curr = +/* @__PURE__ */ new Date();
         var ms2 = curr - (prevTime || curr);
-        self2.diff = ms2;
-        self2.prev = prevTime;
-        self2.curr = curr;
+        self.diff = ms2;
+        self.prev = prevTime;
+        self.curr = curr;
         prevTime = curr;
         var args = new Array(arguments.length);
         for (var i = 0; i < args.length; i++) {
@@ -1071,15 +1063,15 @@ var require_debug = __commonJS({
           var formatter = exports.formatters[format];
           if ("function" === typeof formatter) {
             var val = args[index];
-            match = formatter.call(self2, val);
+            match = formatter.call(self, val);
             args.splice(index, 1);
             index--;
           }
           return match;
         });
-        exports.formatArgs.call(self2, args);
+        exports.formatArgs.call(self, args);
         var logFn = debug.log || exports.log || console.log.bind(console);
-        logFn.apply(self2, args);
+        logFn.apply(self, args);
       }
       debug.namespace = namespace;
       debug.enabled = exports.enabled(namespace);
@@ -1299,8 +1291,8 @@ var require_node = __commonJS({
           }
           break;
         case "FILE":
-          var fs = __require("fs");
-          stream2 = new fs.SyncWriteStream(fd2, { autoClose: false });
+          var fs2 = __require("fs");
+          stream2 = new fs2.SyncWriteStream(fd2, { autoClose: false });
           stream2._type = "fs";
           break;
         case "PIPE":
@@ -1508,8 +1500,8 @@ var require_bom_handling = __commonJS({
     "use strict";
     var BOMChar = "\uFEFF";
     exports.PrependBOM = PrependBOMWrapper;
-    function PrependBOMWrapper(encoder2, options) {
-      this.encoder = encoder2;
+    function PrependBOMWrapper(encoder, options) {
+      this.encoder = encoder;
       this.addBOM = true;
     }
     PrependBOMWrapper.prototype.write = function(str) {
@@ -1523,8 +1515,8 @@ var require_bom_handling = __commonJS({
       return this.encoder.end();
     };
     exports.StripBOM = StripBOMWrapper;
-    function StripBOMWrapper(decoder2, options) {
-      this.decoder = decoder2;
+    function StripBOMWrapper(decoder, options) {
+      this.decoder = decoder;
       this.pass = false;
       this.options = options || {};
     }
@@ -4769,14 +4761,14 @@ var require_lib = __commonJS({
     iconv.encodings = null;
     iconv.defaultCharUnicode = "\uFFFD";
     iconv.defaultCharSingleByte = "?";
-    iconv.encode = function encode3(str, encoding, options) {
+    iconv.encode = function encode(str, encoding, options) {
       str = "" + (str || "");
-      var encoder2 = iconv.getEncoder(encoding, options);
-      var res = encoder2.write(str);
-      var trail = encoder2.end();
+      var encoder = iconv.getEncoder(encoding, options);
+      var res = encoder.write(str);
+      var trail = encoder.end();
       return trail && trail.length > 0 ? Buffer2.concat([res, trail]) : res;
     };
-    iconv.decode = function decode2(buf, encoding, options) {
+    iconv.decode = function decode(buf, encoding, options) {
       if (typeof buf === "string") {
         if (!iconv.skipDecodeWarning) {
           console.error("Iconv-lite warning: decode()-ing strings is deprecated. Refer to https://github.com/ashtuchkin/iconv-lite/wiki/Use-Buffers-when-decoding");
@@ -4784,9 +4776,9 @@ var require_lib = __commonJS({
         }
         buf = Buffer2.from("" + (buf || ""), "binary");
       }
-      var decoder2 = iconv.getDecoder(encoding, options);
-      var res = decoder2.write(buf);
-      var trail = decoder2.end();
+      var decoder = iconv.getDecoder(encoding, options);
+      var res = decoder.write(buf);
+      var trail = decoder.end();
       return trail ? res + trail : res;
     };
     iconv.encodingExists = function encodingExists(enc) {
@@ -4836,16 +4828,16 @@ var require_lib = __commonJS({
       return ("" + encoding).toLowerCase().replace(/:\d{4}$|[^0-9a-z]/g, "");
     };
     iconv.getEncoder = function getEncoder(encoding, options) {
-      var codec = iconv.getCodec(encoding), encoder2 = new codec.encoder(options, codec);
+      var codec = iconv.getCodec(encoding), encoder = new codec.encoder(options, codec);
       if (codec.bomAware && options && options.addBOM)
-        encoder2 = new bomHandling.PrependBOM(encoder2, options);
-      return encoder2;
+        encoder = new bomHandling.PrependBOM(encoder, options);
+      return encoder;
     };
     iconv.getDecoder = function getDecoder(encoding, options) {
-      var codec = iconv.getCodec(encoding), decoder2 = new codec.decoder(options, codec);
+      var codec = iconv.getCodec(encoding), decoder = new codec.decoder(options, codec);
       if (codec.bomAware && !(options && options.stripBOM === false))
-        decoder2 = new bomHandling.StripBOM(decoder2, options);
-      return decoder2;
+        decoder = new bomHandling.StripBOM(decoder, options);
+      return decoder;
     };
     var nodeVer = typeof process !== "undefined" && process.versions && process.versions.node;
     if (nodeVer) {
@@ -4950,7 +4942,7 @@ var require_raw_body = __commonJS({
       var limit = bytes.parse(opts.limit);
       var length = opts.length != null && !isNaN(opts.length) ? parseInt(opts.length, 10) : null;
       if (done) {
-        return readStream(stream, encoding, length, limit, wrap4(done));
+        return readStream(stream, encoding, length, limit, wrap(done));
       }
       return new Promise(function executor(resolve, reject) {
         readStream(stream, encoding, length, limit, function onRead(err, buf) {
@@ -4988,13 +4980,13 @@ var require_raw_body = __commonJS({
         }));
       }
       var received = 0;
-      var decoder2;
+      var decoder;
       try {
-        decoder2 = getDecoder(encoding);
+        decoder = getDecoder(encoding);
       } catch (err) {
         return done(err);
       }
-      var buffer = decoder2 ? "" : [];
+      var buffer = decoder ? "" : [];
       stream.on("aborted", onAborted);
       stream.on("close", cleanup);
       stream.on("data", onData);
@@ -5039,8 +5031,8 @@ var require_raw_body = __commonJS({
             received,
             type: "entity.too.large"
           }));
-        } else if (decoder2) {
-          buffer += decoder2.write(chunk);
+        } else if (decoder) {
+          buffer += decoder.write(chunk);
         } else {
           buffer.push(chunk);
         }
@@ -5056,7 +5048,7 @@ var require_raw_body = __commonJS({
             type: "request.size.invalid"
           }));
         } else {
-          var string = decoder2 ? buffer + (decoder2.end() || "") : Buffer.concat(buffer);
+          var string = decoder ? buffer + (decoder.end() || "") : Buffer.concat(buffer);
           done(null, string);
         }
       }
@@ -5076,7 +5068,7 @@ var require_raw_body = __commonJS({
         return {};
       }
     }
-    function wrap4(fn) {
+    function wrap(fn) {
       var res;
       if (asyncHooks.AsyncResource) {
         res = new asyncHooks.AsyncResource(fn.name || "bound-anonymous-fn");
@@ -5161,7 +5153,7 @@ var require_on_finished = __commonJS({
         defer(listener, null, msg);
         return msg;
       }
-      attachListener(msg, wrap4(listener));
+      attachListener(msg, wrap(listener));
       return msg;
     }
     function isFinished(msg) {
@@ -5236,7 +5228,7 @@ var require_on_finished = __commonJS({
         return {};
       }
     }
-    function wrap4(fn) {
+    function wrap(fn) {
       var res;
       if (asyncHooks.AsyncResource) {
         res = new asyncHooks.AsyncResource(fn.name || "bound-anonymous-fn");
@@ -5267,7 +5259,7 @@ var require_read = __commonJS({
       var stream;
       req._body = true;
       var encoding = opts.encoding !== null ? opts.encoding : null;
-      var verify2 = opts.verify;
+      var verify = opts.verify;
       try {
         stream = contentstream(req, debug, opts.inflate);
         length = stream.length;
@@ -5276,7 +5268,7 @@ var require_read = __commonJS({
         return next(err);
       }
       opts.length = length;
-      opts.encoding = verify2 ? null : encoding;
+      opts.encoding = verify ? null : encoding;
       if (opts.encoding === null && encoding !== null && !iconv.encodingExists(encoding)) {
         return next(createError(415, 'unsupported charset "' + encoding.toUpperCase() + '"', {
           charset: encoding.toLowerCase(),
@@ -5304,10 +5296,10 @@ var require_read = __commonJS({
           });
           return;
         }
-        if (verify2) {
+        if (verify) {
           try {
             debug("verify body");
-            verify2(req, res, body, encoding);
+            verify(req, res, body, encoding);
           } catch (err) {
             next(createError(403, err, {
               body,
@@ -14248,8 +14240,8 @@ var require_json = __commonJS({
       var reviver = opts.reviver;
       var strict = opts.strict !== false;
       var type = opts.type || "application/json";
-      var verify2 = opts.verify || false;
-      if (verify2 !== false && typeof verify2 !== "function") {
+      var verify = opts.verify || false;
+      if (verify !== false && typeof verify !== "function") {
         throw new TypeError("option verify must be function");
       }
       var shouldParse = typeof type !== "function" ? typeChecker(type) : type;
@@ -14305,7 +14297,7 @@ var require_json = __commonJS({
           encoding: charset,
           inflate,
           limit,
-          verify: verify2
+          verify
         });
       };
     }
@@ -14372,8 +14364,8 @@ var require_raw = __commonJS({
       var inflate = opts.inflate !== false;
       var limit = typeof opts.limit !== "number" ? bytes.parse(opts.limit || "100kb") : opts.limit;
       var type = opts.type || "application/octet-stream";
-      var verify2 = opts.verify || false;
-      if (verify2 !== false && typeof verify2 !== "function") {
+      var verify = opts.verify || false;
+      if (verify !== false && typeof verify !== "function") {
         throw new TypeError("option verify must be function");
       }
       var shouldParse = typeof type !== "function" ? typeChecker(type) : type;
@@ -14402,7 +14394,7 @@ var require_raw = __commonJS({
           encoding: null,
           inflate,
           limit,
-          verify: verify2
+          verify
         });
       };
     }
@@ -14430,8 +14422,8 @@ var require_text = __commonJS({
       var inflate = opts.inflate !== false;
       var limit = typeof opts.limit !== "number" ? bytes.parse(opts.limit || "100kb") : opts.limit;
       var type = opts.type || "text/plain";
-      var verify2 = opts.verify || false;
-      if (verify2 !== false && typeof verify2 !== "function") {
+      var verify = opts.verify || false;
+      if (verify !== false && typeof verify !== "function") {
         throw new TypeError("option verify must be function");
       }
       var shouldParse = typeof type !== "function" ? typeChecker(type) : type;
@@ -14461,7 +14453,7 @@ var require_text = __commonJS({
           encoding: charset,
           inflate,
           limit,
-          verify: verify2
+          verify
         });
       };
     }
@@ -14733,14 +14725,14 @@ var require_object_inspect = __commonJS({
         var protoTag = obj instanceof Object ? "" : "null prototype";
         var stringTag = !isPlainObject && toStringTag && Object(obj) === obj && toStringTag in obj ? $slice.call(toStr(obj), 8, -1) : protoTag ? "Object" : "";
         var constructorTag = isPlainObject || typeof obj.constructor !== "function" ? "" : obj.constructor.name ? obj.constructor.name + " " : "";
-        var tag2 = constructorTag + (stringTag || protoTag ? "[" + $join.call($concat.call([], stringTag || [], protoTag || []), ": ") + "] " : "");
+        var tag = constructorTag + (stringTag || protoTag ? "[" + $join.call($concat.call([], stringTag || [], protoTag || []), ": ") + "] " : "");
         if (ys2.length === 0) {
-          return tag2 + "{}";
+          return tag + "{}";
         }
         if (indent) {
-          return tag2 + "{" + indentedJoin(ys2, indent) + "}";
+          return tag + "{" + indentedJoin(ys2, indent) + "}";
         }
-        return tag2 + "{ " + $join.call(ys2, ", ") + " }";
+        return tag + "{ " + $join.call(ys2, ", ") + " }";
       }
       return String(obj);
     };
@@ -15238,7 +15230,7 @@ var require_sign = __commonJS({
   "node_modules/math-intrinsics/sign.js"(exports, module) {
     "use strict";
     var $isNaN = require_isNaN();
-    module.exports = function sign2(number) {
+    module.exports = function sign(number) {
       if ($isNaN(number) || number === 0) {
         return number;
       }
@@ -15602,7 +15594,7 @@ var require_get_intrinsic = __commonJS({
     var min = require_min();
     var pow = require_pow();
     var round = require_round();
-    var sign2 = require_sign();
+    var sign = require_sign();
     var $Function = Function;
     var getEvalledConstructor = function(expressionSyntax) {
       try {
@@ -15716,7 +15708,7 @@ var require_get_intrinsic = __commonJS({
       "%Math.min%": min,
       "%Math.pow%": pow,
       "%Math.round%": round,
-      "%Math.sign%": sign2,
+      "%Math.sign%": sign,
       "%Reflect.getPrototypeOf%": $ReflectGPO
     };
     if (getProto) {
@@ -16296,7 +16288,7 @@ var require_utils = __commonJS({
         return acc;
       }, target);
     };
-    var decode2 = function(str, defaultDecoder, charset) {
+    var decode = function(str, defaultDecoder, charset) {
       var strWithoutPlus = str.replace(/\+/g, " ");
       if (charset === "iso-8859-1") {
         return strWithoutPlus.replace(/%[0-9a-f]{2}/gi, unescape);
@@ -16308,7 +16300,7 @@ var require_utils = __commonJS({
       }
     };
     var limit = 1024;
-    var encode3 = function encode4(str, defaultEncoder, charset, kind, format) {
+    var encode = function encode2(str, defaultEncoder, charset, kind, format) {
       if (str.length === 0) {
         return str;
       }
@@ -16422,8 +16414,8 @@ var require_utils = __commonJS({
       assign,
       combine,
       compact,
-      decode: decode2,
-      encode: encode3,
+      decode,
+      encode,
       isBuffer,
       isOverflow,
       isRegExp,
@@ -16489,7 +16481,7 @@ var require_stringify = __commonJS({
       return typeof v2 === "string" || typeof v2 === "number" || typeof v2 === "boolean" || typeof v2 === "symbol" || typeof v2 === "bigint";
     };
     var sentinel = {};
-    var stringify = function stringify2(object, prefix, generateArrayPrefix, commaRoundTrip, allowEmptyArrays, strictNullHandling, skipNulls, encodeDotInKeys, encoder2, filter, sort, allowDots, serializeDate, format, formatter, encodeValuesOnly, charset, sideChannel) {
+    var stringify = function stringify2(object, prefix, generateArrayPrefix, commaRoundTrip, allowEmptyArrays, strictNullHandling, skipNulls, encodeDotInKeys, encoder, filter, sort, allowDots, serializeDate, format, formatter, encodeValuesOnly, charset, sideChannel) {
       var obj = object;
       var tmpSc = sideChannel;
       var step = 0;
@@ -16522,14 +16514,14 @@ var require_stringify = __commonJS({
       }
       if (obj === null) {
         if (strictNullHandling) {
-          return formatter(encoder2 && !encodeValuesOnly ? encoder2(prefix, defaults.encoder, charset, "key", format) : prefix);
+          return formatter(encoder && !encodeValuesOnly ? encoder(prefix, defaults.encoder, charset, "key", format) : prefix);
         }
         obj = "";
       }
       if (isNonNullishPrimitive(obj) || utils.isBuffer(obj)) {
-        if (encoder2) {
-          var keyValue = encodeValuesOnly ? prefix : encoder2(prefix, defaults.encoder, charset, "key", format);
-          return [formatter(keyValue) + "=" + formatter(encoder2(obj, defaults.encoder, charset, "value", format))];
+        if (encoder) {
+          var keyValue = encodeValuesOnly ? prefix : encoder(prefix, defaults.encoder, charset, "key", format);
+          return [formatter(keyValue) + "=" + formatter(encoder(obj, defaults.encoder, charset, "value", format))];
         }
         return [formatter(prefix) + "=" + formatter(String(obj))];
       }
@@ -16539,9 +16531,9 @@ var require_stringify = __commonJS({
       }
       var objKeys;
       if (generateArrayPrefix === "comma" && isArray(obj)) {
-        if (encodeValuesOnly && encoder2) {
+        if (encodeValuesOnly && encoder) {
           obj = utils.maybeMap(obj, function(v2) {
-            return v2 == null ? v2 : encoder2(v2);
+            return v2 == null ? v2 : encoder(v2);
           });
         }
         objKeys = [{ value: obj.length > 0 ? obj.join(",") || null : void 0 }];
@@ -16576,7 +16568,7 @@ var require_stringify = __commonJS({
           strictNullHandling,
           skipNulls,
           encodeDotInKeys,
-          generateArrayPrefix === "comma" && encodeValuesOnly && isArray(obj) ? null : encoder2,
+          generateArrayPrefix === "comma" && encodeValuesOnly && isArray(obj) ? null : encoder,
           filter,
           sort,
           allowDots,
@@ -17088,8 +17080,8 @@ var require_urlencoded = __commonJS({
       var inflate = opts.inflate !== false;
       var limit = typeof opts.limit !== "number" ? bytes.parse(opts.limit || "100kb") : opts.limit;
       var type = opts.type || "application/x-www-form-urlencoded";
-      var verify2 = opts.verify || false;
-      if (verify2 !== false && typeof verify2 !== "function") {
+      var verify = opts.verify || false;
+      if (verify !== false && typeof verify !== "function") {
         throw new TypeError("option verify must be function");
       }
       var queryparse = extended ? extendedparser(opts) : simpleparser(opts);
@@ -17129,7 +17121,7 @@ var require_urlencoded = __commonJS({
           encoding: charset,
           inflate,
           limit,
-          verify: verify2
+          verify
         });
       };
     }
@@ -17470,12 +17462,12 @@ var require_debug2 = __commonJS({
     function createDebug(namespace) {
       function debug() {
         if (!debug.enabled) return;
-        var self2 = debug;
+        var self = debug;
         var curr = +/* @__PURE__ */ new Date();
         var ms2 = curr - (prevTime || curr);
-        self2.diff = ms2;
-        self2.prev = prevTime;
-        self2.curr = curr;
+        self.diff = ms2;
+        self.prev = prevTime;
+        self.curr = curr;
         prevTime = curr;
         var args = new Array(arguments.length);
         for (var i = 0; i < args.length; i++) {
@@ -17492,15 +17484,15 @@ var require_debug2 = __commonJS({
           var formatter = exports.formatters[format];
           if ("function" === typeof formatter) {
             var val = args[index];
-            match = formatter.call(self2, val);
+            match = formatter.call(self, val);
             args.splice(index, 1);
             index--;
           }
           return match;
         });
-        exports.formatArgs.call(self2, args);
+        exports.formatArgs.call(self, args);
         var logFn = debug.log || exports.log || console.log.bind(console);
-        logFn.apply(self2, args);
+        logFn.apply(self, args);
       }
       debug.namespace = namespace;
       debug.enabled = exports.enabled(namespace);
@@ -17720,8 +17712,8 @@ var require_node2 = __commonJS({
           }
           break;
         case "FILE":
-          var fs = __require("fs");
-          stream2 = new fs.SyncWriteStream(fd2, { autoClose: false });
+          var fs2 = __require("fs");
+          stream2 = new fs2.SyncWriteStream(fd2, { autoClose: false });
           stream2._type = "fs";
           break;
         case "PIPE":
@@ -17930,8 +17922,8 @@ var require_finalhandler = __commonJS({
       process.nextTick(fn.bind.apply(fn, arguments));
     };
     var isFinished = onFinished.isFinished;
-    function createHtmlDocument(message2) {
-      var body = escapeHtml(message2).replace(NEWLINE_REGEXP, "<br>").replace(DOUBLE_SPACE_REGEXP, " &nbsp;");
+    function createHtmlDocument(message) {
+      var body = escapeHtml(message).replace(NEWLINE_REGEXP, "<br>").replace(DOUBLE_SPACE_REGEXP, " &nbsp;");
       return '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<title>Error</title>\n</head>\n<body>\n<pre>' + body + "</pre>\n</body>\n</html>\n";
     }
     module.exports = finalhandler;
@@ -18021,9 +18013,9 @@ var require_finalhandler = __commonJS({
     function headersSent(res) {
       return typeof res.headersSent !== "boolean" ? Boolean(res._header) : res.headersSent;
     }
-    function send(req, res, status, headers, message2) {
+    function send(req, res, status, headers, message) {
       function write() {
-        var body = createHtmlDocument(message2);
+        var body = createHtmlDocument(message);
         res.statusCode = status;
         if (req.httpVersionMajor < 2) {
           res.statusMessage = statuses.message[status];
@@ -18189,12 +18181,12 @@ var require_debug3 = __commonJS({
     function createDebug(namespace) {
       function debug() {
         if (!debug.enabled) return;
-        var self2 = debug;
+        var self = debug;
         var curr = +/* @__PURE__ */ new Date();
         var ms2 = curr - (prevTime || curr);
-        self2.diff = ms2;
-        self2.prev = prevTime;
-        self2.curr = curr;
+        self.diff = ms2;
+        self.prev = prevTime;
+        self.curr = curr;
         prevTime = curr;
         var args = new Array(arguments.length);
         for (var i = 0; i < args.length; i++) {
@@ -18211,15 +18203,15 @@ var require_debug3 = __commonJS({
           var formatter = exports.formatters[format];
           if ("function" === typeof formatter) {
             var val = args[index];
-            match = formatter.call(self2, val);
+            match = formatter.call(self, val);
             args.splice(index, 1);
             index--;
           }
           return match;
         });
-        exports.formatArgs.call(self2, args);
+        exports.formatArgs.call(self, args);
         var logFn = debug.log || exports.log || console.log.bind(console);
-        logFn.apply(self2, args);
+        logFn.apply(self, args);
       }
       debug.namespace = namespace;
       debug.enabled = exports.enabled(namespace);
@@ -18439,8 +18431,8 @@ var require_node3 = __commonJS({
           }
           break;
         case "FILE":
-          var fs = __require("fs");
-          stream2 = new fs.SyncWriteStream(fd2, { autoClose: false });
+          var fs2 = __require("fs");
+          stream2 = new fs2.SyncWriteStream(fd2, { autoClose: false });
           stream2._type = "fs";
           break;
         case "PIPE":
@@ -18952,7 +18944,7 @@ var require_router = __commonJS({
       return this;
     };
     proto.handle = function handle(req, res, out) {
-      var self2 = this;
+      var self = this;
       debug("dispatching %s %s", req.method, req.url);
       var idx = 0;
       var protohost = getProtohost(req.url) || "";
@@ -18961,13 +18953,13 @@ var require_router = __commonJS({
       var sync = 0;
       var paramcalled = {};
       var options = [];
-      var stack = self2.stack;
+      var stack = self.stack;
       var parentParams = req.params;
       var parentUrl = req.baseUrl || "";
       var done = restore(out, req, "baseUrl", "next", "params");
       req.next = next;
       if (req.method === "OPTIONS") {
-        done = wrap4(done, function(old, err) {
+        done = wrap(done, function(old, err) {
           if (err || options.length === 0) return old(err);
           sendOptionsResponse(res, options, old);
         });
@@ -19036,9 +19028,9 @@ var require_router = __commonJS({
         if (route) {
           req.route = route;
         }
-        req.params = self2.mergeParams ? mergeParams(layer.params, parentParams) : layer.params;
+        req.params = self.mergeParams ? mergeParams(layer.params, parentParams) : layer.params;
         var layerPath = layer.path;
-        self2.process_params(layer, paramcalled, req, res, function(err2) {
+        self.process_params(layer, paramcalled, req, res, function(err2) {
           if (err2) {
             next(layerError || err2);
           } else if (route) {
@@ -19267,7 +19259,7 @@ var require_router = __commonJS({
         next(err);
       }
     }
-    function wrap4(old, fn) {
+    function wrap(old, fn) {
       return function proxy() {
         var args = new Array(arguments.length + 1);
         args[0] = old;
@@ -19334,7 +19326,7 @@ var require_view = __commonJS({
     "use strict";
     var debug = require_src3()("express:view");
     var path2 = __require("path");
-    var fs = __require("fs");
+    var fs2 = __require("fs");
     var dirname = path2.dirname;
     var basename = path2.basename;
     var extname = path2.extname;
@@ -19400,7 +19392,7 @@ var require_view = __commonJS({
     function tryStat(path3) {
       debug('stat "%s"', path3);
       try {
-        return fs.statSync(path3);
+        return fs2.statSync(path3);
       } catch (e) {
         return void 0;
       }
@@ -19755,12 +19747,12 @@ var require_debug4 = __commonJS({
     function createDebug(namespace) {
       function debug() {
         if (!debug.enabled) return;
-        var self2 = debug;
+        var self = debug;
         var curr = +/* @__PURE__ */ new Date();
         var ms2 = curr - (prevTime || curr);
-        self2.diff = ms2;
-        self2.prev = prevTime;
-        self2.curr = curr;
+        self.diff = ms2;
+        self.prev = prevTime;
+        self.curr = curr;
         prevTime = curr;
         var args = new Array(arguments.length);
         for (var i = 0; i < args.length; i++) {
@@ -19777,15 +19769,15 @@ var require_debug4 = __commonJS({
           var formatter = exports.formatters[format];
           if ("function" === typeof formatter) {
             var val = args[index];
-            match = formatter.call(self2, val);
+            match = formatter.call(self, val);
             args.splice(index, 1);
             index--;
           }
           return match;
         });
-        exports.formatArgs.call(self2, args);
+        exports.formatArgs.call(self, args);
         var logFn = debug.log || exports.log || console.log.bind(console);
-        logFn.apply(self2, args);
+        logFn.apply(self, args);
       }
       debug.namespace = namespace;
       debug.enabled = exports.enabled(namespace);
@@ -20005,8 +19997,8 @@ var require_node4 = __commonJS({
           }
           break;
         case "FILE":
-          var fs = __require("fs");
-          stream2 = new fs.SyncWriteStream(fd2, { autoClose: false });
+          var fs2 = __require("fs");
+          stream2 = new fs2.SyncWriteStream(fd2, { autoClose: false });
           stream2._type = "fs";
           break;
         case "PIPE":
@@ -20078,8 +20070,8 @@ var require_etag = __commonJS({
       if (!isStats && typeof entity !== "string" && !Buffer.isBuffer(entity)) {
         throw new TypeError("argument entity must be string, Buffer, or fs.Stats");
       }
-      var tag2 = isStats ? stattag(entity) : entitytag(entity);
-      return weak ? "W/" + tag2 : tag2;
+      var tag = isStats ? stattag(entity) : entitytag(entity);
+      return weak ? "W/" + tag : tag;
     }
     function isstats(obj) {
       if (typeof Stats === "function" && obj instanceof Stats) {
@@ -20179,7 +20171,7 @@ var require_types = __commonJS({
 var require_mime = __commonJS({
   "node_modules/mime/mime.js"(exports, module) {
     var path2 = __require("path");
-    var fs = __require("fs");
+    var fs2 = __require("fs");
     function Mime() {
       this.types = /* @__PURE__ */ Object.create(null);
       this.extensions = /* @__PURE__ */ Object.create(null);
@@ -20200,7 +20192,7 @@ var require_mime = __commonJS({
     };
     Mime.prototype.load = function(file) {
       this._loading = file;
-      var map = {}, content = fs.readFileSync(file, "ascii"), lines = content.split(/[\r\n]+/);
+      var map = {}, content = fs2.readFileSync(file, "ascii"), lines = content.split(/[\r\n]+/);
       lines.forEach(function(line) {
         var fields = line.replace(/\s*#.*|^\s*|\s*$/g, "").split(/\s+/);
         map[fields.shift()] = fields;
@@ -20438,7 +20430,7 @@ var require_send = __commonJS({
     var escapeHtml = require_escape_html();
     var etag = require_etag();
     var fresh = require_fresh();
-    var fs = __require("fs");
+    var fs2 = __require("fs");
     var mime = require_mime();
     var ms2 = require_ms5();
     var onFinished = require_on_finished();
@@ -20647,7 +20639,7 @@ var require_send = __commonJS({
     SendStream.prototype.pipe = function pipe(res) {
       var root = this._root;
       this.res = res;
-      var path3 = decode2(this.path);
+      var path3 = decode(this.path);
       if (path3 === -1) {
         this.error(400);
         return res;
@@ -20769,54 +20761,54 @@ var require_send = __commonJS({
     };
     SendStream.prototype.sendFile = function sendFile(path3) {
       var i = 0;
-      var self2 = this;
+      var self = this;
       debug('stat "%s"', path3);
-      fs.stat(path3, function onstat(err, stat) {
+      fs2.stat(path3, function onstat(err, stat) {
         if (err && err.code === "ENOENT" && !extname(path3) && path3[path3.length - 1] !== sep) {
           return next(err);
         }
-        if (err) return self2.onStatError(err);
-        if (stat.isDirectory()) return self2.redirect(path3);
-        self2.emit("file", path3, stat);
-        self2.send(path3, stat);
+        if (err) return self.onStatError(err);
+        if (stat.isDirectory()) return self.redirect(path3);
+        self.emit("file", path3, stat);
+        self.send(path3, stat);
       });
       function next(err) {
-        if (self2._extensions.length <= i) {
-          return err ? self2.onStatError(err) : self2.error(404);
+        if (self._extensions.length <= i) {
+          return err ? self.onStatError(err) : self.error(404);
         }
-        var p2 = path3 + "." + self2._extensions[i++];
+        var p2 = path3 + "." + self._extensions[i++];
         debug('stat "%s"', p2);
-        fs.stat(p2, function(err2, stat) {
+        fs2.stat(p2, function(err2, stat) {
           if (err2) return next(err2);
           if (stat.isDirectory()) return next();
-          self2.emit("file", p2, stat);
-          self2.send(p2, stat);
+          self.emit("file", p2, stat);
+          self.send(p2, stat);
         });
       }
     };
     SendStream.prototype.sendIndex = function sendIndex(path3) {
       var i = -1;
-      var self2 = this;
+      var self = this;
       function next(err) {
-        if (++i >= self2._index.length) {
-          if (err) return self2.onStatError(err);
-          return self2.error(404);
+        if (++i >= self._index.length) {
+          if (err) return self.onStatError(err);
+          return self.error(404);
         }
-        var p2 = join(path3, self2._index[i]);
+        var p2 = join(path3, self._index[i]);
         debug('stat "%s"', p2);
-        fs.stat(p2, function(err2, stat) {
+        fs2.stat(p2, function(err2, stat) {
           if (err2) return next(err2);
           if (stat.isDirectory()) return next();
-          self2.emit("file", p2, stat);
-          self2.send(p2, stat);
+          self.emit("file", p2, stat);
+          self.send(p2, stat);
         });
       }
       next();
     };
     SendStream.prototype.stream = function stream(path3, options) {
-      var self2 = this;
+      var self = this;
       var res = this.res;
-      var stream2 = fs.createReadStream(path3, options);
+      var stream2 = fs2.createReadStream(path3, options);
       this.emit("stream", stream2);
       stream2.pipe(res);
       function cleanup() {
@@ -20825,10 +20817,10 @@ var require_send = __commonJS({
       onFinished(res, cleanup);
       stream2.on("error", function onerror(err) {
         cleanup();
-        self2.onStatError(err);
+        self.onStatError(err);
       });
       stream2.on("end", function onend() {
-        self2.emit("end");
+        self.emit("end");
       });
     };
     SendStream.prototype.type = function type(path3) {
@@ -20904,7 +20896,7 @@ var require_send = __commonJS({
       }
       return err instanceof Error ? createError(status, err, { expose: false }) : createError(status, err);
     }
-    function decode2(path3) {
+    function decode(path3) {
       try {
         return decodeURIComponent(path3);
       } catch (err) {
@@ -22156,7 +22148,7 @@ var require_application = __commonJS({
     };
     app2.del = deprecate.function(app2.delete, "app.del: Use app.delete instead");
     app2.render = function render(name, options, callback) {
-      var cache2 = this.cache;
+      var cache = this.cache;
       var done = callback;
       var engines = this.engines;
       var opts = options;
@@ -22175,7 +22167,7 @@ var require_application = __commonJS({
         renderOptions.cache = this.enabled("view cache");
       }
       if (renderOptions.cache) {
-        view = cache2[name];
+        view = cache[name];
       }
       if (!view) {
         var View2 = this.get("view");
@@ -22191,7 +22183,7 @@ var require_application = __commonJS({
           return done(err);
         }
         if (renderOptions.cache) {
-          cache2[name] = view;
+          cache[name] = view;
         }
       }
       tryRender(view, renderOptions, done);
@@ -22995,7 +22987,7 @@ var require_cookie = __commonJS({
       var obj = {};
       var len = str.length;
       if (len < 2) return obj;
-      var dec = opt && opt.decode || decode2;
+      var dec = opt && opt.decode || decode;
       var index = 0;
       var eqIdx = 0;
       var endIdx = 0;
@@ -23126,15 +23118,15 @@ var require_cookie = __commonJS({
       }
       return str;
     }
-    function decode2(str) {
+    function decode(str) {
       return str.indexOf("%") !== -1 ? decodeURIComponent(str) : str;
     }
     function isDate(val) {
       return __toString.call(val) === "[object Date]";
     }
-    function tryDecode(str, decode3) {
+    function tryDecode(str, decode2) {
       try {
-        return decode3(str);
+        return decode2(str);
       } catch (e) {
         return str;
       }
@@ -23231,7 +23223,7 @@ var require_response = __commonJS({
     var path2 = __require("path");
     var statuses = require_statuses();
     var merge = require_utils_merge();
-    var sign2 = require_cookie_signature().sign;
+    var sign = require_cookie_signature().sign;
     var normalizeType = require_utils2().normalizeType;
     var normalizeTypes = require_utils2().normalizeTypes;
     var setCharset = require_utils2().setCharset;
@@ -23586,7 +23578,7 @@ var require_response = __commonJS({
       }
       var val = typeof value === "object" ? "j:" + JSON.stringify(value) : String(value);
       if (signed) {
-        val = "s:" + sign2(val, secret);
+        val = "s:" + sign(val, secret);
       }
       if (opts.maxAge != null) {
         var maxAge = opts.maxAge - 0;
@@ -23658,15 +23650,15 @@ var require_response = __commonJS({
       var done = callback;
       var opts = options || {};
       var req = this.req;
-      var self2 = this;
+      var self = this;
       if (typeof options === "function") {
         done = options;
         opts = {};
       }
-      opts._locals = self2.locals;
+      opts._locals = self.locals;
       done = done || function(err, str) {
         if (err) return req.next(err);
-        self2.send(str);
+        self.send(str);
       };
       app2.render(view, opts, done);
     };
@@ -24220,7 +24212,7 @@ var require_lib3 = __commonJS({
 // node_modules/dotenv/lib/main.js
 var require_main = __commonJS({
   "node_modules/dotenv/lib/main.js"(exports, module) {
-    var fs = __require("fs");
+    var fs2 = __require("fs");
     var path2 = __require("path");
     var os2 = __require("os");
     var crypto2 = __require("crypto");
@@ -24296,14 +24288,14 @@ var require_main = __commonJS({
       }
       return DotenvModule.parse(decrypted);
     }
-    function _warn(message2) {
-      console.error(`\u26A0 ${message2}`);
+    function _warn(message) {
+      console.error(`\u26A0 ${message}`);
     }
-    function _debug(message2) {
-      console.log(`\u2506 ${message2}`);
+    function _debug(message) {
+      console.log(`\u2506 ${message}`);
     }
-    function _log(message2) {
-      console.log(`\u25C7 ${message2}`);
+    function _log(message) {
+      console.log(`\u25C7 ${message}`);
     }
     function _dotenvKey(options) {
       if (options && options.DOTENV_KEY && options.DOTENV_KEY.length > 0) {
@@ -24352,7 +24344,7 @@ var require_main = __commonJS({
       if (options && options.path && options.path.length > 0) {
         if (Array.isArray(options.path)) {
           for (const filepath of options.path) {
-            if (fs.existsSync(filepath)) {
+            if (fs2.existsSync(filepath)) {
               possibleVaultPath = filepath.endsWith(".vault") ? filepath : `${filepath}.vault`;
             }
           }
@@ -24362,7 +24354,7 @@ var require_main = __commonJS({
       } else {
         possibleVaultPath = path2.resolve(process.cwd(), ".env.vault");
       }
-      if (fs.existsSync(possibleVaultPath)) {
+      if (fs2.existsSync(possibleVaultPath)) {
         return possibleVaultPath;
       }
       return null;
@@ -24415,7 +24407,7 @@ var require_main = __commonJS({
       const parsedAll = {};
       for (const path3 of optionPaths) {
         try {
-          const parsed = DotenvModule.parse(fs.readFileSync(path3, { encoding }));
+          const parsed = DotenvModule.parse(fs2.readFileSync(path3, { encoding }));
           DotenvModule.populate(parsedAll, parsed, options);
         } catch (e) {
           if (debug) {
@@ -24460,7 +24452,7 @@ var require_main = __commonJS({
       }
       return DotenvModule._configVault(options);
     }
-    function decrypt3(encrypted, keyStr) {
+    function decrypt(encrypted, keyStr) {
       const key = Buffer.from(keyStr.slice(-64), "hex");
       let ciphertext = Buffer.from(encrypted, "base64");
       const nonce = ciphertext.subarray(0, 12);
@@ -24521,7 +24513,7 @@ var require_main = __commonJS({
       _configVault,
       _parseVault,
       config,
-      decrypt: decrypt3,
+      decrypt,
       parse,
       populate
     };
@@ -24880,7 +24872,7 @@ var require_jwa = __commonJS({
       return thing;
     }
     function createHmacSigner(bits) {
-      return function sign2(thing, secret) {
+      return function sign(thing, secret) {
         checkIsSecretKey(secret);
         thing = normalizeInput(thing);
         var hmac = crypto2.createHmac("sha" + bits, secret);
@@ -24889,25 +24881,25 @@ var require_jwa = __commonJS({
       };
     }
     var bufferEqual;
-    var timingSafeEqual2 = "timingSafeEqual" in crypto2 ? function timingSafeEqual3(a2, b2) {
+    var timingSafeEqual = "timingSafeEqual" in crypto2 ? function timingSafeEqual2(a2, b2) {
       if (a2.byteLength !== b2.byteLength) {
         return false;
       }
       return crypto2.timingSafeEqual(a2, b2);
-    } : function timingSafeEqual3(a2, b2) {
+    } : function timingSafeEqual2(a2, b2) {
       if (!bufferEqual) {
         bufferEqual = require_buffer_equal_constant_time();
       }
       return bufferEqual(a2, b2);
     };
     function createHmacVerifier(bits) {
-      return function verify2(thing, signature, secret) {
+      return function verify(thing, signature, secret) {
         var computedSig = createHmacSigner(bits)(thing, secret);
-        return timingSafeEqual2(Buffer2.from(signature), Buffer2.from(computedSig));
+        return timingSafeEqual(Buffer2.from(signature), Buffer2.from(computedSig));
       };
     }
     function createKeySigner(bits) {
-      return function sign2(thing, privateKey) {
+      return function sign(thing, privateKey) {
         checkIsPrivateKey(privateKey);
         thing = normalizeInput(thing);
         var signer = crypto2.createSign("RSA-SHA" + bits);
@@ -24916,7 +24908,7 @@ var require_jwa = __commonJS({
       };
     }
     function createKeyVerifier(bits) {
-      return function verify2(thing, signature, publicKey) {
+      return function verify(thing, signature, publicKey) {
         checkIsPublicKey(publicKey);
         thing = normalizeInput(thing);
         signature = toBase64(signature);
@@ -24926,7 +24918,7 @@ var require_jwa = __commonJS({
       };
     }
     function createPSSKeySigner(bits) {
-      return function sign2(thing, privateKey) {
+      return function sign(thing, privateKey) {
         checkIsPrivateKey(privateKey);
         thing = normalizeInput(thing);
         var signer = crypto2.createSign("RSA-SHA" + bits);
@@ -24939,7 +24931,7 @@ var require_jwa = __commonJS({
       };
     }
     function createPSSKeyVerifier(bits) {
-      return function verify2(thing, signature, publicKey) {
+      return function verify(thing, signature, publicKey) {
         checkIsPublicKey(publicKey);
         thing = normalizeInput(thing);
         signature = toBase64(signature);
@@ -24954,7 +24946,7 @@ var require_jwa = __commonJS({
     }
     function createECDSASigner(bits) {
       var inner = createKeySigner(bits);
-      return function sign2() {
+      return function sign() {
         var signature = inner.apply(null, arguments);
         signature = formatEcdsa.derToJose(signature, "ES" + bits);
         return signature;
@@ -24962,19 +24954,19 @@ var require_jwa = __commonJS({
     }
     function createECDSAVerifer(bits) {
       var inner = createKeyVerifier(bits);
-      return function verify2(thing, signature, publicKey) {
+      return function verify(thing, signature, publicKey) {
         signature = formatEcdsa.joseToDer(signature, "ES" + bits).toString("base64");
         var result = inner(thing, signature, publicKey);
         return result;
       };
     }
     function createNoneSigner() {
-      return function sign2() {
+      return function sign() {
         return "";
       };
     }
     function createNoneVerifier() {
-      return function verify2(thing, signature) {
+      return function verify(thing, signature) {
         return signature === "";
       };
     }
@@ -25071,7 +25063,7 @@ var require_sign_stream = __commonJS({
       }.bind(this));
     }
     util.inherits(SignStream, Stream);
-    SignStream.prototype.sign = function sign2() {
+    SignStream.prototype.sign = function sign() {
       try {
         var signature = jwsSign({
           header: this.header,
@@ -25105,11 +25097,11 @@ var require_verify_stream = __commonJS({
     var toString = require_tostring();
     var util = __require("util");
     var JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/;
-    function isObject2(thing) {
+    function isObject(thing) {
       return Object.prototype.toString.call(thing) === "[object Object]";
     }
     function safeJsonParse(thing) {
-      if (isObject2(thing))
+      if (isObject(thing))
         return thing;
       try {
         return JSON.parse(thing);
@@ -25188,7 +25180,7 @@ var require_verify_stream = __commonJS({
       }.bind(this));
     }
     util.inherits(VerifyStream, Stream);
-    VerifyStream.prototype.verify = function verify2() {
+    VerifyStream.prototype.verify = function verify() {
       try {
         var valid = jwsVerify(this.signature.buffer, this.algorithm, this.key.buffer);
         var obj = jwsDecode(this.signature.buffer, this.encoding);
@@ -25278,13 +25270,13 @@ var require_decode = __commonJS({
 // node_modules/jsonwebtoken/lib/JsonWebTokenError.js
 var require_JsonWebTokenError = __commonJS({
   "node_modules/jsonwebtoken/lib/JsonWebTokenError.js"(exports, module) {
-    var JsonWebTokenError = function(message2, error) {
-      Error.call(this, message2);
+    var JsonWebTokenError = function(message, error) {
+      Error.call(this, message);
       if (Error.captureStackTrace) {
         Error.captureStackTrace(this, this.constructor);
       }
       this.name = "JsonWebTokenError";
-      this.message = message2;
+      this.message = message;
       if (error) this.inner = error;
     };
     JsonWebTokenError.prototype = Object.create(Error.prototype);
@@ -25297,8 +25289,8 @@ var require_JsonWebTokenError = __commonJS({
 var require_NotBeforeError = __commonJS({
   "node_modules/jsonwebtoken/lib/NotBeforeError.js"(exports, module) {
     var JsonWebTokenError = require_JsonWebTokenError();
-    var NotBeforeError = function(message2, date) {
-      JsonWebTokenError.call(this, message2);
+    var NotBeforeError = function(message, date) {
+      JsonWebTokenError.call(this, message);
       this.name = "NotBeforeError";
       this.date = date;
     };
@@ -25312,8 +25304,8 @@ var require_NotBeforeError = __commonJS({
 var require_TokenExpiredError = __commonJS({
   "node_modules/jsonwebtoken/lib/TokenExpiredError.js"(exports, module) {
     var JsonWebTokenError = require_JsonWebTokenError();
-    var TokenExpiredError = function(message2, expiredAt) {
-      JsonWebTokenError.call(this, message2);
+    var TokenExpiredError = function(message, expiredAt) {
+      JsonWebTokenError.call(this, message);
       this.name = "TokenExpiredError";
       this.expiredAt = expiredAt;
     };
@@ -26341,7 +26333,7 @@ var require_range2 = __commonJS({
         range = range.replace(BUILDSTRIPRE, "");
         const memoOpts = (this.options.includePrerelease && FLAG_INCLUDE_PRERELEASE) | (this.options.loose && FLAG_LOOSE);
         const memoKey = memoOpts + ":" + range;
-        const cached = cache2.get(memoKey);
+        const cached = cache.get(memoKey);
         if (cached) {
           return cached;
         }
@@ -26375,7 +26367,7 @@ var require_range2 = __commonJS({
           rangeMap.delete("");
         }
         const result = [...rangeMap.values()];
-        cache2.set(memoKey, result);
+        cache.set(memoKey, result);
         return result;
       }
       intersects(range, options) {
@@ -26414,7 +26406,7 @@ var require_range2 = __commonJS({
     };
     module.exports = Range;
     var LRU = require_lrucache();
-    var cache2 = new LRU();
+    var cache = new LRU();
     var parseOptions = require_parse_options();
     var Comparator = require_comparator();
     var debug = require_debug5();
@@ -26640,8 +26632,8 @@ var require_range2 = __commonJS({
             continue;
           }
           if (set[i].semver.prerelease.length > 0) {
-            const allowed2 = set[i].semver;
-            if (allowed2.major === version.major && allowed2.minor === version.minor && allowed2.patch === version.patch) {
+            const allowed = set[i].semver;
+            if (allowed.major === version.major && allowed.minor === version.minor && allowed.patch === version.patch) {
               return true;
             }
           }
@@ -27421,7 +27413,7 @@ var require_verify = __commonJS({
     var JsonWebTokenError = require_JsonWebTokenError();
     var NotBeforeError = require_NotBeforeError();
     var TokenExpiredError = require_TokenExpiredError();
-    var decode2 = require_decode();
+    var decode = require_decode();
     var timespan = require_timespan();
     var validateAsymmetricKey = require_validateAsymmetricKey();
     var PS_SUPPORTED = require_psSupported();
@@ -27475,7 +27467,7 @@ var require_verify = __commonJS({
       }
       let decodedToken;
       try {
-        decodedToken = decode2(jwtString, { complete: true });
+        decodedToken = decode(jwtString, { complete: true });
       } catch (err) {
         return done(err);
       }
@@ -27749,27 +27741,27 @@ var require_lodash = __commonJS({
       return value != null && isLength(value.length) && !isFunction(value);
     }
     function isArrayLikeObject(value) {
-      return isObjectLike2(value) && isArrayLike(value);
+      return isObjectLike(value) && isArrayLike(value);
     }
     function isFunction(value) {
-      var tag2 = isObject2(value) ? objectToString.call(value) : "";
-      return tag2 == funcTag || tag2 == genTag;
+      var tag = isObject(value) ? objectToString.call(value) : "";
+      return tag == funcTag || tag == genTag;
     }
     function isLength(value) {
       return typeof value == "number" && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
     }
-    function isObject2(value) {
+    function isObject(value) {
       var type = typeof value;
       return !!value && (type == "object" || type == "function");
     }
-    function isObjectLike2(value) {
+    function isObjectLike(value) {
       return !!value && typeof value == "object";
     }
     function isString(value) {
-      return typeof value == "string" || !isArray(value) && isObjectLike2(value) && objectToString.call(value) == stringTag;
+      return typeof value == "string" || !isArray(value) && isObjectLike(value) && objectToString.call(value) == stringTag;
     }
     function isSymbol(value) {
-      return typeof value == "symbol" || isObjectLike2(value) && objectToString.call(value) == symbolTag;
+      return typeof value == "symbol" || isObjectLike(value) && objectToString.call(value) == symbolTag;
     }
     function toFinite(value) {
       if (!value) {
@@ -27777,8 +27769,8 @@ var require_lodash = __commonJS({
       }
       value = toNumber(value);
       if (value === INFINITY || value === -INFINITY) {
-        var sign2 = value < 0 ? -1 : 1;
-        return sign2 * MAX_INTEGER;
+        var sign = value < 0 ? -1 : 1;
+        return sign * MAX_INTEGER;
       }
       return value === value ? value : 0;
     }
@@ -27793,9 +27785,9 @@ var require_lodash = __commonJS({
       if (isSymbol(value)) {
         return NAN;
       }
-      if (isObject2(value)) {
+      if (isObject(value)) {
         var other = typeof value.valueOf == "function" ? value.valueOf() : value;
-        value = isObject2(other) ? other + "" : other;
+        value = isObject(other) ? other + "" : other;
       }
       if (typeof value != "string") {
         return value === 0 ? value : +value;
@@ -27821,9 +27813,9 @@ var require_lodash2 = __commonJS({
     var objectProto = Object.prototype;
     var objectToString = objectProto.toString;
     function isBoolean(value) {
-      return value === true || value === false || isObjectLike2(value) && objectToString.call(value) == boolTag;
+      return value === true || value === false || isObjectLike(value) && objectToString.call(value) == boolTag;
     }
-    function isObjectLike2(value) {
+    function isObjectLike(value) {
       return !!value && typeof value == "object";
     }
     module.exports = isBoolean;
@@ -27847,15 +27839,15 @@ var require_lodash3 = __commonJS({
     function isInteger(value) {
       return typeof value == "number" && value == toInteger(value);
     }
-    function isObject2(value) {
+    function isObject(value) {
       var type = typeof value;
       return !!value && (type == "object" || type == "function");
     }
-    function isObjectLike2(value) {
+    function isObjectLike(value) {
       return !!value && typeof value == "object";
     }
     function isSymbol(value) {
-      return typeof value == "symbol" || isObjectLike2(value) && objectToString.call(value) == symbolTag;
+      return typeof value == "symbol" || isObjectLike(value) && objectToString.call(value) == symbolTag;
     }
     function toFinite(value) {
       if (!value) {
@@ -27863,8 +27855,8 @@ var require_lodash3 = __commonJS({
       }
       value = toNumber(value);
       if (value === INFINITY || value === -INFINITY) {
-        var sign2 = value < 0 ? -1 : 1;
-        return sign2 * MAX_INTEGER;
+        var sign = value < 0 ? -1 : 1;
+        return sign * MAX_INTEGER;
       }
       return value === value ? value : 0;
     }
@@ -27879,9 +27871,9 @@ var require_lodash3 = __commonJS({
       if (isSymbol(value)) {
         return NAN;
       }
-      if (isObject2(value)) {
+      if (isObject(value)) {
         var other = typeof value.valueOf == "function" ? value.valueOf() : value;
-        value = isObject2(other) ? other + "" : other;
+        value = isObject(other) ? other + "" : other;
       }
       if (typeof value != "string") {
         return value === 0 ? value : +value;
@@ -27900,11 +27892,11 @@ var require_lodash4 = __commonJS({
     var numberTag = "[object Number]";
     var objectProto = Object.prototype;
     var objectToString = objectProto.toString;
-    function isObjectLike2(value) {
+    function isObjectLike(value) {
       return !!value && typeof value == "object";
     }
     function isNumber(value) {
-      return typeof value == "number" || isObjectLike2(value) && objectToString.call(value) == numberTag;
+      return typeof value == "number" || isObjectLike(value) && objectToString.call(value) == numberTag;
     }
     module.exports = isNumber;
   }
@@ -27936,11 +27928,11 @@ var require_lodash5 = __commonJS({
     var objectCtorString = funcToString.call(Object);
     var objectToString = objectProto.toString;
     var getPrototype = overArg(Object.getPrototypeOf, Object);
-    function isObjectLike2(value) {
+    function isObjectLike(value) {
       return !!value && typeof value == "object";
     }
     function isPlainObject(value) {
-      if (!isObjectLike2(value) || objectToString.call(value) != objectTag || isHostObject(value)) {
+      if (!isObjectLike(value) || objectToString.call(value) != objectTag || isHostObject(value)) {
         return false;
       }
       var proto = getPrototype(value);
@@ -27961,11 +27953,11 @@ var require_lodash6 = __commonJS({
     var objectProto = Object.prototype;
     var objectToString = objectProto.toString;
     var isArray = Array.isArray;
-    function isObjectLike2(value) {
+    function isObjectLike(value) {
       return !!value && typeof value == "object";
     }
     function isString(value) {
-      return typeof value == "string" || !isArray(value) && isObjectLike2(value) && objectToString.call(value) == stringTag;
+      return typeof value == "string" || !isArray(value) && isObjectLike(value) && objectToString.call(value) == stringTag;
     }
     module.exports = isString;
   }
@@ -28005,15 +27997,15 @@ var require_lodash7 = __commonJS({
     function once(func) {
       return before(2, func);
     }
-    function isObject2(value) {
+    function isObject(value) {
       var type = typeof value;
       return !!value && (type == "object" || type == "function");
     }
-    function isObjectLike2(value) {
+    function isObjectLike(value) {
       return !!value && typeof value == "object";
     }
     function isSymbol(value) {
-      return typeof value == "symbol" || isObjectLike2(value) && objectToString.call(value) == symbolTag;
+      return typeof value == "symbol" || isObjectLike(value) && objectToString.call(value) == symbolTag;
     }
     function toFinite(value) {
       if (!value) {
@@ -28021,8 +28013,8 @@ var require_lodash7 = __commonJS({
       }
       value = toNumber(value);
       if (value === INFINITY || value === -INFINITY) {
-        var sign2 = value < 0 ? -1 : 1;
-        return sign2 * MAX_INTEGER;
+        var sign = value < 0 ? -1 : 1;
+        return sign * MAX_INTEGER;
       }
       return value === value ? value : 0;
     }
@@ -28037,9 +28029,9 @@ var require_lodash7 = __commonJS({
       if (isSymbol(value)) {
         return NAN;
       }
-      if (isObject2(value)) {
+      if (isObject(value)) {
         var other = typeof value.valueOf == "function" ? value.valueOf() : value;
-        value = isObject2(other) ? other + "" : other;
+        value = isObject(other) ? other + "" : other;
       }
       if (typeof value != "string") {
         return value === 0 ? value : +value;
@@ -28291,7726 +28283,7 @@ var require_jsonwebtoken = __commonJS({
   }
 });
 
-// node_modules/debug/src/common.js
-var require_common = __commonJS({
-  "node_modules/debug/src/common.js"(exports, module) {
-    function setup(env) {
-      createDebug.debug = createDebug;
-      createDebug.default = createDebug;
-      createDebug.coerce = coerce;
-      createDebug.disable = disable;
-      createDebug.enable = enable;
-      createDebug.enabled = enabled;
-      createDebug.humanize = require_ms5();
-      createDebug.destroy = destroy;
-      Object.keys(env).forEach((key) => {
-        createDebug[key] = env[key];
-      });
-      createDebug.names = [];
-      createDebug.skips = [];
-      createDebug.formatters = {};
-      function selectColor(namespace) {
-        let hash = 0;
-        for (let i = 0; i < namespace.length; i++) {
-          hash = (hash << 5) - hash + namespace.charCodeAt(i);
-          hash |= 0;
-        }
-        return createDebug.colors[Math.abs(hash) % createDebug.colors.length];
-      }
-      createDebug.selectColor = selectColor;
-      function createDebug(namespace) {
-        let prevTime;
-        let enableOverride = null;
-        let namespacesCache;
-        let enabledCache;
-        function debug(...args) {
-          if (!debug.enabled) {
-            return;
-          }
-          const self2 = debug;
-          const curr = Number(/* @__PURE__ */ new Date());
-          const ms2 = curr - (prevTime || curr);
-          self2.diff = ms2;
-          self2.prev = prevTime;
-          self2.curr = curr;
-          prevTime = curr;
-          args[0] = createDebug.coerce(args[0]);
-          if (typeof args[0] !== "string") {
-            args.unshift("%O");
-          }
-          let index = 0;
-          args[0] = args[0].replace(/%([a-zA-Z%])/g, (match, format) => {
-            if (match === "%%") {
-              return "%";
-            }
-            index++;
-            const formatter = createDebug.formatters[format];
-            if (typeof formatter === "function") {
-              const val = args[index];
-              match = formatter.call(self2, val);
-              args.splice(index, 1);
-              index--;
-            }
-            return match;
-          });
-          createDebug.formatArgs.call(self2, args);
-          const logFn = self2.log || createDebug.log;
-          logFn.apply(self2, args);
-        }
-        debug.namespace = namespace;
-        debug.useColors = createDebug.useColors();
-        debug.color = createDebug.selectColor(namespace);
-        debug.extend = extend;
-        debug.destroy = createDebug.destroy;
-        Object.defineProperty(debug, "enabled", {
-          enumerable: true,
-          configurable: false,
-          get: () => {
-            if (enableOverride !== null) {
-              return enableOverride;
-            }
-            if (namespacesCache !== createDebug.namespaces) {
-              namespacesCache = createDebug.namespaces;
-              enabledCache = createDebug.enabled(namespace);
-            }
-            return enabledCache;
-          },
-          set: (v2) => {
-            enableOverride = v2;
-          }
-        });
-        if (typeof createDebug.init === "function") {
-          createDebug.init(debug);
-        }
-        return debug;
-      }
-      function extend(namespace, delimiter) {
-        const newDebug = createDebug(this.namespace + (typeof delimiter === "undefined" ? ":" : delimiter) + namespace);
-        newDebug.log = this.log;
-        return newDebug;
-      }
-      function enable(namespaces) {
-        createDebug.save(namespaces);
-        createDebug.namespaces = namespaces;
-        createDebug.names = [];
-        createDebug.skips = [];
-        const split = (typeof namespaces === "string" ? namespaces : "").trim().replace(/\s+/g, ",").split(",").filter(Boolean);
-        for (const ns of split) {
-          if (ns[0] === "-") {
-            createDebug.skips.push(ns.slice(1));
-          } else {
-            createDebug.names.push(ns);
-          }
-        }
-      }
-      function matchesTemplate(search, template) {
-        let searchIndex = 0;
-        let templateIndex = 0;
-        let starIndex = -1;
-        let matchIndex = 0;
-        while (searchIndex < search.length) {
-          if (templateIndex < template.length && (template[templateIndex] === search[searchIndex] || template[templateIndex] === "*")) {
-            if (template[templateIndex] === "*") {
-              starIndex = templateIndex;
-              matchIndex = searchIndex;
-              templateIndex++;
-            } else {
-              searchIndex++;
-              templateIndex++;
-            }
-          } else if (starIndex !== -1) {
-            templateIndex = starIndex + 1;
-            matchIndex++;
-            searchIndex = matchIndex;
-          } else {
-            return false;
-          }
-        }
-        while (templateIndex < template.length && template[templateIndex] === "*") {
-          templateIndex++;
-        }
-        return templateIndex === template.length;
-      }
-      function disable() {
-        const namespaces = [
-          ...createDebug.names,
-          ...createDebug.skips.map((namespace) => "-" + namespace)
-        ].join(",");
-        createDebug.enable("");
-        return namespaces;
-      }
-      function enabled(name) {
-        for (const skip of createDebug.skips) {
-          if (matchesTemplate(name, skip)) {
-            return false;
-          }
-        }
-        for (const ns of createDebug.names) {
-          if (matchesTemplate(name, ns)) {
-            return true;
-          }
-        }
-        return false;
-      }
-      function coerce(val) {
-        if (val instanceof Error) {
-          return val.stack || val.message;
-        }
-        return val;
-      }
-      function destroy() {
-        console.warn("Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`.");
-      }
-      createDebug.enable(createDebug.load());
-      return createDebug;
-    }
-    module.exports = setup;
-  }
-});
-
-// node_modules/debug/src/browser.js
-var require_browser5 = __commonJS({
-  "node_modules/debug/src/browser.js"(exports, module) {
-    exports.formatArgs = formatArgs;
-    exports.save = save;
-    exports.load = load;
-    exports.useColors = useColors;
-    exports.storage = localstorage();
-    exports.destroy = /* @__PURE__ */ (() => {
-      let warned = false;
-      return () => {
-        if (!warned) {
-          warned = true;
-          console.warn("Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`.");
-        }
-      };
-    })();
-    exports.colors = [
-      "#0000CC",
-      "#0000FF",
-      "#0033CC",
-      "#0033FF",
-      "#0066CC",
-      "#0066FF",
-      "#0099CC",
-      "#0099FF",
-      "#00CC00",
-      "#00CC33",
-      "#00CC66",
-      "#00CC99",
-      "#00CCCC",
-      "#00CCFF",
-      "#3300CC",
-      "#3300FF",
-      "#3333CC",
-      "#3333FF",
-      "#3366CC",
-      "#3366FF",
-      "#3399CC",
-      "#3399FF",
-      "#33CC00",
-      "#33CC33",
-      "#33CC66",
-      "#33CC99",
-      "#33CCCC",
-      "#33CCFF",
-      "#6600CC",
-      "#6600FF",
-      "#6633CC",
-      "#6633FF",
-      "#66CC00",
-      "#66CC33",
-      "#9900CC",
-      "#9900FF",
-      "#9933CC",
-      "#9933FF",
-      "#99CC00",
-      "#99CC33",
-      "#CC0000",
-      "#CC0033",
-      "#CC0066",
-      "#CC0099",
-      "#CC00CC",
-      "#CC00FF",
-      "#CC3300",
-      "#CC3333",
-      "#CC3366",
-      "#CC3399",
-      "#CC33CC",
-      "#CC33FF",
-      "#CC6600",
-      "#CC6633",
-      "#CC9900",
-      "#CC9933",
-      "#CCCC00",
-      "#CCCC33",
-      "#FF0000",
-      "#FF0033",
-      "#FF0066",
-      "#FF0099",
-      "#FF00CC",
-      "#FF00FF",
-      "#FF3300",
-      "#FF3333",
-      "#FF3366",
-      "#FF3399",
-      "#FF33CC",
-      "#FF33FF",
-      "#FF6600",
-      "#FF6633",
-      "#FF9900",
-      "#FF9933",
-      "#FFCC00",
-      "#FFCC33"
-    ];
-    function useColors() {
-      if (typeof window !== "undefined" && window.process && (window.process.type === "renderer" || window.process.__nwjs)) {
-        return true;
-      }
-      if (typeof navigator !== "undefined" && navigator.userAgent && navigator.userAgent.toLowerCase().match(/(edge|trident)\/(\d+)/)) {
-        return false;
-      }
-      let m2;
-      return typeof document !== "undefined" && document.documentElement && document.documentElement.style && document.documentElement.style.WebkitAppearance || // Is firebug? http://stackoverflow.com/a/398120/376773
-      typeof window !== "undefined" && window.console && (window.console.firebug || window.console.exception && window.console.table) || // Is firefox >= v31?
-      // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
-      typeof navigator !== "undefined" && navigator.userAgent && (m2 = navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/)) && parseInt(m2[1], 10) >= 31 || // Double check webkit in userAgent just in case we are in a worker
-      typeof navigator !== "undefined" && navigator.userAgent && navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/);
-    }
-    function formatArgs(args) {
-      args[0] = (this.useColors ? "%c" : "") + this.namespace + (this.useColors ? " %c" : " ") + args[0] + (this.useColors ? "%c " : " ") + "+" + module.exports.humanize(this.diff);
-      if (!this.useColors) {
-        return;
-      }
-      const c = "color: " + this.color;
-      args.splice(1, 0, c, "color: inherit");
-      let index = 0;
-      let lastC = 0;
-      args[0].replace(/%[a-zA-Z%]/g, (match) => {
-        if (match === "%%") {
-          return;
-        }
-        index++;
-        if (match === "%c") {
-          lastC = index;
-        }
-      });
-      args.splice(lastC, 0, c);
-    }
-    exports.log = console.debug || console.log || (() => {
-    });
-    function save(namespaces) {
-      try {
-        if (namespaces) {
-          exports.storage.setItem("debug", namespaces);
-        } else {
-          exports.storage.removeItem("debug");
-        }
-      } catch (error) {
-      }
-    }
-    function load() {
-      let r;
-      try {
-        r = exports.storage.getItem("debug") || exports.storage.getItem("DEBUG");
-      } catch (error) {
-      }
-      if (!r && typeof process !== "undefined" && "env" in process) {
-        r = process.env.DEBUG;
-      }
-      return r;
-    }
-    function localstorage() {
-      try {
-        return localStorage;
-      } catch (error) {
-      }
-    }
-    module.exports = require_common()(exports);
-    var { formatters } = module.exports;
-    formatters.j = function(v2) {
-      try {
-        return JSON.stringify(v2);
-      } catch (error) {
-        return "[UnexpectedJSONParseError]: " + error.message;
-      }
-    };
-  }
-});
-
-// node_modules/debug/src/node.js
-var require_node5 = __commonJS({
-  "node_modules/debug/src/node.js"(exports, module) {
-    var tty = __require("tty");
-    var util = __require("util");
-    exports.init = init;
-    exports.log = log;
-    exports.formatArgs = formatArgs;
-    exports.save = save;
-    exports.load = load;
-    exports.useColors = useColors;
-    exports.destroy = util.deprecate(
-      () => {
-      },
-      "Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`."
-    );
-    exports.colors = [6, 2, 3, 4, 5, 1];
-    try {
-      const supportsColor = __require("supports-color");
-      if (supportsColor && (supportsColor.stderr || supportsColor).level >= 2) {
-        exports.colors = [
-          20,
-          21,
-          26,
-          27,
-          32,
-          33,
-          38,
-          39,
-          40,
-          41,
-          42,
-          43,
-          44,
-          45,
-          56,
-          57,
-          62,
-          63,
-          68,
-          69,
-          74,
-          75,
-          76,
-          77,
-          78,
-          79,
-          80,
-          81,
-          92,
-          93,
-          98,
-          99,
-          112,
-          113,
-          128,
-          129,
-          134,
-          135,
-          148,
-          149,
-          160,
-          161,
-          162,
-          163,
-          164,
-          165,
-          166,
-          167,
-          168,
-          169,
-          170,
-          171,
-          172,
-          173,
-          178,
-          179,
-          184,
-          185,
-          196,
-          197,
-          198,
-          199,
-          200,
-          201,
-          202,
-          203,
-          204,
-          205,
-          206,
-          207,
-          208,
-          209,
-          214,
-          215,
-          220,
-          221
-        ];
-      }
-    } catch (error) {
-    }
-    exports.inspectOpts = Object.keys(process.env).filter((key) => {
-      return /^debug_/i.test(key);
-    }).reduce((obj, key) => {
-      const prop = key.substring(6).toLowerCase().replace(/_([a-z])/g, (_, k) => {
-        return k.toUpperCase();
-      });
-      let val = process.env[key];
-      if (/^(yes|on|true|enabled)$/i.test(val)) {
-        val = true;
-      } else if (/^(no|off|false|disabled)$/i.test(val)) {
-        val = false;
-      } else if (val === "null") {
-        val = null;
-      } else {
-        val = Number(val);
-      }
-      obj[prop] = val;
-      return obj;
-    }, {});
-    function useColors() {
-      return "colors" in exports.inspectOpts ? Boolean(exports.inspectOpts.colors) : tty.isatty(process.stderr.fd);
-    }
-    function formatArgs(args) {
-      const { namespace: name, useColors: useColors2 } = this;
-      if (useColors2) {
-        const c = this.color;
-        const colorCode = "\x1B[3" + (c < 8 ? c : "8;5;" + c);
-        const prefix = `  ${colorCode};1m${name} \x1B[0m`;
-        args[0] = prefix + args[0].split("\n").join("\n" + prefix);
-        args.push(colorCode + "m+" + module.exports.humanize(this.diff) + "\x1B[0m");
-      } else {
-        args[0] = getDate() + name + " " + args[0];
-      }
-    }
-    function getDate() {
-      if (exports.inspectOpts.hideDate) {
-        return "";
-      }
-      return (/* @__PURE__ */ new Date()).toISOString() + " ";
-    }
-    function log(...args) {
-      return process.stderr.write(util.formatWithOptions(exports.inspectOpts, ...args) + "\n");
-    }
-    function save(namespaces) {
-      if (namespaces) {
-        process.env.DEBUG = namespaces;
-      } else {
-        delete process.env.DEBUG;
-      }
-    }
-    function load() {
-      return process.env.DEBUG;
-    }
-    function init(debug) {
-      debug.inspectOpts = {};
-      const keys = Object.keys(exports.inspectOpts);
-      for (let i = 0; i < keys.length; i++) {
-        debug.inspectOpts[keys[i]] = exports.inspectOpts[keys[i]];
-      }
-    }
-    module.exports = require_common()(exports);
-    var { formatters } = module.exports;
-    formatters.o = function(v2) {
-      this.inspectOpts.colors = this.useColors;
-      return util.inspect(v2, this.inspectOpts).split("\n").map((str) => str.trim()).join(" ");
-    };
-    formatters.O = function(v2) {
-      this.inspectOpts.colors = this.useColors;
-      return util.inspect(v2, this.inspectOpts);
-    };
-  }
-});
-
-// node_modules/debug/src/index.js
-var require_src5 = __commonJS({
-  "node_modules/debug/src/index.js"(exports, module) {
-    if (typeof process === "undefined" || process.type === "renderer" || process.browser === true || process.__nwjs) {
-      module.exports = require_browser5();
-    } else {
-      module.exports = require_node5();
-    }
-  }
-});
-
-// node_modules/jose/dist/webapi/lib/buffer_utils.js
-function concat(...buffers) {
-  const size = buffers.reduce((acc, { length }) => acc + length, 0);
-  const buf = new Uint8Array(size);
-  let i = 0;
-  for (const buffer of buffers) {
-    buf.set(buffer, i);
-    i += buffer.length;
-  }
-  return buf;
-}
-function writeUInt32BE(buf, value, offset) {
-  if (value < 0 || value >= MAX_INT32) {
-    throw new RangeError(`value must be >= 0 and <= ${MAX_INT32 - 1}. Received ${value}`);
-  }
-  buf.set([value >>> 24, value >>> 16, value >>> 8, value & 255], offset);
-}
-function uint64be(value) {
-  const high = Math.floor(value / MAX_INT32);
-  const low = value % MAX_INT32;
-  const buf = new Uint8Array(8);
-  writeUInt32BE(buf, high, 0);
-  writeUInt32BE(buf, low, 4);
-  return buf;
-}
-function uint32be(value) {
-  const buf = new Uint8Array(4);
-  writeUInt32BE(buf, value);
-  return buf;
-}
-function encode(string) {
-  const bytes = new Uint8Array(string.length);
-  for (let i = 0; i < string.length; i++) {
-    const code = string.charCodeAt(i);
-    if (code > 127) {
-      throw new TypeError("non-ASCII string encountered in encode()");
-    }
-    bytes[i] = code;
-  }
-  return bytes;
-}
-var encoder, decoder, MAX_INT32;
-var init_buffer_utils = __esm({
-  "node_modules/jose/dist/webapi/lib/buffer_utils.js"() {
-    encoder = new TextEncoder();
-    decoder = new TextDecoder();
-    MAX_INT32 = 2 ** 32;
-  }
-});
-
-// node_modules/jose/dist/webapi/lib/base64.js
-function encodeBase64(input) {
-  if (Uint8Array.prototype.toBase64) {
-    return input.toBase64();
-  }
-  const CHUNK_SIZE = 32768;
-  const arr = [];
-  for (let i = 0; i < input.length; i += CHUNK_SIZE) {
-    arr.push(String.fromCharCode.apply(null, input.subarray(i, i + CHUNK_SIZE)));
-  }
-  return btoa(arr.join(""));
-}
-function decodeBase64(encoded) {
-  if (Uint8Array.fromBase64) {
-    return Uint8Array.fromBase64(encoded);
-  }
-  const binary = atob(encoded);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-  return bytes;
-}
-var init_base64 = __esm({
-  "node_modules/jose/dist/webapi/lib/base64.js"() {
-  }
-});
-
-// node_modules/jose/dist/webapi/util/base64url.js
-var base64url_exports = {};
-__export(base64url_exports, {
-  decode: () => decode,
-  encode: () => encode2
-});
-function decode(input) {
-  if (Uint8Array.fromBase64) {
-    return Uint8Array.fromBase64(typeof input === "string" ? input : decoder.decode(input), {
-      alphabet: "base64url"
-    });
-  }
-  let encoded = input;
-  if (encoded instanceof Uint8Array) {
-    encoded = decoder.decode(encoded);
-  }
-  encoded = encoded.replace(/-/g, "+").replace(/_/g, "/");
-  try {
-    return decodeBase64(encoded);
-  } catch {
-    throw new TypeError("The input to be decoded is not correctly encoded.");
-  }
-}
-function encode2(input) {
-  let unencoded = input;
-  if (typeof unencoded === "string") {
-    unencoded = encoder.encode(unencoded);
-  }
-  if (Uint8Array.prototype.toBase64) {
-    return unencoded.toBase64({ alphabet: "base64url", omitPadding: true });
-  }
-  return encodeBase64(unencoded).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
-}
-var init_base64url = __esm({
-  "node_modules/jose/dist/webapi/util/base64url.js"() {
-    init_buffer_utils();
-    init_base64();
-  }
-});
-
-// node_modules/jose/dist/webapi/lib/crypto_key.js
-function getHashLength(hash) {
-  return parseInt(hash.name.slice(4), 10);
-}
-function checkHashLength(algorithm, expected) {
-  const actual = getHashLength(algorithm.hash);
-  if (actual !== expected)
-    throw unusable(`SHA-${expected}`, "algorithm.hash");
-}
-function getNamedCurve(alg) {
-  switch (alg) {
-    case "ES256":
-      return "P-256";
-    case "ES384":
-      return "P-384";
-    case "ES512":
-      return "P-521";
-    default:
-      throw new Error("unreachable");
-  }
-}
-function checkUsage(key, usage) {
-  if (usage && !key.usages.includes(usage)) {
-    throw new TypeError(`CryptoKey does not support this operation, its usages must include ${usage}.`);
-  }
-}
-function checkSigCryptoKey(key, alg, usage) {
-  switch (alg) {
-    case "HS256":
-    case "HS384":
-    case "HS512": {
-      if (!isAlgorithm(key.algorithm, "HMAC"))
-        throw unusable("HMAC");
-      checkHashLength(key.algorithm, parseInt(alg.slice(2), 10));
-      break;
-    }
-    case "RS256":
-    case "RS384":
-    case "RS512": {
-      if (!isAlgorithm(key.algorithm, "RSASSA-PKCS1-v1_5"))
-        throw unusable("RSASSA-PKCS1-v1_5");
-      checkHashLength(key.algorithm, parseInt(alg.slice(2), 10));
-      break;
-    }
-    case "PS256":
-    case "PS384":
-    case "PS512": {
-      if (!isAlgorithm(key.algorithm, "RSA-PSS"))
-        throw unusable("RSA-PSS");
-      checkHashLength(key.algorithm, parseInt(alg.slice(2), 10));
-      break;
-    }
-    case "Ed25519":
-    case "EdDSA": {
-      if (!isAlgorithm(key.algorithm, "Ed25519"))
-        throw unusable("Ed25519");
-      break;
-    }
-    case "ML-DSA-44":
-    case "ML-DSA-65":
-    case "ML-DSA-87": {
-      if (!isAlgorithm(key.algorithm, alg))
-        throw unusable(alg);
-      break;
-    }
-    case "ES256":
-    case "ES384":
-    case "ES512": {
-      if (!isAlgorithm(key.algorithm, "ECDSA"))
-        throw unusable("ECDSA");
-      const expected = getNamedCurve(alg);
-      const actual = key.algorithm.namedCurve;
-      if (actual !== expected)
-        throw unusable(expected, "algorithm.namedCurve");
-      break;
-    }
-    default:
-      throw new TypeError("CryptoKey does not support this operation");
-  }
-  checkUsage(key, usage);
-}
-function checkEncCryptoKey(key, alg, usage) {
-  switch (alg) {
-    case "A128GCM":
-    case "A192GCM":
-    case "A256GCM": {
-      if (!isAlgorithm(key.algorithm, "AES-GCM"))
-        throw unusable("AES-GCM");
-      const expected = parseInt(alg.slice(1, 4), 10);
-      const actual = key.algorithm.length;
-      if (actual !== expected)
-        throw unusable(expected, "algorithm.length");
-      break;
-    }
-    case "A128KW":
-    case "A192KW":
-    case "A256KW": {
-      if (!isAlgorithm(key.algorithm, "AES-KW"))
-        throw unusable("AES-KW");
-      const expected = parseInt(alg.slice(1, 4), 10);
-      const actual = key.algorithm.length;
-      if (actual !== expected)
-        throw unusable(expected, "algorithm.length");
-      break;
-    }
-    case "ECDH": {
-      switch (key.algorithm.name) {
-        case "ECDH":
-        case "X25519":
-          break;
-        default:
-          throw unusable("ECDH or X25519");
-      }
-      break;
-    }
-    case "PBES2-HS256+A128KW":
-    case "PBES2-HS384+A192KW":
-    case "PBES2-HS512+A256KW":
-      if (!isAlgorithm(key.algorithm, "PBKDF2"))
-        throw unusable("PBKDF2");
-      break;
-    case "RSA-OAEP":
-    case "RSA-OAEP-256":
-    case "RSA-OAEP-384":
-    case "RSA-OAEP-512": {
-      if (!isAlgorithm(key.algorithm, "RSA-OAEP"))
-        throw unusable("RSA-OAEP");
-      checkHashLength(key.algorithm, parseInt(alg.slice(9), 10) || 1);
-      break;
-    }
-    default:
-      throw new TypeError("CryptoKey does not support this operation");
-  }
-  checkUsage(key, usage);
-}
-var unusable, isAlgorithm;
-var init_crypto_key = __esm({
-  "node_modules/jose/dist/webapi/lib/crypto_key.js"() {
-    unusable = (name, prop = "algorithm.name") => new TypeError(`CryptoKey does not support this operation, its ${prop} must be ${name}`);
-    isAlgorithm = (algorithm, name) => algorithm.name === name;
-  }
-});
-
-// node_modules/jose/dist/webapi/lib/invalid_key_input.js
-function message(msg, actual, ...types) {
-  types = types.filter(Boolean);
-  if (types.length > 2) {
-    const last = types.pop();
-    msg += `one of type ${types.join(", ")}, or ${last}.`;
-  } else if (types.length === 2) {
-    msg += `one of type ${types[0]} or ${types[1]}.`;
-  } else {
-    msg += `of type ${types[0]}.`;
-  }
-  if (actual == null) {
-    msg += ` Received ${actual}`;
-  } else if (typeof actual === "function" && actual.name) {
-    msg += ` Received function ${actual.name}`;
-  } else if (typeof actual === "object" && actual != null) {
-    if (actual.constructor?.name) {
-      msg += ` Received an instance of ${actual.constructor.name}`;
-    }
-  }
-  return msg;
-}
-var invalidKeyInput, withAlg;
-var init_invalid_key_input = __esm({
-  "node_modules/jose/dist/webapi/lib/invalid_key_input.js"() {
-    invalidKeyInput = (actual, ...types) => message("Key must be ", actual, ...types);
-    withAlg = (alg, actual, ...types) => message(`Key for the ${alg} algorithm must be `, actual, ...types);
-  }
-});
-
-// node_modules/jose/dist/webapi/util/errors.js
-var errors_exports = {};
-__export(errors_exports, {
-  JOSEAlgNotAllowed: () => JOSEAlgNotAllowed,
-  JOSEError: () => JOSEError,
-  JOSENotSupported: () => JOSENotSupported,
-  JWEDecryptionFailed: () => JWEDecryptionFailed,
-  JWEInvalid: () => JWEInvalid,
-  JWKInvalid: () => JWKInvalid,
-  JWKSInvalid: () => JWKSInvalid,
-  JWKSMultipleMatchingKeys: () => JWKSMultipleMatchingKeys,
-  JWKSNoMatchingKey: () => JWKSNoMatchingKey,
-  JWKSTimeout: () => JWKSTimeout,
-  JWSInvalid: () => JWSInvalid,
-  JWSSignatureVerificationFailed: () => JWSSignatureVerificationFailed,
-  JWTClaimValidationFailed: () => JWTClaimValidationFailed,
-  JWTExpired: () => JWTExpired,
-  JWTInvalid: () => JWTInvalid
-});
-var JOSEError, JWTClaimValidationFailed, JWTExpired, JOSEAlgNotAllowed, JOSENotSupported, JWEDecryptionFailed, JWEInvalid, JWSInvalid, JWTInvalid, JWKInvalid, JWKSInvalid, JWKSNoMatchingKey, JWKSMultipleMatchingKeys, JWKSTimeout, JWSSignatureVerificationFailed;
-var init_errors = __esm({
-  "node_modules/jose/dist/webapi/util/errors.js"() {
-    JOSEError = class extends Error {
-      static code = "ERR_JOSE_GENERIC";
-      code = "ERR_JOSE_GENERIC";
-      constructor(message2, options) {
-        super(message2, options);
-        this.name = this.constructor.name;
-        Error.captureStackTrace?.(this, this.constructor);
-      }
-    };
-    JWTClaimValidationFailed = class extends JOSEError {
-      static code = "ERR_JWT_CLAIM_VALIDATION_FAILED";
-      code = "ERR_JWT_CLAIM_VALIDATION_FAILED";
-      claim;
-      reason;
-      payload;
-      constructor(message2, payload, claim = "unspecified", reason = "unspecified") {
-        super(message2, { cause: { claim, reason, payload } });
-        this.claim = claim;
-        this.reason = reason;
-        this.payload = payload;
-      }
-    };
-    JWTExpired = class extends JOSEError {
-      static code = "ERR_JWT_EXPIRED";
-      code = "ERR_JWT_EXPIRED";
-      claim;
-      reason;
-      payload;
-      constructor(message2, payload, claim = "unspecified", reason = "unspecified") {
-        super(message2, { cause: { claim, reason, payload } });
-        this.claim = claim;
-        this.reason = reason;
-        this.payload = payload;
-      }
-    };
-    JOSEAlgNotAllowed = class extends JOSEError {
-      static code = "ERR_JOSE_ALG_NOT_ALLOWED";
-      code = "ERR_JOSE_ALG_NOT_ALLOWED";
-    };
-    JOSENotSupported = class extends JOSEError {
-      static code = "ERR_JOSE_NOT_SUPPORTED";
-      code = "ERR_JOSE_NOT_SUPPORTED";
-    };
-    JWEDecryptionFailed = class extends JOSEError {
-      static code = "ERR_JWE_DECRYPTION_FAILED";
-      code = "ERR_JWE_DECRYPTION_FAILED";
-      constructor(message2 = "decryption operation failed", options) {
-        super(message2, options);
-      }
-    };
-    JWEInvalid = class extends JOSEError {
-      static code = "ERR_JWE_INVALID";
-      code = "ERR_JWE_INVALID";
-    };
-    JWSInvalid = class extends JOSEError {
-      static code = "ERR_JWS_INVALID";
-      code = "ERR_JWS_INVALID";
-    };
-    JWTInvalid = class extends JOSEError {
-      static code = "ERR_JWT_INVALID";
-      code = "ERR_JWT_INVALID";
-    };
-    JWKInvalid = class extends JOSEError {
-      static code = "ERR_JWK_INVALID";
-      code = "ERR_JWK_INVALID";
-    };
-    JWKSInvalid = class extends JOSEError {
-      static code = "ERR_JWKS_INVALID";
-      code = "ERR_JWKS_INVALID";
-    };
-    JWKSNoMatchingKey = class extends JOSEError {
-      static code = "ERR_JWKS_NO_MATCHING_KEY";
-      code = "ERR_JWKS_NO_MATCHING_KEY";
-      constructor(message2 = "no applicable key found in the JSON Web Key Set", options) {
-        super(message2, options);
-      }
-    };
-    JWKSMultipleMatchingKeys = class extends JOSEError {
-      [Symbol.asyncIterator];
-      static code = "ERR_JWKS_MULTIPLE_MATCHING_KEYS";
-      code = "ERR_JWKS_MULTIPLE_MATCHING_KEYS";
-      constructor(message2 = "multiple matching keys found in the JSON Web Key Set", options) {
-        super(message2, options);
-      }
-    };
-    JWKSTimeout = class extends JOSEError {
-      static code = "ERR_JWKS_TIMEOUT";
-      code = "ERR_JWKS_TIMEOUT";
-      constructor(message2 = "request timed out", options) {
-        super(message2, options);
-      }
-    };
-    JWSSignatureVerificationFailed = class extends JOSEError {
-      static code = "ERR_JWS_SIGNATURE_VERIFICATION_FAILED";
-      code = "ERR_JWS_SIGNATURE_VERIFICATION_FAILED";
-      constructor(message2 = "signature verification failed", options) {
-        super(message2, options);
-      }
-    };
-  }
-});
-
-// node_modules/jose/dist/webapi/lib/is_key_like.js
-function assertCryptoKey(key) {
-  if (!isCryptoKey(key)) {
-    throw new Error("CryptoKey instance expected");
-  }
-}
-var isCryptoKey, isKeyObject, isKeyLike;
-var init_is_key_like = __esm({
-  "node_modules/jose/dist/webapi/lib/is_key_like.js"() {
-    isCryptoKey = (key) => {
-      if (key?.[Symbol.toStringTag] === "CryptoKey")
-        return true;
-      try {
-        return key instanceof CryptoKey;
-      } catch {
-        return false;
-      }
-    };
-    isKeyObject = (key) => key?.[Symbol.toStringTag] === "KeyObject";
-    isKeyLike = (key) => isCryptoKey(key) || isKeyObject(key);
-  }
-});
-
-// node_modules/jose/dist/webapi/lib/content_encryption.js
-function cekLength(alg) {
-  switch (alg) {
-    case "A128GCM":
-      return 128;
-    case "A192GCM":
-      return 192;
-    case "A256GCM":
-    case "A128CBC-HS256":
-      return 256;
-    case "A192CBC-HS384":
-      return 384;
-    case "A256CBC-HS512":
-      return 512;
-    default:
-      throw new JOSENotSupported(`Unsupported JWE Algorithm: ${alg}`);
-  }
-}
-function checkCekLength(cek, expected) {
-  const actual = cek.byteLength << 3;
-  if (actual !== expected) {
-    throw new JWEInvalid(`Invalid Content Encryption Key length. Expected ${expected} bits, got ${actual} bits`);
-  }
-}
-function ivBitLength(alg) {
-  switch (alg) {
-    case "A128GCM":
-    case "A128GCMKW":
-    case "A192GCM":
-    case "A192GCMKW":
-    case "A256GCM":
-    case "A256GCMKW":
-      return 96;
-    case "A128CBC-HS256":
-    case "A192CBC-HS384":
-    case "A256CBC-HS512":
-      return 128;
-    default:
-      throw new JOSENotSupported(`Unsupported JWE Algorithm: ${alg}`);
-  }
-}
-function checkIvLength(enc, iv) {
-  if (iv.length << 3 !== ivBitLength(enc)) {
-    throw new JWEInvalid("Invalid Initialization Vector length");
-  }
-}
-async function cbcKeySetup(enc, cek, usage) {
-  if (!(cek instanceof Uint8Array)) {
-    throw new TypeError(invalidKeyInput(cek, "Uint8Array"));
-  }
-  const keySize = parseInt(enc.slice(1, 4), 10);
-  const encKey = await crypto.subtle.importKey("raw", cek.subarray(keySize >> 3), "AES-CBC", false, [usage]);
-  const macKey = await crypto.subtle.importKey("raw", cek.subarray(0, keySize >> 3), {
-    hash: `SHA-${keySize << 1}`,
-    name: "HMAC"
-  }, false, ["sign"]);
-  return { encKey, macKey, keySize };
-}
-async function cbcHmacTag(macKey, macData, keySize) {
-  return new Uint8Array((await crypto.subtle.sign("HMAC", macKey, macData)).slice(0, keySize >> 3));
-}
-async function cbcEncrypt(enc, plaintext, cek, iv, aad) {
-  const { encKey, macKey, keySize } = await cbcKeySetup(enc, cek, "encrypt");
-  const ciphertext = new Uint8Array(await crypto.subtle.encrypt({
-    iv,
-    name: "AES-CBC"
-  }, encKey, plaintext));
-  const macData = concat(aad, iv, ciphertext, uint64be(aad.length << 3));
-  const tag2 = await cbcHmacTag(macKey, macData, keySize);
-  return { ciphertext, tag: tag2, iv };
-}
-async function timingSafeEqual(a2, b2) {
-  if (!(a2 instanceof Uint8Array)) {
-    throw new TypeError("First argument must be a buffer");
-  }
-  if (!(b2 instanceof Uint8Array)) {
-    throw new TypeError("Second argument must be a buffer");
-  }
-  const algorithm = { name: "HMAC", hash: "SHA-256" };
-  const key = await crypto.subtle.generateKey(algorithm, false, ["sign"]);
-  const aHmac = new Uint8Array(await crypto.subtle.sign(algorithm, key, a2));
-  const bHmac = new Uint8Array(await crypto.subtle.sign(algorithm, key, b2));
-  let out = 0;
-  let i = -1;
-  while (++i < 32) {
-    out |= aHmac[i] ^ bHmac[i];
-  }
-  return out === 0;
-}
-async function cbcDecrypt(enc, cek, ciphertext, iv, tag2, aad) {
-  const { encKey, macKey, keySize } = await cbcKeySetup(enc, cek, "decrypt");
-  const macData = concat(aad, iv, ciphertext, uint64be(aad.length << 3));
-  const expectedTag = await cbcHmacTag(macKey, macData, keySize);
-  let macCheckPassed;
-  try {
-    macCheckPassed = await timingSafeEqual(tag2, expectedTag);
-  } catch {
-  }
-  if (!macCheckPassed) {
-    throw new JWEDecryptionFailed();
-  }
-  let plaintext;
-  try {
-    plaintext = new Uint8Array(await crypto.subtle.decrypt({ iv, name: "AES-CBC" }, encKey, ciphertext));
-  } catch {
-  }
-  if (!plaintext) {
-    throw new JWEDecryptionFailed();
-  }
-  return plaintext;
-}
-async function gcmEncrypt(enc, plaintext, cek, iv, aad) {
-  let encKey;
-  if (cek instanceof Uint8Array) {
-    encKey = await crypto.subtle.importKey("raw", cek, "AES-GCM", false, ["encrypt"]);
-  } else {
-    checkEncCryptoKey(cek, enc, "encrypt");
-    encKey = cek;
-  }
-  const encrypted = new Uint8Array(await crypto.subtle.encrypt({
-    additionalData: aad,
-    iv,
-    name: "AES-GCM",
-    tagLength: 128
-  }, encKey, plaintext));
-  const tag2 = encrypted.slice(-16);
-  const ciphertext = encrypted.slice(0, -16);
-  return { ciphertext, tag: tag2, iv };
-}
-async function gcmDecrypt(enc, cek, ciphertext, iv, tag2, aad) {
-  let encKey;
-  if (cek instanceof Uint8Array) {
-    encKey = await crypto.subtle.importKey("raw", cek, "AES-GCM", false, ["decrypt"]);
-  } else {
-    checkEncCryptoKey(cek, enc, "decrypt");
-    encKey = cek;
-  }
-  try {
-    return new Uint8Array(await crypto.subtle.decrypt({
-      additionalData: aad,
-      iv,
-      name: "AES-GCM",
-      tagLength: 128
-    }, encKey, concat(ciphertext, tag2)));
-  } catch {
-    throw new JWEDecryptionFailed();
-  }
-}
-async function encrypt(enc, plaintext, cek, iv, aad) {
-  if (!isCryptoKey(cek) && !(cek instanceof Uint8Array)) {
-    throw new TypeError(invalidKeyInput(cek, "CryptoKey", "KeyObject", "Uint8Array", "JSON Web Key"));
-  }
-  if (iv) {
-    checkIvLength(enc, iv);
-  } else {
-    iv = generateIv(enc);
-  }
-  switch (enc) {
-    case "A128CBC-HS256":
-    case "A192CBC-HS384":
-    case "A256CBC-HS512":
-      if (cek instanceof Uint8Array) {
-        checkCekLength(cek, parseInt(enc.slice(-3), 10));
-      }
-      return cbcEncrypt(enc, plaintext, cek, iv, aad);
-    case "A128GCM":
-    case "A192GCM":
-    case "A256GCM":
-      if (cek instanceof Uint8Array) {
-        checkCekLength(cek, parseInt(enc.slice(1, 4), 10));
-      }
-      return gcmEncrypt(enc, plaintext, cek, iv, aad);
-    default:
-      throw new JOSENotSupported(unsupportedEnc);
-  }
-}
-async function decrypt(enc, cek, ciphertext, iv, tag2, aad) {
-  if (!isCryptoKey(cek) && !(cek instanceof Uint8Array)) {
-    throw new TypeError(invalidKeyInput(cek, "CryptoKey", "KeyObject", "Uint8Array", "JSON Web Key"));
-  }
-  if (!iv) {
-    throw new JWEInvalid("JWE Initialization Vector missing");
-  }
-  if (!tag2) {
-    throw new JWEInvalid("JWE Authentication Tag missing");
-  }
-  checkIvLength(enc, iv);
-  switch (enc) {
-    case "A128CBC-HS256":
-    case "A192CBC-HS384":
-    case "A256CBC-HS512":
-      if (cek instanceof Uint8Array)
-        checkCekLength(cek, parseInt(enc.slice(-3), 10));
-      return cbcDecrypt(enc, cek, ciphertext, iv, tag2, aad);
-    case "A128GCM":
-    case "A192GCM":
-    case "A256GCM":
-      if (cek instanceof Uint8Array)
-        checkCekLength(cek, parseInt(enc.slice(1, 4), 10));
-      return gcmDecrypt(enc, cek, ciphertext, iv, tag2, aad);
-    default:
-      throw new JOSENotSupported(unsupportedEnc);
-  }
-}
-var generateCek, generateIv, unsupportedEnc;
-var init_content_encryption = __esm({
-  "node_modules/jose/dist/webapi/lib/content_encryption.js"() {
-    init_buffer_utils();
-    init_crypto_key();
-    init_invalid_key_input();
-    init_errors();
-    init_is_key_like();
-    generateCek = (alg) => crypto.getRandomValues(new Uint8Array(cekLength(alg) >> 3));
-    generateIv = (alg) => crypto.getRandomValues(new Uint8Array(ivBitLength(alg) >> 3));
-    unsupportedEnc = "Unsupported JWE Content Encryption Algorithm";
-  }
-});
-
-// node_modules/jose/dist/webapi/lib/helpers.js
-function assertNotSet(value, name) {
-  if (value) {
-    throw new TypeError(`${name} can only be called once`);
-  }
-}
-function decodeBase64url(value, label, ErrorClass) {
-  try {
-    return decode(value);
-  } catch {
-    throw new ErrorClass(`Failed to base64url decode the ${label}`);
-  }
-}
-async function digest(algorithm, data) {
-  const subtleDigest = `SHA-${algorithm.slice(-3)}`;
-  return new Uint8Array(await crypto.subtle.digest(subtleDigest, data));
-}
-var unprotected;
-var init_helpers = __esm({
-  "node_modules/jose/dist/webapi/lib/helpers.js"() {
-    init_base64url();
-    unprotected = Symbol();
-  }
-});
-
-// node_modules/jose/dist/webapi/lib/type_checks.js
-function isObject(input) {
-  if (!isObjectLike(input) || Object.prototype.toString.call(input) !== "[object Object]") {
-    return false;
-  }
-  if (Object.getPrototypeOf(input) === null) {
-    return true;
-  }
-  let proto = input;
-  while (Object.getPrototypeOf(proto) !== null) {
-    proto = Object.getPrototypeOf(proto);
-  }
-  return Object.getPrototypeOf(input) === proto;
-}
-function isDisjoint(...headers) {
-  const sources = headers.filter(Boolean);
-  if (sources.length === 0 || sources.length === 1) {
-    return true;
-  }
-  let acc;
-  for (const header of sources) {
-    const parameters = Object.keys(header);
-    if (!acc || acc.size === 0) {
-      acc = new Set(parameters);
-      continue;
-    }
-    for (const parameter of parameters) {
-      if (acc.has(parameter)) {
-        return false;
-      }
-      acc.add(parameter);
-    }
-  }
-  return true;
-}
-var isObjectLike, isJWK, isPrivateJWK, isPublicJWK, isSecretJWK;
-var init_type_checks = __esm({
-  "node_modules/jose/dist/webapi/lib/type_checks.js"() {
-    isObjectLike = (value) => typeof value === "object" && value !== null;
-    isJWK = (key) => isObject(key) && typeof key.kty === "string";
-    isPrivateJWK = (key) => key.kty !== "oct" && (key.kty === "AKP" && typeof key.priv === "string" || typeof key.d === "string");
-    isPublicJWK = (key) => key.kty !== "oct" && key.d === void 0 && key.priv === void 0;
-    isSecretJWK = (key) => key.kty === "oct" && typeof key.k === "string";
-  }
-});
-
-// node_modules/jose/dist/webapi/lib/aeskw.js
-function checkKeySize(key, alg) {
-  if (key.algorithm.length !== parseInt(alg.slice(1, 4), 10)) {
-    throw new TypeError(`Invalid key size for alg: ${alg}`);
-  }
-}
-function getCryptoKey(key, alg, usage) {
-  if (key instanceof Uint8Array) {
-    return crypto.subtle.importKey("raw", key, "AES-KW", true, [usage]);
-  }
-  checkEncCryptoKey(key, alg, usage);
-  return key;
-}
-async function wrap(alg, key, cek) {
-  const cryptoKey = await getCryptoKey(key, alg, "wrapKey");
-  checkKeySize(cryptoKey, alg);
-  const cryptoKeyCek = await crypto.subtle.importKey("raw", cek, { hash: "SHA-256", name: "HMAC" }, true, ["sign"]);
-  return new Uint8Array(await crypto.subtle.wrapKey("raw", cryptoKeyCek, cryptoKey, "AES-KW"));
-}
-async function unwrap(alg, key, encryptedKey) {
-  const cryptoKey = await getCryptoKey(key, alg, "unwrapKey");
-  checkKeySize(cryptoKey, alg);
-  const cryptoKeyCek = await crypto.subtle.unwrapKey("raw", encryptedKey, cryptoKey, "AES-KW", { hash: "SHA-256", name: "HMAC" }, true, ["sign"]);
-  return new Uint8Array(await crypto.subtle.exportKey("raw", cryptoKeyCek));
-}
-var init_aeskw = __esm({
-  "node_modules/jose/dist/webapi/lib/aeskw.js"() {
-    init_crypto_key();
-  }
-});
-
-// node_modules/jose/dist/webapi/lib/ecdhes.js
-function lengthAndInput(input) {
-  return concat(uint32be(input.length), input);
-}
-async function concatKdf(Z, L, OtherInfo) {
-  const dkLen = L >> 3;
-  const hashLen = 32;
-  const reps = Math.ceil(dkLen / hashLen);
-  const dk = new Uint8Array(reps * hashLen);
-  for (let i = 1; i <= reps; i++) {
-    const hashInput = new Uint8Array(4 + Z.length + OtherInfo.length);
-    hashInput.set(uint32be(i), 0);
-    hashInput.set(Z, 4);
-    hashInput.set(OtherInfo, 4 + Z.length);
-    const hashResult = await digest("sha256", hashInput);
-    dk.set(hashResult, (i - 1) * hashLen);
-  }
-  return dk.slice(0, dkLen);
-}
-async function deriveKey(publicKey, privateKey, algorithm, keyLength, apu = new Uint8Array(), apv = new Uint8Array()) {
-  checkEncCryptoKey(publicKey, "ECDH");
-  checkEncCryptoKey(privateKey, "ECDH", "deriveBits");
-  const algorithmID = lengthAndInput(encode(algorithm));
-  const partyUInfo = lengthAndInput(apu);
-  const partyVInfo = lengthAndInput(apv);
-  const suppPubInfo = uint32be(keyLength);
-  const suppPrivInfo = new Uint8Array();
-  const otherInfo = concat(algorithmID, partyUInfo, partyVInfo, suppPubInfo, suppPrivInfo);
-  const Z = new Uint8Array(await crypto.subtle.deriveBits({
-    name: publicKey.algorithm.name,
-    public: publicKey
-  }, privateKey, getEcdhBitLength(publicKey)));
-  return concatKdf(Z, keyLength, otherInfo);
-}
-function getEcdhBitLength(publicKey) {
-  if (publicKey.algorithm.name === "X25519") {
-    return 256;
-  }
-  return Math.ceil(parseInt(publicKey.algorithm.namedCurve.slice(-3), 10) / 8) << 3;
-}
-function allowed(key) {
-  switch (key.algorithm.namedCurve) {
-    case "P-256":
-    case "P-384":
-    case "P-521":
-      return true;
-    default:
-      return key.algorithm.name === "X25519";
-  }
-}
-var init_ecdhes = __esm({
-  "node_modules/jose/dist/webapi/lib/ecdhes.js"() {
-    init_buffer_utils();
-    init_crypto_key();
-    init_helpers();
-  }
-});
-
-// node_modules/jose/dist/webapi/lib/pbes2kw.js
-function getCryptoKey2(key, alg) {
-  if (key instanceof Uint8Array) {
-    return crypto.subtle.importKey("raw", key, "PBKDF2", false, [
-      "deriveBits"
-    ]);
-  }
-  checkEncCryptoKey(key, alg, "deriveBits");
-  return key;
-}
-async function deriveKey2(p2s, alg, p2c, key) {
-  if (!(p2s instanceof Uint8Array) || p2s.length < 8) {
-    throw new JWEInvalid("PBES2 Salt Input must be 8 or more octets");
-  }
-  if (!Number.isSafeInteger(p2c) || Math.sign(p2c) !== 1) {
-    throw new JWEInvalid("PBES2 Count Input must be a positive integer");
-  }
-  const salt = concatSalt(alg, p2s);
-  const keylen = parseInt(alg.slice(13, 16), 10);
-  const subtleAlg = {
-    hash: `SHA-${alg.slice(8, 11)}`,
-    iterations: p2c,
-    name: "PBKDF2",
-    salt
-  };
-  const cryptoKey = await getCryptoKey2(key, alg);
-  return new Uint8Array(await crypto.subtle.deriveBits(subtleAlg, cryptoKey, keylen));
-}
-async function wrap2(alg, key, cek, p2c = 2048, p2s = crypto.getRandomValues(new Uint8Array(16))) {
-  const derived = await deriveKey2(p2s, alg, p2c, key);
-  const encryptedKey = await wrap(alg.slice(-6), derived, cek);
-  return { encryptedKey, p2c, p2s: encode2(p2s) };
-}
-async function unwrap2(alg, key, encryptedKey, p2c, p2s) {
-  const derived = await deriveKey2(p2s, alg, p2c, key);
-  return unwrap(alg.slice(-6), derived, encryptedKey);
-}
-var concatSalt;
-var init_pbes2kw = __esm({
-  "node_modules/jose/dist/webapi/lib/pbes2kw.js"() {
-    init_base64url();
-    init_aeskw();
-    init_crypto_key();
-    init_buffer_utils();
-    init_errors();
-    concatSalt = (alg, p2sInput) => concat(encode(alg), Uint8Array.of(0), p2sInput);
-  }
-});
-
-// node_modules/jose/dist/webapi/lib/signing.js
-function checkKeyLength(alg, key) {
-  if (alg.startsWith("RS") || alg.startsWith("PS")) {
-    const { modulusLength } = key.algorithm;
-    if (typeof modulusLength !== "number" || modulusLength < 2048) {
-      throw new TypeError(`${alg} requires key modulusLength to be 2048 bits or larger`);
-    }
-  }
-}
-function subtleAlgorithm(alg, algorithm) {
-  const hash = `SHA-${alg.slice(-3)}`;
-  switch (alg) {
-    case "HS256":
-    case "HS384":
-    case "HS512":
-      return { hash, name: "HMAC" };
-    case "PS256":
-    case "PS384":
-    case "PS512":
-      return { hash, name: "RSA-PSS", saltLength: parseInt(alg.slice(-3), 10) >> 3 };
-    case "RS256":
-    case "RS384":
-    case "RS512":
-      return { hash, name: "RSASSA-PKCS1-v1_5" };
-    case "ES256":
-    case "ES384":
-    case "ES512":
-      return { hash, name: "ECDSA", namedCurve: algorithm.namedCurve };
-    case "Ed25519":
-    case "EdDSA":
-      return { name: "Ed25519" };
-    case "ML-DSA-44":
-    case "ML-DSA-65":
-    case "ML-DSA-87":
-      return { name: alg };
-    default:
-      throw new JOSENotSupported(`alg ${alg} is not supported either by JOSE or your javascript runtime`);
-  }
-}
-async function getSigKey(alg, key, usage) {
-  if (key instanceof Uint8Array) {
-    if (!alg.startsWith("HS")) {
-      throw new TypeError(invalidKeyInput(key, "CryptoKey", "KeyObject", "JSON Web Key"));
-    }
-    return crypto.subtle.importKey("raw", key, { hash: `SHA-${alg.slice(-3)}`, name: "HMAC" }, false, [usage]);
-  }
-  checkSigCryptoKey(key, alg, usage);
-  return key;
-}
-async function sign(alg, key, data) {
-  const cryptoKey = await getSigKey(alg, key, "sign");
-  checkKeyLength(alg, cryptoKey);
-  const signature = await crypto.subtle.sign(subtleAlgorithm(alg, cryptoKey.algorithm), cryptoKey, data);
-  return new Uint8Array(signature);
-}
-async function verify(alg, key, signature, data) {
-  const cryptoKey = await getSigKey(alg, key, "verify");
-  checkKeyLength(alg, cryptoKey);
-  const algorithm = subtleAlgorithm(alg, cryptoKey.algorithm);
-  try {
-    return await crypto.subtle.verify(algorithm, cryptoKey, signature, data);
-  } catch {
-    return false;
-  }
-}
-var init_signing = __esm({
-  "node_modules/jose/dist/webapi/lib/signing.js"() {
-    init_errors();
-    init_crypto_key();
-    init_invalid_key_input();
-  }
-});
-
-// node_modules/jose/dist/webapi/lib/rsaes.js
-async function encrypt2(alg, key, cek) {
-  checkEncCryptoKey(key, alg, "encrypt");
-  checkKeyLength(alg, key);
-  return new Uint8Array(await crypto.subtle.encrypt(subtleAlgorithm2(alg), key, cek));
-}
-async function decrypt2(alg, key, encryptedKey) {
-  checkEncCryptoKey(key, alg, "decrypt");
-  checkKeyLength(alg, key);
-  return new Uint8Array(await crypto.subtle.decrypt(subtleAlgorithm2(alg), key, encryptedKey));
-}
-var subtleAlgorithm2;
-var init_rsaes = __esm({
-  "node_modules/jose/dist/webapi/lib/rsaes.js"() {
-    init_crypto_key();
-    init_signing();
-    init_errors();
-    subtleAlgorithm2 = (alg) => {
-      switch (alg) {
-        case "RSA-OAEP":
-        case "RSA-OAEP-256":
-        case "RSA-OAEP-384":
-        case "RSA-OAEP-512":
-          return "RSA-OAEP";
-        default:
-          throw new JOSENotSupported(`alg ${alg} is not supported either by JOSE or your javascript runtime`);
-      }
-    };
-  }
-});
-
-// node_modules/jose/dist/webapi/lib/jwk_to_key.js
-function subtleMapping(jwk) {
-  let algorithm;
-  let keyUsages;
-  switch (jwk.kty) {
-    case "AKP": {
-      switch (jwk.alg) {
-        case "ML-DSA-44":
-        case "ML-DSA-65":
-        case "ML-DSA-87":
-          algorithm = { name: jwk.alg };
-          keyUsages = jwk.priv ? ["sign"] : ["verify"];
-          break;
-        default:
-          throw new JOSENotSupported(unsupportedAlg);
-      }
-      break;
-    }
-    case "RSA": {
-      switch (jwk.alg) {
-        case "PS256":
-        case "PS384":
-        case "PS512":
-          algorithm = { name: "RSA-PSS", hash: `SHA-${jwk.alg.slice(-3)}` };
-          keyUsages = jwk.d ? ["sign"] : ["verify"];
-          break;
-        case "RS256":
-        case "RS384":
-        case "RS512":
-          algorithm = { name: "RSASSA-PKCS1-v1_5", hash: `SHA-${jwk.alg.slice(-3)}` };
-          keyUsages = jwk.d ? ["sign"] : ["verify"];
-          break;
-        case "RSA-OAEP":
-        case "RSA-OAEP-256":
-        case "RSA-OAEP-384":
-        case "RSA-OAEP-512":
-          algorithm = {
-            name: "RSA-OAEP",
-            hash: `SHA-${parseInt(jwk.alg.slice(-3), 10) || 1}`
-          };
-          keyUsages = jwk.d ? ["decrypt", "unwrapKey"] : ["encrypt", "wrapKey"];
-          break;
-        default:
-          throw new JOSENotSupported(unsupportedAlg);
-      }
-      break;
-    }
-    case "EC": {
-      switch (jwk.alg) {
-        case "ES256":
-        case "ES384":
-        case "ES512":
-          algorithm = {
-            name: "ECDSA",
-            namedCurve: { ES256: "P-256", ES384: "P-384", ES512: "P-521" }[jwk.alg]
-          };
-          keyUsages = jwk.d ? ["sign"] : ["verify"];
-          break;
-        case "ECDH-ES":
-        case "ECDH-ES+A128KW":
-        case "ECDH-ES+A192KW":
-        case "ECDH-ES+A256KW":
-          algorithm = { name: "ECDH", namedCurve: jwk.crv };
-          keyUsages = jwk.d ? ["deriveBits"] : [];
-          break;
-        default:
-          throw new JOSENotSupported(unsupportedAlg);
-      }
-      break;
-    }
-    case "OKP": {
-      switch (jwk.alg) {
-        case "Ed25519":
-        case "EdDSA":
-          algorithm = { name: "Ed25519" };
-          keyUsages = jwk.d ? ["sign"] : ["verify"];
-          break;
-        case "ECDH-ES":
-        case "ECDH-ES+A128KW":
-        case "ECDH-ES+A192KW":
-        case "ECDH-ES+A256KW":
-          algorithm = { name: jwk.crv };
-          keyUsages = jwk.d ? ["deriveBits"] : [];
-          break;
-        default:
-          throw new JOSENotSupported(unsupportedAlg);
-      }
-      break;
-    }
-    default:
-      throw new JOSENotSupported('Invalid or unsupported JWK "kty" (Key Type) Parameter value');
-  }
-  return { algorithm, keyUsages };
-}
-async function jwkToKey(jwk) {
-  if (!jwk.alg) {
-    throw new TypeError('"alg" argument is required when "jwk.alg" is not present');
-  }
-  const { algorithm, keyUsages } = subtleMapping(jwk);
-  const keyData = { ...jwk };
-  if (keyData.kty !== "AKP") {
-    delete keyData.alg;
-  }
-  delete keyData.use;
-  return crypto.subtle.importKey("jwk", keyData, algorithm, jwk.ext ?? (jwk.d || jwk.priv ? false : true), jwk.key_ops ?? keyUsages);
-}
-var unsupportedAlg;
-var init_jwk_to_key = __esm({
-  "node_modules/jose/dist/webapi/lib/jwk_to_key.js"() {
-    init_errors();
-    unsupportedAlg = 'Invalid or unsupported JWK "alg" (Algorithm) Parameter value';
-  }
-});
-
-// node_modules/jose/dist/webapi/lib/normalize_key.js
-async function normalizeKey(key, alg) {
-  if (key instanceof Uint8Array) {
-    return key;
-  }
-  if (isCryptoKey(key)) {
-    return key;
-  }
-  if (isKeyObject(key)) {
-    if (key.type === "secret") {
-      return key.export();
-    }
-    if ("toCryptoKey" in key && typeof key.toCryptoKey === "function") {
-      try {
-        return handleKeyObject(key, alg);
-      } catch (err) {
-        if (err instanceof TypeError) {
-          throw err;
-        }
-      }
-    }
-    let jwk = key.export({ format: "jwk" });
-    return handleJWK(key, jwk, alg);
-  }
-  if (isJWK(key)) {
-    if (key.k) {
-      return decode(key.k);
-    }
-    return handleJWK(key, key, alg, true);
-  }
-  throw new Error("unreachable");
-}
-var unusableForAlg, cache, handleJWK, handleKeyObject;
-var init_normalize_key = __esm({
-  "node_modules/jose/dist/webapi/lib/normalize_key.js"() {
-    init_type_checks();
-    init_base64url();
-    init_jwk_to_key();
-    init_is_key_like();
-    unusableForAlg = "given KeyObject instance cannot be used for this algorithm";
-    handleJWK = async (key, jwk, alg, freeze = false) => {
-      cache ||= /* @__PURE__ */ new WeakMap();
-      let cached = cache.get(key);
-      if (cached?.[alg]) {
-        return cached[alg];
-      }
-      const cryptoKey = await jwkToKey({ ...jwk, alg });
-      if (freeze)
-        Object.freeze(key);
-      if (!cached) {
-        cache.set(key, { [alg]: cryptoKey });
-      } else {
-        cached[alg] = cryptoKey;
-      }
-      return cryptoKey;
-    };
-    handleKeyObject = (keyObject, alg) => {
-      cache ||= /* @__PURE__ */ new WeakMap();
-      let cached = cache.get(keyObject);
-      if (cached?.[alg]) {
-        return cached[alg];
-      }
-      const isPublic = keyObject.type === "public";
-      const extractable = isPublic ? true : false;
-      let cryptoKey;
-      if (keyObject.asymmetricKeyType === "x25519") {
-        switch (alg) {
-          case "ECDH-ES":
-          case "ECDH-ES+A128KW":
-          case "ECDH-ES+A192KW":
-          case "ECDH-ES+A256KW":
-            break;
-          default:
-            throw new TypeError(unusableForAlg);
-        }
-        cryptoKey = keyObject.toCryptoKey(keyObject.asymmetricKeyType, extractable, isPublic ? [] : ["deriveBits"]);
-      }
-      if (keyObject.asymmetricKeyType === "ed25519") {
-        if (alg !== "EdDSA" && alg !== "Ed25519") {
-          throw new TypeError(unusableForAlg);
-        }
-        cryptoKey = keyObject.toCryptoKey(keyObject.asymmetricKeyType, extractable, [
-          isPublic ? "verify" : "sign"
-        ]);
-      }
-      switch (keyObject.asymmetricKeyType) {
-        case "ml-dsa-44":
-        case "ml-dsa-65":
-        case "ml-dsa-87": {
-          if (alg !== keyObject.asymmetricKeyType.toUpperCase()) {
-            throw new TypeError(unusableForAlg);
-          }
-          cryptoKey = keyObject.toCryptoKey(keyObject.asymmetricKeyType, extractable, [
-            isPublic ? "verify" : "sign"
-          ]);
-        }
-      }
-      if (keyObject.asymmetricKeyType === "rsa") {
-        let hash;
-        switch (alg) {
-          case "RSA-OAEP":
-            hash = "SHA-1";
-            break;
-          case "RS256":
-          case "PS256":
-          case "RSA-OAEP-256":
-            hash = "SHA-256";
-            break;
-          case "RS384":
-          case "PS384":
-          case "RSA-OAEP-384":
-            hash = "SHA-384";
-            break;
-          case "RS512":
-          case "PS512":
-          case "RSA-OAEP-512":
-            hash = "SHA-512";
-            break;
-          default:
-            throw new TypeError(unusableForAlg);
-        }
-        if (alg.startsWith("RSA-OAEP")) {
-          return keyObject.toCryptoKey({
-            name: "RSA-OAEP",
-            hash
-          }, extractable, isPublic ? ["encrypt"] : ["decrypt"]);
-        }
-        cryptoKey = keyObject.toCryptoKey({
-          name: alg.startsWith("PS") ? "RSA-PSS" : "RSASSA-PKCS1-v1_5",
-          hash
-        }, extractable, [isPublic ? "verify" : "sign"]);
-      }
-      if (keyObject.asymmetricKeyType === "ec") {
-        const nist = /* @__PURE__ */ new Map([
-          ["prime256v1", "P-256"],
-          ["secp384r1", "P-384"],
-          ["secp521r1", "P-521"]
-        ]);
-        const namedCurve = nist.get(keyObject.asymmetricKeyDetails?.namedCurve);
-        if (!namedCurve) {
-          throw new TypeError(unusableForAlg);
-        }
-        const expectedCurve = { ES256: "P-256", ES384: "P-384", ES512: "P-521" };
-        if (expectedCurve[alg] && namedCurve === expectedCurve[alg]) {
-          cryptoKey = keyObject.toCryptoKey({
-            name: "ECDSA",
-            namedCurve
-          }, extractable, [isPublic ? "verify" : "sign"]);
-        }
-        if (alg.startsWith("ECDH-ES")) {
-          cryptoKey = keyObject.toCryptoKey({
-            name: "ECDH",
-            namedCurve
-          }, extractable, isPublic ? [] : ["deriveBits"]);
-        }
-      }
-      if (!cryptoKey) {
-        throw new TypeError(unusableForAlg);
-      }
-      if (!cached) {
-        cache.set(keyObject, { [alg]: cryptoKey });
-      } else {
-        cached[alg] = cryptoKey;
-      }
-      return cryptoKey;
-    };
-  }
-});
-
-// node_modules/jose/dist/webapi/lib/asn1.js
-function parsePKCS8Header(state) {
-  expectTag(state, 48, "Invalid PKCS#8 structure");
-  parseLength(state);
-  expectTag(state, 2, "Expected version field");
-  const verLen = parseLength(state);
-  state.pos += verLen;
-  expectTag(state, 48, "Expected algorithm identifier");
-  const algIdLen = parseLength(state);
-  const algIdStart = state.pos;
-  return { algIdStart, algIdLength: algIdLen };
-}
-function parseSPKIHeader(state) {
-  expectTag(state, 48, "Invalid SPKI structure");
-  parseLength(state);
-  expectTag(state, 48, "Expected algorithm identifier");
-  const algIdLen = parseLength(state);
-  const algIdStart = state.pos;
-  return { algIdStart, algIdLength: algIdLen };
-}
-function spkiFromX509(buf) {
-  const state = createASN1State(buf);
-  expectTag(state, 48, "Invalid certificate structure");
-  parseLength(state);
-  expectTag(state, 48, "Invalid tbsCertificate structure");
-  parseLength(state);
-  if (buf[state.pos] === 160) {
-    skipElement(state, 6);
-  } else {
-    skipElement(state, 5);
-  }
-  const spkiStart = state.pos;
-  expectTag(state, 48, "Invalid SPKI structure");
-  const spkiContentLen = parseLength(state);
-  return buf.subarray(spkiStart, spkiStart + spkiContentLen + (state.pos - spkiStart));
-}
-function extractX509SPKI(x509) {
-  const derBytes = processPEMData(x509, /(?:-----(?:BEGIN|END) CERTIFICATE-----|\s)/g);
-  return spkiFromX509(derBytes);
-}
-var formatPEM, genericExport, toSPKI, toPKCS8, bytesEqual, createASN1State, parseLength, skipElement, expectTag, getSubarray, parseAlgorithmOID, parseECAlgorithmIdentifier, genericImport, processPEMData, fromPKCS8, fromSPKI, fromX509;
-var init_asn1 = __esm({
-  "node_modules/jose/dist/webapi/lib/asn1.js"() {
-    init_invalid_key_input();
-    init_base64();
-    init_errors();
-    init_is_key_like();
-    formatPEM = (b64, descriptor) => {
-      const newlined = (b64.match(/.{1,64}/g) || []).join("\n");
-      return `-----BEGIN ${descriptor}-----
-${newlined}
------END ${descriptor}-----`;
-    };
-    genericExport = async (keyType, keyFormat, key) => {
-      if (isKeyObject(key)) {
-        if (key.type !== keyType) {
-          throw new TypeError(`key is not a ${keyType} key`);
-        }
-        return key.export({ format: "pem", type: keyFormat });
-      }
-      if (!isCryptoKey(key)) {
-        throw new TypeError(invalidKeyInput(key, "CryptoKey", "KeyObject"));
-      }
-      if (!key.extractable) {
-        throw new TypeError("CryptoKey is not extractable");
-      }
-      if (key.type !== keyType) {
-        throw new TypeError(`key is not a ${keyType} key`);
-      }
-      return formatPEM(encodeBase64(new Uint8Array(await crypto.subtle.exportKey(keyFormat, key))), `${keyType.toUpperCase()} KEY`);
-    };
-    toSPKI = (key) => genericExport("public", "spki", key);
-    toPKCS8 = (key) => genericExport("private", "pkcs8", key);
-    bytesEqual = (a2, b2) => {
-      if (a2.byteLength !== b2.length)
-        return false;
-      for (let i = 0; i < a2.byteLength; i++) {
-        if (a2[i] !== b2[i])
-          return false;
-      }
-      return true;
-    };
-    createASN1State = (data) => ({ data, pos: 0 });
-    parseLength = (state) => {
-      const first = state.data[state.pos++];
-      if (first & 128) {
-        const lengthOfLen = first & 127;
-        let length = 0;
-        for (let i = 0; i < lengthOfLen; i++) {
-          length = length << 8 | state.data[state.pos++];
-        }
-        return length;
-      }
-      return first;
-    };
-    skipElement = (state, count = 1) => {
-      if (count <= 0)
-        return;
-      state.pos++;
-      const length = parseLength(state);
-      state.pos += length;
-      if (count > 1) {
-        skipElement(state, count - 1);
-      }
-    };
-    expectTag = (state, expectedTag, errorMessage) => {
-      if (state.data[state.pos++] !== expectedTag) {
-        throw new Error(errorMessage);
-      }
-    };
-    getSubarray = (state, length) => {
-      const result = state.data.subarray(state.pos, state.pos + length);
-      state.pos += length;
-      return result;
-    };
-    parseAlgorithmOID = (state) => {
-      expectTag(state, 6, "Expected algorithm OID");
-      const oidLen = parseLength(state);
-      return getSubarray(state, oidLen);
-    };
-    parseECAlgorithmIdentifier = (state) => {
-      const algOid = parseAlgorithmOID(state);
-      if (bytesEqual(algOid, [43, 101, 110])) {
-        return "X25519";
-      }
-      if (!bytesEqual(algOid, [42, 134, 72, 206, 61, 2, 1])) {
-        throw new Error("Unsupported key algorithm");
-      }
-      expectTag(state, 6, "Expected curve OID");
-      const curveOidLen = parseLength(state);
-      const curveOid = getSubarray(state, curveOidLen);
-      for (const { name, oid } of [
-        { name: "P-256", oid: [42, 134, 72, 206, 61, 3, 1, 7] },
-        { name: "P-384", oid: [43, 129, 4, 0, 34] },
-        { name: "P-521", oid: [43, 129, 4, 0, 35] }
-      ]) {
-        if (bytesEqual(curveOid, oid)) {
-          return name;
-        }
-      }
-      throw new Error("Unsupported named curve");
-    };
-    genericImport = async (keyFormat, keyData, alg, options) => {
-      let algorithm;
-      let keyUsages;
-      const isPublic = keyFormat === "spki";
-      const getSigUsages = () => isPublic ? ["verify"] : ["sign"];
-      const getEncUsages = () => isPublic ? ["encrypt", "wrapKey"] : ["decrypt", "unwrapKey"];
-      switch (alg) {
-        case "PS256":
-        case "PS384":
-        case "PS512":
-          algorithm = { name: "RSA-PSS", hash: `SHA-${alg.slice(-3)}` };
-          keyUsages = getSigUsages();
-          break;
-        case "RS256":
-        case "RS384":
-        case "RS512":
-          algorithm = { name: "RSASSA-PKCS1-v1_5", hash: `SHA-${alg.slice(-3)}` };
-          keyUsages = getSigUsages();
-          break;
-        case "RSA-OAEP":
-        case "RSA-OAEP-256":
-        case "RSA-OAEP-384":
-        case "RSA-OAEP-512":
-          algorithm = {
-            name: "RSA-OAEP",
-            hash: `SHA-${parseInt(alg.slice(-3), 10) || 1}`
-          };
-          keyUsages = getEncUsages();
-          break;
-        case "ES256":
-        case "ES384":
-        case "ES512": {
-          const curveMap = { ES256: "P-256", ES384: "P-384", ES512: "P-521" };
-          algorithm = { name: "ECDSA", namedCurve: curveMap[alg] };
-          keyUsages = getSigUsages();
-          break;
-        }
-        case "ECDH-ES":
-        case "ECDH-ES+A128KW":
-        case "ECDH-ES+A192KW":
-        case "ECDH-ES+A256KW": {
-          try {
-            const namedCurve = options.getNamedCurve(keyData);
-            algorithm = namedCurve === "X25519" ? { name: "X25519" } : { name: "ECDH", namedCurve };
-          } catch (cause) {
-            throw new JOSENotSupported("Invalid or unsupported key format");
-          }
-          keyUsages = isPublic ? [] : ["deriveBits"];
-          break;
-        }
-        case "Ed25519":
-        case "EdDSA":
-          algorithm = { name: "Ed25519" };
-          keyUsages = getSigUsages();
-          break;
-        case "ML-DSA-44":
-        case "ML-DSA-65":
-        case "ML-DSA-87":
-          algorithm = { name: alg };
-          keyUsages = getSigUsages();
-          break;
-        default:
-          throw new JOSENotSupported('Invalid or unsupported "alg" (Algorithm) value');
-      }
-      return crypto.subtle.importKey(keyFormat, keyData, algorithm, options?.extractable ?? (isPublic ? true : false), keyUsages);
-    };
-    processPEMData = (pem, pattern) => {
-      return decodeBase64(pem.replace(pattern, ""));
-    };
-    fromPKCS8 = (pem, alg, options) => {
-      const keyData = processPEMData(pem, /(?:-----(?:BEGIN|END) PRIVATE KEY-----|\s)/g);
-      let opts = options;
-      if (alg?.startsWith?.("ECDH-ES")) {
-        opts ||= {};
-        opts.getNamedCurve = (keyData2) => {
-          const state = createASN1State(keyData2);
-          parsePKCS8Header(state);
-          return parseECAlgorithmIdentifier(state);
-        };
-      }
-      return genericImport("pkcs8", keyData, alg, opts);
-    };
-    fromSPKI = (pem, alg, options) => {
-      const keyData = processPEMData(pem, /(?:-----(?:BEGIN|END) PUBLIC KEY-----|\s)/g);
-      let opts = options;
-      if (alg?.startsWith?.("ECDH-ES")) {
-        opts ||= {};
-        opts.getNamedCurve = (keyData2) => {
-          const state = createASN1State(keyData2);
-          parseSPKIHeader(state);
-          return parseECAlgorithmIdentifier(state);
-        };
-      }
-      return genericImport("spki", keyData, alg, opts);
-    };
-    fromX509 = (pem, alg, options) => {
-      let spki;
-      try {
-        spki = extractX509SPKI(pem);
-      } catch (cause) {
-        throw new TypeError("Failed to parse the X.509 certificate", { cause });
-      }
-      return fromSPKI(formatPEM(encodeBase64(spki), "PUBLIC KEY"), alg, options);
-    };
-  }
-});
-
-// node_modules/jose/dist/webapi/key/import.js
-async function importSPKI(spki, alg, options) {
-  if (typeof spki !== "string" || spki.indexOf("-----BEGIN PUBLIC KEY-----") !== 0) {
-    throw new TypeError('"spki" must be SPKI formatted string');
-  }
-  return fromSPKI(spki, alg, options);
-}
-async function importX509(x509, alg, options) {
-  if (typeof x509 !== "string" || x509.indexOf("-----BEGIN CERTIFICATE-----") !== 0) {
-    throw new TypeError('"x509" must be X.509 formatted string');
-  }
-  return fromX509(x509, alg, options);
-}
-async function importPKCS8(pkcs8, alg, options) {
-  if (typeof pkcs8 !== "string" || pkcs8.indexOf("-----BEGIN PRIVATE KEY-----") !== 0) {
-    throw new TypeError('"pkcs8" must be PKCS#8 formatted string');
-  }
-  return fromPKCS8(pkcs8, alg, options);
-}
-async function importJWK(jwk, alg, options) {
-  if (!isObject(jwk)) {
-    throw new TypeError("JWK must be an object");
-  }
-  let ext;
-  alg ??= jwk.alg;
-  ext ??= options?.extractable ?? jwk.ext;
-  switch (jwk.kty) {
-    case "oct":
-      if (typeof jwk.k !== "string" || !jwk.k) {
-        throw new TypeError('missing "k" (Key Value) Parameter value');
-      }
-      return decode(jwk.k);
-    case "RSA":
-      if ("oth" in jwk && jwk.oth !== void 0) {
-        throw new JOSENotSupported('RSA JWK "oth" (Other Primes Info) Parameter value is not supported');
-      }
-      return jwkToKey({ ...jwk, alg, ext });
-    case "AKP": {
-      if (typeof jwk.alg !== "string" || !jwk.alg) {
-        throw new TypeError('missing "alg" (Algorithm) Parameter value');
-      }
-      if (alg !== void 0 && alg !== jwk.alg) {
-        throw new TypeError("JWK alg and alg option value mismatch");
-      }
-      return jwkToKey({ ...jwk, ext });
-    }
-    case "EC":
-    case "OKP":
-      return jwkToKey({ ...jwk, alg, ext });
-    default:
-      throw new JOSENotSupported('Unsupported "kty" (Key Type) Parameter value');
-  }
-}
-var init_import = __esm({
-  "node_modules/jose/dist/webapi/key/import.js"() {
-    init_base64url();
-    init_asn1();
-    init_jwk_to_key();
-    init_errors();
-    init_type_checks();
-  }
-});
-
-// node_modules/jose/dist/webapi/lib/key_to_jwk.js
-async function keyToJWK(key) {
-  if (isKeyObject(key)) {
-    if (key.type === "secret") {
-      key = key.export();
-    } else {
-      return key.export({ format: "jwk" });
-    }
-  }
-  if (key instanceof Uint8Array) {
-    return {
-      kty: "oct",
-      k: encode2(key)
-    };
-  }
-  if (!isCryptoKey(key)) {
-    throw new TypeError(invalidKeyInput(key, "CryptoKey", "KeyObject", "Uint8Array"));
-  }
-  if (!key.extractable) {
-    throw new TypeError("non-extractable CryptoKey cannot be exported as a JWK");
-  }
-  const { ext, key_ops, alg, use, ...jwk } = await crypto.subtle.exportKey("jwk", key);
-  if (jwk.kty === "AKP") {
-    ;
-    jwk.alg = alg;
-  }
-  return jwk;
-}
-var init_key_to_jwk = __esm({
-  "node_modules/jose/dist/webapi/lib/key_to_jwk.js"() {
-    init_invalid_key_input();
-    init_base64url();
-    init_is_key_like();
-  }
-});
-
-// node_modules/jose/dist/webapi/key/export.js
-async function exportSPKI(key) {
-  return toSPKI(key);
-}
-async function exportPKCS8(key) {
-  return toPKCS8(key);
-}
-async function exportJWK(key) {
-  return keyToJWK(key);
-}
-var init_export = __esm({
-  "node_modules/jose/dist/webapi/key/export.js"() {
-    init_asn1();
-    init_key_to_jwk();
-  }
-});
-
-// node_modules/jose/dist/webapi/lib/aesgcmkw.js
-async function wrap3(alg, key, cek, iv) {
-  const jweAlgorithm = alg.slice(0, 7);
-  const wrapped = await encrypt(jweAlgorithm, cek, key, iv, new Uint8Array());
-  return {
-    encryptedKey: wrapped.ciphertext,
-    iv: encode2(wrapped.iv),
-    tag: encode2(wrapped.tag)
-  };
-}
-async function unwrap3(alg, key, encryptedKey, iv, tag2) {
-  const jweAlgorithm = alg.slice(0, 7);
-  return decrypt(jweAlgorithm, key, encryptedKey, iv, tag2, new Uint8Array());
-}
-var init_aesgcmkw = __esm({
-  "node_modules/jose/dist/webapi/lib/aesgcmkw.js"() {
-    init_content_encryption();
-    init_base64url();
-  }
-});
-
-// node_modules/jose/dist/webapi/lib/key_management.js
-function assertEncryptedKey(encryptedKey) {
-  if (encryptedKey === void 0)
-    throw new JWEInvalid("JWE Encrypted Key missing");
-}
-async function decryptKeyManagement(alg, key, encryptedKey, joseHeader, options) {
-  switch (alg) {
-    case "dir": {
-      if (encryptedKey !== void 0)
-        throw new JWEInvalid("Encountered unexpected JWE Encrypted Key");
-      return key;
-    }
-    case "ECDH-ES":
-      if (encryptedKey !== void 0)
-        throw new JWEInvalid("Encountered unexpected JWE Encrypted Key");
-    case "ECDH-ES+A128KW":
-    case "ECDH-ES+A192KW":
-    case "ECDH-ES+A256KW": {
-      if (!isObject(joseHeader.epk))
-        throw new JWEInvalid(`JOSE Header "epk" (Ephemeral Public Key) missing or invalid`);
-      assertCryptoKey(key);
-      if (!allowed(key))
-        throw new JOSENotSupported("ECDH with the provided key is not allowed or not supported by your javascript runtime");
-      const epk = await importJWK(joseHeader.epk, alg);
-      assertCryptoKey(epk);
-      let partyUInfo;
-      let partyVInfo;
-      if (joseHeader.apu !== void 0) {
-        if (typeof joseHeader.apu !== "string")
-          throw new JWEInvalid(`JOSE Header "apu" (Agreement PartyUInfo) invalid`);
-        partyUInfo = decodeBase64url(joseHeader.apu, "apu", JWEInvalid);
-      }
-      if (joseHeader.apv !== void 0) {
-        if (typeof joseHeader.apv !== "string")
-          throw new JWEInvalid(`JOSE Header "apv" (Agreement PartyVInfo) invalid`);
-        partyVInfo = decodeBase64url(joseHeader.apv, "apv", JWEInvalid);
-      }
-      const sharedSecret = await deriveKey(epk, key, alg === "ECDH-ES" ? joseHeader.enc : alg, alg === "ECDH-ES" ? cekLength(joseHeader.enc) : parseInt(alg.slice(-5, -2), 10), partyUInfo, partyVInfo);
-      if (alg === "ECDH-ES")
-        return sharedSecret;
-      assertEncryptedKey(encryptedKey);
-      return unwrap(alg.slice(-6), sharedSecret, encryptedKey);
-    }
-    case "RSA-OAEP":
-    case "RSA-OAEP-256":
-    case "RSA-OAEP-384":
-    case "RSA-OAEP-512": {
-      assertEncryptedKey(encryptedKey);
-      assertCryptoKey(key);
-      return decrypt2(alg, key, encryptedKey);
-    }
-    case "PBES2-HS256+A128KW":
-    case "PBES2-HS384+A192KW":
-    case "PBES2-HS512+A256KW": {
-      assertEncryptedKey(encryptedKey);
-      if (typeof joseHeader.p2c !== "number")
-        throw new JWEInvalid(`JOSE Header "p2c" (PBES2 Count) missing or invalid`);
-      const p2cLimit = options?.maxPBES2Count || 1e4;
-      if (joseHeader.p2c > p2cLimit)
-        throw new JWEInvalid(`JOSE Header "p2c" (PBES2 Count) out is of acceptable bounds`);
-      if (typeof joseHeader.p2s !== "string")
-        throw new JWEInvalid(`JOSE Header "p2s" (PBES2 Salt) missing or invalid`);
-      let p2s;
-      p2s = decodeBase64url(joseHeader.p2s, "p2s", JWEInvalid);
-      return unwrap2(alg, key, encryptedKey, joseHeader.p2c, p2s);
-    }
-    case "A128KW":
-    case "A192KW":
-    case "A256KW": {
-      assertEncryptedKey(encryptedKey);
-      return unwrap(alg, key, encryptedKey);
-    }
-    case "A128GCMKW":
-    case "A192GCMKW":
-    case "A256GCMKW": {
-      assertEncryptedKey(encryptedKey);
-      if (typeof joseHeader.iv !== "string")
-        throw new JWEInvalid(`JOSE Header "iv" (Initialization Vector) missing or invalid`);
-      if (typeof joseHeader.tag !== "string")
-        throw new JWEInvalid(`JOSE Header "tag" (Authentication Tag) missing or invalid`);
-      let iv;
-      iv = decodeBase64url(joseHeader.iv, "iv", JWEInvalid);
-      let tag2;
-      tag2 = decodeBase64url(joseHeader.tag, "tag", JWEInvalid);
-      return unwrap3(alg, key, encryptedKey, iv, tag2);
-    }
-    default: {
-      throw new JOSENotSupported(unsupportedAlgHeader);
-    }
-  }
-}
-async function encryptKeyManagement(alg, enc, key, providedCek, providedParameters = {}) {
-  let encryptedKey;
-  let parameters;
-  let cek;
-  switch (alg) {
-    case "dir": {
-      cek = key;
-      break;
-    }
-    case "ECDH-ES":
-    case "ECDH-ES+A128KW":
-    case "ECDH-ES+A192KW":
-    case "ECDH-ES+A256KW": {
-      assertCryptoKey(key);
-      if (!allowed(key)) {
-        throw new JOSENotSupported("ECDH with the provided key is not allowed or not supported by your javascript runtime");
-      }
-      const { apu, apv } = providedParameters;
-      let ephemeralKey;
-      if (providedParameters.epk) {
-        ephemeralKey = await normalizeKey(providedParameters.epk, alg);
-      } else {
-        ephemeralKey = (await crypto.subtle.generateKey(key.algorithm, true, ["deriveBits"])).privateKey;
-      }
-      const { x: x2, y, crv, kty } = await exportJWK(ephemeralKey);
-      const sharedSecret = await deriveKey(key, ephemeralKey, alg === "ECDH-ES" ? enc : alg, alg === "ECDH-ES" ? cekLength(enc) : parseInt(alg.slice(-5, -2), 10), apu, apv);
-      parameters = { epk: { x: x2, crv, kty } };
-      if (kty === "EC")
-        parameters.epk.y = y;
-      if (apu)
-        parameters.apu = encode2(apu);
-      if (apv)
-        parameters.apv = encode2(apv);
-      if (alg === "ECDH-ES") {
-        cek = sharedSecret;
-        break;
-      }
-      cek = providedCek || generateCek(enc);
-      const kwAlg = alg.slice(-6);
-      encryptedKey = await wrap(kwAlg, sharedSecret, cek);
-      break;
-    }
-    case "RSA-OAEP":
-    case "RSA-OAEP-256":
-    case "RSA-OAEP-384":
-    case "RSA-OAEP-512": {
-      cek = providedCek || generateCek(enc);
-      assertCryptoKey(key);
-      encryptedKey = await encrypt2(alg, key, cek);
-      break;
-    }
-    case "PBES2-HS256+A128KW":
-    case "PBES2-HS384+A192KW":
-    case "PBES2-HS512+A256KW": {
-      cek = providedCek || generateCek(enc);
-      const { p2c, p2s } = providedParameters;
-      ({ encryptedKey, ...parameters } = await wrap2(alg, key, cek, p2c, p2s));
-      break;
-    }
-    case "A128KW":
-    case "A192KW":
-    case "A256KW": {
-      cek = providedCek || generateCek(enc);
-      encryptedKey = await wrap(alg, key, cek);
-      break;
-    }
-    case "A128GCMKW":
-    case "A192GCMKW":
-    case "A256GCMKW": {
-      cek = providedCek || generateCek(enc);
-      const { iv } = providedParameters;
-      ({ encryptedKey, ...parameters } = await wrap3(alg, key, cek, iv));
-      break;
-    }
-    default: {
-      throw new JOSENotSupported(unsupportedAlgHeader);
-    }
-  }
-  return { cek, encryptedKey, parameters };
-}
-var unsupportedAlgHeader;
-var init_key_management = __esm({
-  "node_modules/jose/dist/webapi/lib/key_management.js"() {
-    init_aeskw();
-    init_ecdhes();
-    init_pbes2kw();
-    init_rsaes();
-    init_base64url();
-    init_normalize_key();
-    init_errors();
-    init_helpers();
-    init_content_encryption();
-    init_import();
-    init_export();
-    init_type_checks();
-    init_aesgcmkw();
-    init_is_key_like();
-    unsupportedAlgHeader = 'Invalid or unsupported "alg" (JWE Algorithm) header value';
-  }
-});
-
-// node_modules/jose/dist/webapi/lib/validate_crit.js
-function validateCrit(Err, recognizedDefault, recognizedOption, protectedHeader, joseHeader) {
-  if (joseHeader.crit !== void 0 && protectedHeader?.crit === void 0) {
-    throw new Err('"crit" (Critical) Header Parameter MUST be integrity protected');
-  }
-  if (!protectedHeader || protectedHeader.crit === void 0) {
-    return /* @__PURE__ */ new Set();
-  }
-  if (!Array.isArray(protectedHeader.crit) || protectedHeader.crit.length === 0 || protectedHeader.crit.some((input) => typeof input !== "string" || input.length === 0)) {
-    throw new Err('"crit" (Critical) Header Parameter MUST be an array of non-empty strings when present');
-  }
-  let recognized;
-  if (recognizedOption !== void 0) {
-    recognized = new Map([...Object.entries(recognizedOption), ...recognizedDefault.entries()]);
-  } else {
-    recognized = recognizedDefault;
-  }
-  for (const parameter of protectedHeader.crit) {
-    if (!recognized.has(parameter)) {
-      throw new JOSENotSupported(`Extension Header Parameter "${parameter}" is not recognized`);
-    }
-    if (joseHeader[parameter] === void 0) {
-      throw new Err(`Extension Header Parameter "${parameter}" is missing`);
-    }
-    if (recognized.get(parameter) && protectedHeader[parameter] === void 0) {
-      throw new Err(`Extension Header Parameter "${parameter}" MUST be integrity protected`);
-    }
-  }
-  return new Set(protectedHeader.crit);
-}
-var init_validate_crit = __esm({
-  "node_modules/jose/dist/webapi/lib/validate_crit.js"() {
-    init_errors();
-  }
-});
-
-// node_modules/jose/dist/webapi/lib/validate_algorithms.js
-function validateAlgorithms(option, algorithms) {
-  if (algorithms !== void 0 && (!Array.isArray(algorithms) || algorithms.some((s) => typeof s !== "string"))) {
-    throw new TypeError(`"${option}" option must be an array of strings`);
-  }
-  if (!algorithms) {
-    return void 0;
-  }
-  return new Set(algorithms);
-}
-var init_validate_algorithms = __esm({
-  "node_modules/jose/dist/webapi/lib/validate_algorithms.js"() {
-  }
-});
-
-// node_modules/jose/dist/webapi/lib/check_key_type.js
-function checkKeyType(alg, key, usage) {
-  switch (alg.substring(0, 2)) {
-    case "A1":
-    case "A2":
-    case "di":
-    case "HS":
-    case "PB":
-      symmetricTypeCheck(alg, key, usage);
-      break;
-    default:
-      asymmetricTypeCheck(alg, key, usage);
-  }
-}
-var tag, jwkMatchesOp, symmetricTypeCheck, asymmetricTypeCheck;
-var init_check_key_type = __esm({
-  "node_modules/jose/dist/webapi/lib/check_key_type.js"() {
-    init_invalid_key_input();
-    init_is_key_like();
-    init_type_checks();
-    tag = (key) => key?.[Symbol.toStringTag];
-    jwkMatchesOp = (alg, key, usage) => {
-      if (key.use !== void 0) {
-        let expected;
-        switch (usage) {
-          case "sign":
-          case "verify":
-            expected = "sig";
-            break;
-          case "encrypt":
-          case "decrypt":
-            expected = "enc";
-            break;
-        }
-        if (key.use !== expected) {
-          throw new TypeError(`Invalid key for this operation, its "use" must be "${expected}" when present`);
-        }
-      }
-      if (key.alg !== void 0 && key.alg !== alg) {
-        throw new TypeError(`Invalid key for this operation, its "alg" must be "${alg}" when present`);
-      }
-      if (Array.isArray(key.key_ops)) {
-        let expectedKeyOp;
-        switch (true) {
-          case (usage === "sign" || usage === "verify"):
-          case alg === "dir":
-          case alg.includes("CBC-HS"):
-            expectedKeyOp = usage;
-            break;
-          case alg.startsWith("PBES2"):
-            expectedKeyOp = "deriveBits";
-            break;
-          case /^A\d{3}(?:GCM)?(?:KW)?$/.test(alg):
-            if (!alg.includes("GCM") && alg.endsWith("KW")) {
-              expectedKeyOp = usage === "encrypt" ? "wrapKey" : "unwrapKey";
-            } else {
-              expectedKeyOp = usage;
-            }
-            break;
-          case (usage === "encrypt" && alg.startsWith("RSA")):
-            expectedKeyOp = "wrapKey";
-            break;
-          case usage === "decrypt":
-            expectedKeyOp = alg.startsWith("RSA") ? "unwrapKey" : "deriveBits";
-            break;
-        }
-        if (expectedKeyOp && key.key_ops?.includes?.(expectedKeyOp) === false) {
-          throw new TypeError(`Invalid key for this operation, its "key_ops" must include "${expectedKeyOp}" when present`);
-        }
-      }
-      return true;
-    };
-    symmetricTypeCheck = (alg, key, usage) => {
-      if (key instanceof Uint8Array)
-        return;
-      if (isJWK(key)) {
-        if (isSecretJWK(key) && jwkMatchesOp(alg, key, usage))
-          return;
-        throw new TypeError(`JSON Web Key for symmetric algorithms must have JWK "kty" (Key Type) equal to "oct" and the JWK "k" (Key Value) present`);
-      }
-      if (!isKeyLike(key)) {
-        throw new TypeError(withAlg(alg, key, "CryptoKey", "KeyObject", "JSON Web Key", "Uint8Array"));
-      }
-      if (key.type !== "secret") {
-        throw new TypeError(`${tag(key)} instances for symmetric algorithms must be of type "secret"`);
-      }
-    };
-    asymmetricTypeCheck = (alg, key, usage) => {
-      if (isJWK(key)) {
-        switch (usage) {
-          case "decrypt":
-          case "sign":
-            if (isPrivateJWK(key) && jwkMatchesOp(alg, key, usage))
-              return;
-            throw new TypeError(`JSON Web Key for this operation must be a private JWK`);
-          case "encrypt":
-          case "verify":
-            if (isPublicJWK(key) && jwkMatchesOp(alg, key, usage))
-              return;
-            throw new TypeError(`JSON Web Key for this operation must be a public JWK`);
-        }
-      }
-      if (!isKeyLike(key)) {
-        throw new TypeError(withAlg(alg, key, "CryptoKey", "KeyObject", "JSON Web Key"));
-      }
-      if (key.type === "secret") {
-        throw new TypeError(`${tag(key)} instances for asymmetric algorithms must not be of type "secret"`);
-      }
-      if (key.type === "public") {
-        switch (usage) {
-          case "sign":
-            throw new TypeError(`${tag(key)} instances for asymmetric algorithm signing must be of type "private"`);
-          case "decrypt":
-            throw new TypeError(`${tag(key)} instances for asymmetric algorithm decryption must be of type "private"`);
-        }
-      }
-      if (key.type === "private") {
-        switch (usage) {
-          case "verify":
-            throw new TypeError(`${tag(key)} instances for asymmetric algorithm verifying must be of type "public"`);
-          case "encrypt":
-            throw new TypeError(`${tag(key)} instances for asymmetric algorithm encryption must be of type "public"`);
-        }
-      }
-    };
-  }
-});
-
-// node_modules/jose/dist/webapi/lib/deflate.js
-function supported(name) {
-  if (typeof globalThis[name] === "undefined") {
-    throw new JOSENotSupported(`JWE "zip" (Compression Algorithm) Header Parameter requires the ${name} API.`);
-  }
-}
-async function compress(input) {
-  supported("CompressionStream");
-  const cs2 = new CompressionStream("deflate-raw");
-  const writer = cs2.writable.getWriter();
-  writer.write(input).catch(() => {
-  });
-  writer.close().catch(() => {
-  });
-  const chunks = [];
-  const reader = cs2.readable.getReader();
-  for (; ; ) {
-    const { value, done } = await reader.read();
-    if (done)
-      break;
-    chunks.push(value);
-  }
-  return concat(...chunks);
-}
-async function decompress(input, maxLength) {
-  supported("DecompressionStream");
-  const ds2 = new DecompressionStream("deflate-raw");
-  const writer = ds2.writable.getWriter();
-  writer.write(input).catch(() => {
-  });
-  writer.close().catch(() => {
-  });
-  const chunks = [];
-  let length = 0;
-  const reader = ds2.readable.getReader();
-  for (; ; ) {
-    const { value, done } = await reader.read();
-    if (done)
-      break;
-    chunks.push(value);
-    length += value.byteLength;
-    if (maxLength !== Infinity && length > maxLength) {
-      throw new JWEInvalid("Decompressed plaintext exceeded the configured limit");
-    }
-  }
-  return concat(...chunks);
-}
-var init_deflate = __esm({
-  "node_modules/jose/dist/webapi/lib/deflate.js"() {
-    init_errors();
-    init_buffer_utils();
-  }
-});
-
-// node_modules/jose/dist/webapi/jwe/flattened/decrypt.js
-async function flattenedDecrypt(jwe, key, options) {
-  if (!isObject(jwe)) {
-    throw new JWEInvalid("Flattened JWE must be an object");
-  }
-  if (jwe.protected === void 0 && jwe.header === void 0 && jwe.unprotected === void 0) {
-    throw new JWEInvalid("JOSE Header missing");
-  }
-  if (jwe.iv !== void 0 && typeof jwe.iv !== "string") {
-    throw new JWEInvalid("JWE Initialization Vector incorrect type");
-  }
-  if (typeof jwe.ciphertext !== "string") {
-    throw new JWEInvalid("JWE Ciphertext missing or incorrect type");
-  }
-  if (jwe.tag !== void 0 && typeof jwe.tag !== "string") {
-    throw new JWEInvalid("JWE Authentication Tag incorrect type");
-  }
-  if (jwe.protected !== void 0 && typeof jwe.protected !== "string") {
-    throw new JWEInvalid("JWE Protected Header incorrect type");
-  }
-  if (jwe.encrypted_key !== void 0 && typeof jwe.encrypted_key !== "string") {
-    throw new JWEInvalid("JWE Encrypted Key incorrect type");
-  }
-  if (jwe.aad !== void 0 && typeof jwe.aad !== "string") {
-    throw new JWEInvalid("JWE AAD incorrect type");
-  }
-  if (jwe.header !== void 0 && !isObject(jwe.header)) {
-    throw new JWEInvalid("JWE Shared Unprotected Header incorrect type");
-  }
-  if (jwe.unprotected !== void 0 && !isObject(jwe.unprotected)) {
-    throw new JWEInvalid("JWE Per-Recipient Unprotected Header incorrect type");
-  }
-  let parsedProt;
-  if (jwe.protected) {
-    try {
-      const protectedHeader2 = decode(jwe.protected);
-      parsedProt = JSON.parse(decoder.decode(protectedHeader2));
-    } catch {
-      throw new JWEInvalid("JWE Protected Header is invalid");
-    }
-  }
-  if (!isDisjoint(parsedProt, jwe.header, jwe.unprotected)) {
-    throw new JWEInvalid("JWE Protected, JWE Unprotected Header, and JWE Per-Recipient Unprotected Header Parameter names must be disjoint");
-  }
-  const joseHeader = {
-    ...parsedProt,
-    ...jwe.header,
-    ...jwe.unprotected
-  };
-  validateCrit(JWEInvalid, /* @__PURE__ */ new Map(), options?.crit, parsedProt, joseHeader);
-  if (joseHeader.zip !== void 0 && joseHeader.zip !== "DEF") {
-    throw new JOSENotSupported('Unsupported JWE "zip" (Compression Algorithm) Header Parameter value.');
-  }
-  if (joseHeader.zip !== void 0 && !parsedProt?.zip) {
-    throw new JWEInvalid('JWE "zip" (Compression Algorithm) Header Parameter MUST be in a protected header.');
-  }
-  const { alg, enc } = joseHeader;
-  if (typeof alg !== "string" || !alg) {
-    throw new JWEInvalid("missing JWE Algorithm (alg) in JWE Header");
-  }
-  if (typeof enc !== "string" || !enc) {
-    throw new JWEInvalid("missing JWE Encryption Algorithm (enc) in JWE Header");
-  }
-  const keyManagementAlgorithms = options && validateAlgorithms("keyManagementAlgorithms", options.keyManagementAlgorithms);
-  const contentEncryptionAlgorithms = options && validateAlgorithms("contentEncryptionAlgorithms", options.contentEncryptionAlgorithms);
-  if (keyManagementAlgorithms && !keyManagementAlgorithms.has(alg) || !keyManagementAlgorithms && alg.startsWith("PBES2")) {
-    throw new JOSEAlgNotAllowed('"alg" (Algorithm) Header Parameter value not allowed');
-  }
-  if (contentEncryptionAlgorithms && !contentEncryptionAlgorithms.has(enc)) {
-    throw new JOSEAlgNotAllowed('"enc" (Encryption Algorithm) Header Parameter value not allowed');
-  }
-  let encryptedKey;
-  if (jwe.encrypted_key !== void 0) {
-    encryptedKey = decodeBase64url(jwe.encrypted_key, "encrypted_key", JWEInvalid);
-  }
-  let resolvedKey = false;
-  if (typeof key === "function") {
-    key = await key(parsedProt, jwe);
-    resolvedKey = true;
-  }
-  checkKeyType(alg === "dir" ? enc : alg, key, "decrypt");
-  const k = await normalizeKey(key, alg);
-  let cek;
-  try {
-    cek = await decryptKeyManagement(alg, k, encryptedKey, joseHeader, options);
-  } catch (err) {
-    if (err instanceof TypeError || err instanceof JWEInvalid || err instanceof JOSENotSupported) {
-      throw err;
-    }
-    cek = generateCek(enc);
-  }
-  let iv;
-  let tag2;
-  if (jwe.iv !== void 0) {
-    iv = decodeBase64url(jwe.iv, "iv", JWEInvalid);
-  }
-  if (jwe.tag !== void 0) {
-    tag2 = decodeBase64url(jwe.tag, "tag", JWEInvalid);
-  }
-  const protectedHeader = jwe.protected !== void 0 ? encode(jwe.protected) : new Uint8Array();
-  let additionalData;
-  if (jwe.aad !== void 0) {
-    additionalData = concat(protectedHeader, encode("."), encode(jwe.aad));
-  } else {
-    additionalData = protectedHeader;
-  }
-  const ciphertext = decodeBase64url(jwe.ciphertext, "ciphertext", JWEInvalid);
-  const plaintext = await decrypt(enc, cek, ciphertext, iv, tag2, additionalData);
-  const result = { plaintext };
-  if (joseHeader.zip === "DEF") {
-    const maxDecompressedLength = options?.maxDecompressedLength ?? 25e4;
-    if (maxDecompressedLength === 0) {
-      throw new JOSENotSupported('JWE "zip" (Compression Algorithm) Header Parameter is not supported.');
-    }
-    if (maxDecompressedLength !== Infinity && (!Number.isSafeInteger(maxDecompressedLength) || maxDecompressedLength < 1)) {
-      throw new TypeError("maxDecompressedLength must be 0, a positive safe integer, or Infinity");
-    }
-    result.plaintext = await decompress(plaintext, maxDecompressedLength).catch((cause) => {
-      if (cause instanceof JWEInvalid)
-        throw cause;
-      throw new JWEInvalid("Failed to decompress plaintext", { cause });
-    });
-  }
-  if (jwe.protected !== void 0) {
-    result.protectedHeader = parsedProt;
-  }
-  if (jwe.aad !== void 0) {
-    result.additionalAuthenticatedData = decodeBase64url(jwe.aad, "aad", JWEInvalid);
-  }
-  if (jwe.unprotected !== void 0) {
-    result.sharedUnprotectedHeader = jwe.unprotected;
-  }
-  if (jwe.header !== void 0) {
-    result.unprotectedHeader = jwe.header;
-  }
-  if (resolvedKey) {
-    return { ...result, key: k };
-  }
-  return result;
-}
-var init_decrypt = __esm({
-  "node_modules/jose/dist/webapi/jwe/flattened/decrypt.js"() {
-    init_base64url();
-    init_content_encryption();
-    init_helpers();
-    init_errors();
-    init_type_checks();
-    init_type_checks();
-    init_key_management();
-    init_buffer_utils();
-    init_content_encryption();
-    init_validate_crit();
-    init_validate_algorithms();
-    init_normalize_key();
-    init_check_key_type();
-    init_deflate();
-  }
-});
-
-// node_modules/jose/dist/webapi/jwe/compact/decrypt.js
-async function compactDecrypt(jwe, key, options) {
-  if (jwe instanceof Uint8Array) {
-    jwe = decoder.decode(jwe);
-  }
-  if (typeof jwe !== "string") {
-    throw new JWEInvalid("Compact JWE must be a string or Uint8Array");
-  }
-  const { 0: protectedHeader, 1: encryptedKey, 2: iv, 3: ciphertext, 4: tag2, length } = jwe.split(".");
-  if (length !== 5) {
-    throw new JWEInvalid("Invalid Compact JWE");
-  }
-  const decrypted = await flattenedDecrypt({
-    ciphertext,
-    iv: iv || void 0,
-    protected: protectedHeader,
-    tag: tag2 || void 0,
-    encrypted_key: encryptedKey || void 0
-  }, key, options);
-  const result = { plaintext: decrypted.plaintext, protectedHeader: decrypted.protectedHeader };
-  if (typeof key === "function") {
-    return { ...result, key: decrypted.key };
-  }
-  return result;
-}
-var init_decrypt2 = __esm({
-  "node_modules/jose/dist/webapi/jwe/compact/decrypt.js"() {
-    init_decrypt();
-    init_errors();
-    init_buffer_utils();
-  }
-});
-
-// node_modules/jose/dist/webapi/jwe/general/decrypt.js
-async function generalDecrypt(jwe, key, options) {
-  if (!isObject(jwe)) {
-    throw new JWEInvalid("General JWE must be an object");
-  }
-  if (!Array.isArray(jwe.recipients) || !jwe.recipients.every(isObject)) {
-    throw new JWEInvalid("JWE Recipients missing or incorrect type");
-  }
-  if (!jwe.recipients.length) {
-    throw new JWEInvalid("JWE Recipients has no members");
-  }
-  for (const recipient of jwe.recipients) {
-    try {
-      return await flattenedDecrypt({
-        aad: jwe.aad,
-        ciphertext: jwe.ciphertext,
-        encrypted_key: recipient.encrypted_key,
-        header: recipient.header,
-        iv: jwe.iv,
-        protected: jwe.protected,
-        tag: jwe.tag,
-        unprotected: jwe.unprotected
-      }, key, options);
-    } catch {
-    }
-  }
-  throw new JWEDecryptionFailed();
-}
-var init_decrypt3 = __esm({
-  "node_modules/jose/dist/webapi/jwe/general/decrypt.js"() {
-    init_decrypt();
-    init_errors();
-    init_type_checks();
-  }
-});
-
-// node_modules/jose/dist/webapi/jwe/flattened/encrypt.js
-var FlattenedEncrypt;
-var init_encrypt = __esm({
-  "node_modules/jose/dist/webapi/jwe/flattened/encrypt.js"() {
-    init_base64url();
-    init_helpers();
-    init_content_encryption();
-    init_key_management();
-    init_errors();
-    init_type_checks();
-    init_buffer_utils();
-    init_validate_crit();
-    init_normalize_key();
-    init_check_key_type();
-    init_deflate();
-    FlattenedEncrypt = class {
-      #plaintext;
-      #protectedHeader;
-      #sharedUnprotectedHeader;
-      #unprotectedHeader;
-      #aad;
-      #cek;
-      #iv;
-      #keyManagementParameters;
-      constructor(plaintext) {
-        if (!(plaintext instanceof Uint8Array)) {
-          throw new TypeError("plaintext must be an instance of Uint8Array");
-        }
-        this.#plaintext = plaintext;
-      }
-      setKeyManagementParameters(parameters) {
-        assertNotSet(this.#keyManagementParameters, "setKeyManagementParameters");
-        this.#keyManagementParameters = parameters;
-        return this;
-      }
-      setProtectedHeader(protectedHeader) {
-        assertNotSet(this.#protectedHeader, "setProtectedHeader");
-        this.#protectedHeader = protectedHeader;
-        return this;
-      }
-      setSharedUnprotectedHeader(sharedUnprotectedHeader) {
-        assertNotSet(this.#sharedUnprotectedHeader, "setSharedUnprotectedHeader");
-        this.#sharedUnprotectedHeader = sharedUnprotectedHeader;
-        return this;
-      }
-      setUnprotectedHeader(unprotectedHeader) {
-        assertNotSet(this.#unprotectedHeader, "setUnprotectedHeader");
-        this.#unprotectedHeader = unprotectedHeader;
-        return this;
-      }
-      setAdditionalAuthenticatedData(aad) {
-        this.#aad = aad;
-        return this;
-      }
-      setContentEncryptionKey(cek) {
-        assertNotSet(this.#cek, "setContentEncryptionKey");
-        this.#cek = cek;
-        return this;
-      }
-      setInitializationVector(iv) {
-        assertNotSet(this.#iv, "setInitializationVector");
-        this.#iv = iv;
-        return this;
-      }
-      async encrypt(key, options) {
-        if (!this.#protectedHeader && !this.#unprotectedHeader && !this.#sharedUnprotectedHeader) {
-          throw new JWEInvalid("either setProtectedHeader, setUnprotectedHeader, or sharedUnprotectedHeader must be called before #encrypt()");
-        }
-        if (!isDisjoint(this.#protectedHeader, this.#unprotectedHeader, this.#sharedUnprotectedHeader)) {
-          throw new JWEInvalid("JWE Protected, JWE Shared Unprotected and JWE Per-Recipient Header Parameter names must be disjoint");
-        }
-        const joseHeader = {
-          ...this.#protectedHeader,
-          ...this.#unprotectedHeader,
-          ...this.#sharedUnprotectedHeader
-        };
-        validateCrit(JWEInvalid, /* @__PURE__ */ new Map(), options?.crit, this.#protectedHeader, joseHeader);
-        if (joseHeader.zip !== void 0 && joseHeader.zip !== "DEF") {
-          throw new JOSENotSupported('Unsupported JWE "zip" (Compression Algorithm) Header Parameter value.');
-        }
-        if (joseHeader.zip !== void 0 && !this.#protectedHeader?.zip) {
-          throw new JWEInvalid('JWE "zip" (Compression Algorithm) Header Parameter MUST be in a protected header.');
-        }
-        const { alg, enc } = joseHeader;
-        if (typeof alg !== "string" || !alg) {
-          throw new JWEInvalid('JWE "alg" (Algorithm) Header Parameter missing or invalid');
-        }
-        if (typeof enc !== "string" || !enc) {
-          throw new JWEInvalid('JWE "enc" (Encryption Algorithm) Header Parameter missing or invalid');
-        }
-        let encryptedKey;
-        if (this.#cek && (alg === "dir" || alg === "ECDH-ES")) {
-          throw new TypeError(`setContentEncryptionKey cannot be called with JWE "alg" (Algorithm) Header ${alg}`);
-        }
-        checkKeyType(alg === "dir" ? enc : alg, key, "encrypt");
-        let cek;
-        {
-          let parameters;
-          const k = await normalizeKey(key, alg);
-          ({ cek, encryptedKey, parameters } = await encryptKeyManagement(alg, enc, k, this.#cek, this.#keyManagementParameters));
-          if (parameters) {
-            if (options && unprotected in options) {
-              if (!this.#unprotectedHeader) {
-                this.setUnprotectedHeader(parameters);
-              } else {
-                this.#unprotectedHeader = { ...this.#unprotectedHeader, ...parameters };
-              }
-            } else if (!this.#protectedHeader) {
-              this.setProtectedHeader(parameters);
-            } else {
-              this.#protectedHeader = { ...this.#protectedHeader, ...parameters };
-            }
-          }
-        }
-        let additionalData;
-        let protectedHeaderS;
-        let protectedHeaderB;
-        let aadMember;
-        if (this.#protectedHeader) {
-          protectedHeaderS = encode2(JSON.stringify(this.#protectedHeader));
-          protectedHeaderB = encode(protectedHeaderS);
-        } else {
-          protectedHeaderS = "";
-          protectedHeaderB = new Uint8Array();
-        }
-        if (this.#aad) {
-          aadMember = encode2(this.#aad);
-          const aadMemberBytes = encode(aadMember);
-          additionalData = concat(protectedHeaderB, encode("."), aadMemberBytes);
-        } else {
-          additionalData = protectedHeaderB;
-        }
-        let plaintext = this.#plaintext;
-        if (joseHeader.zip === "DEF") {
-          plaintext = await compress(plaintext).catch((cause) => {
-            throw new JWEInvalid("Failed to compress plaintext", { cause });
-          });
-        }
-        const { ciphertext, tag: tag2, iv } = await encrypt(enc, plaintext, cek, this.#iv, additionalData);
-        const jwe = {
-          ciphertext: encode2(ciphertext)
-        };
-        if (iv) {
-          jwe.iv = encode2(iv);
-        }
-        if (tag2) {
-          jwe.tag = encode2(tag2);
-        }
-        if (encryptedKey) {
-          jwe.encrypted_key = encode2(encryptedKey);
-        }
-        if (aadMember) {
-          jwe.aad = aadMember;
-        }
-        if (this.#protectedHeader) {
-          jwe.protected = protectedHeaderS;
-        }
-        if (this.#sharedUnprotectedHeader) {
-          jwe.unprotected = this.#sharedUnprotectedHeader;
-        }
-        if (this.#unprotectedHeader) {
-          jwe.header = this.#unprotectedHeader;
-        }
-        return jwe;
-      }
-    };
-  }
-});
-
-// node_modules/jose/dist/webapi/jwe/general/encrypt.js
-var IndividualRecipient, GeneralEncrypt;
-var init_encrypt2 = __esm({
-  "node_modules/jose/dist/webapi/jwe/general/encrypt.js"() {
-    init_encrypt();
-    init_helpers();
-    init_errors();
-    init_content_encryption();
-    init_type_checks();
-    init_key_management();
-    init_base64url();
-    init_validate_crit();
-    init_normalize_key();
-    init_check_key_type();
-    IndividualRecipient = class {
-      #parent;
-      unprotectedHeader;
-      keyManagementParameters;
-      key;
-      options;
-      constructor(enc, key, options) {
-        this.#parent = enc;
-        this.key = key;
-        this.options = options;
-      }
-      setUnprotectedHeader(unprotectedHeader) {
-        assertNotSet(this.unprotectedHeader, "setUnprotectedHeader");
-        this.unprotectedHeader = unprotectedHeader;
-        return this;
-      }
-      setKeyManagementParameters(parameters) {
-        assertNotSet(this.keyManagementParameters, "setKeyManagementParameters");
-        this.keyManagementParameters = parameters;
-        return this;
-      }
-      addRecipient(...args) {
-        return this.#parent.addRecipient(...args);
-      }
-      encrypt(...args) {
-        return this.#parent.encrypt(...args);
-      }
-      done() {
-        return this.#parent;
-      }
-    };
-    GeneralEncrypt = class {
-      #plaintext;
-      #recipients = [];
-      #protectedHeader;
-      #unprotectedHeader;
-      #aad;
-      constructor(plaintext) {
-        this.#plaintext = plaintext;
-      }
-      addRecipient(key, options) {
-        const recipient = new IndividualRecipient(this, key, { crit: options?.crit });
-        this.#recipients.push(recipient);
-        return recipient;
-      }
-      setProtectedHeader(protectedHeader) {
-        assertNotSet(this.#protectedHeader, "setProtectedHeader");
-        this.#protectedHeader = protectedHeader;
-        return this;
-      }
-      setSharedUnprotectedHeader(sharedUnprotectedHeader) {
-        assertNotSet(this.#unprotectedHeader, "setSharedUnprotectedHeader");
-        this.#unprotectedHeader = sharedUnprotectedHeader;
-        return this;
-      }
-      setAdditionalAuthenticatedData(aad) {
-        this.#aad = aad;
-        return this;
-      }
-      async encrypt() {
-        if (!this.#recipients.length) {
-          throw new JWEInvalid("at least one recipient must be added");
-        }
-        if (this.#recipients.length === 1) {
-          const [recipient] = this.#recipients;
-          const flattened = await new FlattenedEncrypt(this.#plaintext).setAdditionalAuthenticatedData(this.#aad).setProtectedHeader(this.#protectedHeader).setSharedUnprotectedHeader(this.#unprotectedHeader).setUnprotectedHeader(recipient.unprotectedHeader).encrypt(recipient.key, { ...recipient.options });
-          const jwe2 = {
-            ciphertext: flattened.ciphertext,
-            iv: flattened.iv,
-            recipients: [{}],
-            tag: flattened.tag
-          };
-          if (flattened.aad)
-            jwe2.aad = flattened.aad;
-          if (flattened.protected)
-            jwe2.protected = flattened.protected;
-          if (flattened.unprotected)
-            jwe2.unprotected = flattened.unprotected;
-          if (flattened.encrypted_key)
-            jwe2.recipients[0].encrypted_key = flattened.encrypted_key;
-          if (flattened.header)
-            jwe2.recipients[0].header = flattened.header;
-          return jwe2;
-        }
-        let enc;
-        for (let i = 0; i < this.#recipients.length; i++) {
-          const recipient = this.#recipients[i];
-          if (!isDisjoint(this.#protectedHeader, this.#unprotectedHeader, recipient.unprotectedHeader)) {
-            throw new JWEInvalid("JWE Protected, JWE Shared Unprotected and JWE Per-Recipient Header Parameter names must be disjoint");
-          }
-          const joseHeader = {
-            ...this.#protectedHeader,
-            ...this.#unprotectedHeader,
-            ...recipient.unprotectedHeader
-          };
-          const { alg } = joseHeader;
-          if (typeof alg !== "string" || !alg) {
-            throw new JWEInvalid('JWE "alg" (Algorithm) Header Parameter missing or invalid');
-          }
-          if (alg === "dir" || alg === "ECDH-ES") {
-            throw new JWEInvalid('"dir" and "ECDH-ES" alg may only be used with a single recipient');
-          }
-          if (typeof joseHeader.enc !== "string" || !joseHeader.enc) {
-            throw new JWEInvalid('JWE "enc" (Encryption Algorithm) Header Parameter missing or invalid');
-          }
-          if (!enc) {
-            enc = joseHeader.enc;
-          } else if (enc !== joseHeader.enc) {
-            throw new JWEInvalid('JWE "enc" (Encryption Algorithm) Header Parameter must be the same for all recipients');
-          }
-          validateCrit(JWEInvalid, /* @__PURE__ */ new Map(), recipient.options.crit, this.#protectedHeader, joseHeader);
-          if (joseHeader.zip !== void 0 && joseHeader.zip !== "DEF") {
-            throw new JOSENotSupported('Unsupported JWE "zip" (Compression Algorithm) Header Parameter value.');
-          }
-          if (joseHeader.zip !== void 0 && !this.#protectedHeader?.zip) {
-            throw new JWEInvalid('JWE "zip" (Compression Algorithm) Header Parameter MUST be in a protected header.');
-          }
-        }
-        const cek = generateCek(enc);
-        const jwe = {
-          ciphertext: "",
-          recipients: []
-        };
-        for (let i = 0; i < this.#recipients.length; i++) {
-          const recipient = this.#recipients[i];
-          const target = {};
-          jwe.recipients.push(target);
-          if (i === 0) {
-            const flattened = await new FlattenedEncrypt(this.#plaintext).setAdditionalAuthenticatedData(this.#aad).setContentEncryptionKey(cek).setProtectedHeader(this.#protectedHeader).setSharedUnprotectedHeader(this.#unprotectedHeader).setUnprotectedHeader(recipient.unprotectedHeader).setKeyManagementParameters(recipient.keyManagementParameters).encrypt(recipient.key, {
-              ...recipient.options,
-              [unprotected]: true
-            });
-            jwe.ciphertext = flattened.ciphertext;
-            jwe.iv = flattened.iv;
-            jwe.tag = flattened.tag;
-            if (flattened.aad)
-              jwe.aad = flattened.aad;
-            if (flattened.protected)
-              jwe.protected = flattened.protected;
-            if (flattened.unprotected)
-              jwe.unprotected = flattened.unprotected;
-            target.encrypted_key = flattened.encrypted_key;
-            if (flattened.header)
-              target.header = flattened.header;
-            continue;
-          }
-          const alg = recipient.unprotectedHeader?.alg || this.#protectedHeader?.alg || this.#unprotectedHeader?.alg;
-          checkKeyType(alg === "dir" ? enc : alg, recipient.key, "encrypt");
-          const k = await normalizeKey(recipient.key, alg);
-          const { encryptedKey, parameters } = await encryptKeyManagement(alg, enc, k, cek, recipient.keyManagementParameters);
-          target.encrypted_key = encode2(encryptedKey);
-          if (recipient.unprotectedHeader || parameters)
-            target.header = { ...recipient.unprotectedHeader, ...parameters };
-        }
-        return jwe;
-      }
-    };
-  }
-});
-
-// node_modules/jose/dist/webapi/jws/flattened/verify.js
-async function flattenedVerify(jws, key, options) {
-  if (!isObject(jws)) {
-    throw new JWSInvalid("Flattened JWS must be an object");
-  }
-  if (jws.protected === void 0 && jws.header === void 0) {
-    throw new JWSInvalid('Flattened JWS must have either of the "protected" or "header" members');
-  }
-  if (jws.protected !== void 0 && typeof jws.protected !== "string") {
-    throw new JWSInvalid("JWS Protected Header incorrect type");
-  }
-  if (jws.payload === void 0) {
-    throw new JWSInvalid("JWS Payload missing");
-  }
-  if (typeof jws.signature !== "string") {
-    throw new JWSInvalid("JWS Signature missing or incorrect type");
-  }
-  if (jws.header !== void 0 && !isObject(jws.header)) {
-    throw new JWSInvalid("JWS Unprotected Header incorrect type");
-  }
-  let parsedProt = {};
-  if (jws.protected) {
-    try {
-      const protectedHeader = decode(jws.protected);
-      parsedProt = JSON.parse(decoder.decode(protectedHeader));
-    } catch {
-      throw new JWSInvalid("JWS Protected Header is invalid");
-    }
-  }
-  if (!isDisjoint(parsedProt, jws.header)) {
-    throw new JWSInvalid("JWS Protected and JWS Unprotected Header Parameter names must be disjoint");
-  }
-  const joseHeader = {
-    ...parsedProt,
-    ...jws.header
-  };
-  const extensions = validateCrit(JWSInvalid, /* @__PURE__ */ new Map([["b64", true]]), options?.crit, parsedProt, joseHeader);
-  let b64 = true;
-  if (extensions.has("b64")) {
-    b64 = parsedProt.b64;
-    if (typeof b64 !== "boolean") {
-      throw new JWSInvalid('The "b64" (base64url-encode payload) Header Parameter must be a boolean');
-    }
-  }
-  const { alg } = joseHeader;
-  if (typeof alg !== "string" || !alg) {
-    throw new JWSInvalid('JWS "alg" (Algorithm) Header Parameter missing or invalid');
-  }
-  const algorithms = options && validateAlgorithms("algorithms", options.algorithms);
-  if (algorithms && !algorithms.has(alg)) {
-    throw new JOSEAlgNotAllowed('"alg" (Algorithm) Header Parameter value not allowed');
-  }
-  if (b64) {
-    if (typeof jws.payload !== "string") {
-      throw new JWSInvalid("JWS Payload must be a string");
-    }
-  } else if (typeof jws.payload !== "string" && !(jws.payload instanceof Uint8Array)) {
-    throw new JWSInvalid("JWS Payload must be a string or an Uint8Array instance");
-  }
-  let resolvedKey = false;
-  if (typeof key === "function") {
-    key = await key(parsedProt, jws);
-    resolvedKey = true;
-  }
-  checkKeyType(alg, key, "verify");
-  const data = concat(jws.protected !== void 0 ? encode(jws.protected) : new Uint8Array(), encode("."), typeof jws.payload === "string" ? b64 ? encode(jws.payload) : encoder.encode(jws.payload) : jws.payload);
-  const signature = decodeBase64url(jws.signature, "signature", JWSInvalid);
-  const k = await normalizeKey(key, alg);
-  const verified = await verify(alg, k, signature, data);
-  if (!verified) {
-    throw new JWSSignatureVerificationFailed();
-  }
-  let payload;
-  if (b64) {
-    payload = decodeBase64url(jws.payload, "payload", JWSInvalid);
-  } else if (typeof jws.payload === "string") {
-    payload = encoder.encode(jws.payload);
-  } else {
-    payload = jws.payload;
-  }
-  const result = { payload };
-  if (jws.protected !== void 0) {
-    result.protectedHeader = parsedProt;
-  }
-  if (jws.header !== void 0) {
-    result.unprotectedHeader = jws.header;
-  }
-  if (resolvedKey) {
-    return { ...result, key: k };
-  }
-  return result;
-}
-var init_verify = __esm({
-  "node_modules/jose/dist/webapi/jws/flattened/verify.js"() {
-    init_base64url();
-    init_signing();
-    init_errors();
-    init_buffer_utils();
-    init_helpers();
-    init_type_checks();
-    init_type_checks();
-    init_check_key_type();
-    init_validate_crit();
-    init_validate_algorithms();
-    init_normalize_key();
-  }
-});
-
-// node_modules/jose/dist/webapi/jws/compact/verify.js
-async function compactVerify(jws, key, options) {
-  if (jws instanceof Uint8Array) {
-    jws = decoder.decode(jws);
-  }
-  if (typeof jws !== "string") {
-    throw new JWSInvalid("Compact JWS must be a string or Uint8Array");
-  }
-  const { 0: protectedHeader, 1: payload, 2: signature, length } = jws.split(".");
-  if (length !== 3) {
-    throw new JWSInvalid("Invalid Compact JWS");
-  }
-  const verified = await flattenedVerify({ payload, protected: protectedHeader, signature }, key, options);
-  const result = { payload: verified.payload, protectedHeader: verified.protectedHeader };
-  if (typeof key === "function") {
-    return { ...result, key: verified.key };
-  }
-  return result;
-}
-var init_verify2 = __esm({
-  "node_modules/jose/dist/webapi/jws/compact/verify.js"() {
-    init_verify();
-    init_errors();
-    init_buffer_utils();
-  }
-});
-
-// node_modules/jose/dist/webapi/jws/general/verify.js
-async function generalVerify(jws, key, options) {
-  if (!isObject(jws)) {
-    throw new JWSInvalid("General JWS must be an object");
-  }
-  if (!Array.isArray(jws.signatures) || !jws.signatures.every(isObject)) {
-    throw new JWSInvalid("JWS Signatures missing or incorrect type");
-  }
-  for (const signature of jws.signatures) {
-    try {
-      return await flattenedVerify({
-        header: signature.header,
-        payload: jws.payload,
-        protected: signature.protected,
-        signature: signature.signature
-      }, key, options);
-    } catch {
-    }
-  }
-  throw new JWSSignatureVerificationFailed();
-}
-var init_verify3 = __esm({
-  "node_modules/jose/dist/webapi/jws/general/verify.js"() {
-    init_verify();
-    init_errors();
-    init_type_checks();
-  }
-});
-
-// node_modules/jose/dist/webapi/lib/jwt_claims_set.js
-function secs(str) {
-  const matched = REGEX.exec(str);
-  if (!matched || matched[4] && matched[1]) {
-    throw new TypeError("Invalid time period format");
-  }
-  const value = parseFloat(matched[2]);
-  const unit = matched[3].toLowerCase();
-  let numericDate;
-  switch (unit) {
-    case "sec":
-    case "secs":
-    case "second":
-    case "seconds":
-    case "s":
-      numericDate = Math.round(value);
-      break;
-    case "minute":
-    case "minutes":
-    case "min":
-    case "mins":
-    case "m":
-      numericDate = Math.round(value * minute);
-      break;
-    case "hour":
-    case "hours":
-    case "hr":
-    case "hrs":
-    case "h":
-      numericDate = Math.round(value * hour);
-      break;
-    case "day":
-    case "days":
-    case "d":
-      numericDate = Math.round(value * day);
-      break;
-    case "week":
-    case "weeks":
-    case "w":
-      numericDate = Math.round(value * week);
-      break;
-    default:
-      numericDate = Math.round(value * year);
-      break;
-  }
-  if (matched[1] === "-" || matched[4] === "ago") {
-    return -numericDate;
-  }
-  return numericDate;
-}
-function validateInput(label, input) {
-  if (!Number.isFinite(input)) {
-    throw new TypeError(`Invalid ${label} input`);
-  }
-  return input;
-}
-function validateClaimsSet(protectedHeader, encodedPayload, options = {}) {
-  let payload;
-  try {
-    payload = JSON.parse(decoder.decode(encodedPayload));
-  } catch {
-  }
-  if (!isObject(payload)) {
-    throw new JWTInvalid("JWT Claims Set must be a top-level JSON object");
-  }
-  const { typ } = options;
-  if (typ && (typeof protectedHeader.typ !== "string" || normalizeTyp(protectedHeader.typ) !== normalizeTyp(typ))) {
-    throw new JWTClaimValidationFailed('unexpected "typ" JWT header value', payload, "typ", "check_failed");
-  }
-  const { requiredClaims = [], issuer, subject, audience, maxTokenAge } = options;
-  const presenceCheck = [...requiredClaims];
-  if (maxTokenAge !== void 0)
-    presenceCheck.push("iat");
-  if (audience !== void 0)
-    presenceCheck.push("aud");
-  if (subject !== void 0)
-    presenceCheck.push("sub");
-  if (issuer !== void 0)
-    presenceCheck.push("iss");
-  for (const claim of new Set(presenceCheck.reverse())) {
-    if (!(claim in payload)) {
-      throw new JWTClaimValidationFailed(`missing required "${claim}" claim`, payload, claim, "missing");
-    }
-  }
-  if (issuer && !(Array.isArray(issuer) ? issuer : [issuer]).includes(payload.iss)) {
-    throw new JWTClaimValidationFailed('unexpected "iss" claim value', payload, "iss", "check_failed");
-  }
-  if (subject && payload.sub !== subject) {
-    throw new JWTClaimValidationFailed('unexpected "sub" claim value', payload, "sub", "check_failed");
-  }
-  if (audience && !checkAudiencePresence(payload.aud, typeof audience === "string" ? [audience] : audience)) {
-    throw new JWTClaimValidationFailed('unexpected "aud" claim value', payload, "aud", "check_failed");
-  }
-  let tolerance;
-  switch (typeof options.clockTolerance) {
-    case "string":
-      tolerance = secs(options.clockTolerance);
-      break;
-    case "number":
-      tolerance = options.clockTolerance;
-      break;
-    case "undefined":
-      tolerance = 0;
-      break;
-    default:
-      throw new TypeError("Invalid clockTolerance option type");
-  }
-  const { currentDate } = options;
-  const now = epoch(currentDate || /* @__PURE__ */ new Date());
-  if ((payload.iat !== void 0 || maxTokenAge) && typeof payload.iat !== "number") {
-    throw new JWTClaimValidationFailed('"iat" claim must be a number', payload, "iat", "invalid");
-  }
-  if (payload.nbf !== void 0) {
-    if (typeof payload.nbf !== "number") {
-      throw new JWTClaimValidationFailed('"nbf" claim must be a number', payload, "nbf", "invalid");
-    }
-    if (payload.nbf > now + tolerance) {
-      throw new JWTClaimValidationFailed('"nbf" claim timestamp check failed', payload, "nbf", "check_failed");
-    }
-  }
-  if (payload.exp !== void 0) {
-    if (typeof payload.exp !== "number") {
-      throw new JWTClaimValidationFailed('"exp" claim must be a number', payload, "exp", "invalid");
-    }
-    if (payload.exp <= now - tolerance) {
-      throw new JWTExpired('"exp" claim timestamp check failed', payload, "exp", "check_failed");
-    }
-  }
-  if (maxTokenAge) {
-    const age = now - payload.iat;
-    const max = typeof maxTokenAge === "number" ? maxTokenAge : secs(maxTokenAge);
-    if (age - tolerance > max) {
-      throw new JWTExpired('"iat" claim timestamp check failed (too far in the past)', payload, "iat", "check_failed");
-    }
-    if (age < 0 - tolerance) {
-      throw new JWTClaimValidationFailed('"iat" claim timestamp check failed (it should be in the past)', payload, "iat", "check_failed");
-    }
-  }
-  return payload;
-}
-var epoch, minute, hour, day, week, year, REGEX, normalizeTyp, checkAudiencePresence, JWTClaimsBuilder;
-var init_jwt_claims_set = __esm({
-  "node_modules/jose/dist/webapi/lib/jwt_claims_set.js"() {
-    init_errors();
-    init_buffer_utils();
-    init_type_checks();
-    epoch = (date) => Math.floor(date.getTime() / 1e3);
-    minute = 60;
-    hour = minute * 60;
-    day = hour * 24;
-    week = day * 7;
-    year = day * 365.25;
-    REGEX = /^(\+|\-)? ?(\d+|\d+\.\d+) ?(seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|years?|yrs?|y)(?: (ago|from now))?$/i;
-    normalizeTyp = (value) => {
-      if (value.includes("/")) {
-        return value.toLowerCase();
-      }
-      return `application/${value.toLowerCase()}`;
-    };
-    checkAudiencePresence = (audPayload, audOption) => {
-      if (typeof audPayload === "string") {
-        return audOption.includes(audPayload);
-      }
-      if (Array.isArray(audPayload)) {
-        return audOption.some(Set.prototype.has.bind(new Set(audPayload)));
-      }
-      return false;
-    };
-    JWTClaimsBuilder = class {
-      #payload;
-      constructor(payload) {
-        if (!isObject(payload)) {
-          throw new TypeError("JWT Claims Set MUST be an object");
-        }
-        this.#payload = structuredClone(payload);
-      }
-      data() {
-        return encoder.encode(JSON.stringify(this.#payload));
-      }
-      get iss() {
-        return this.#payload.iss;
-      }
-      set iss(value) {
-        this.#payload.iss = value;
-      }
-      get sub() {
-        return this.#payload.sub;
-      }
-      set sub(value) {
-        this.#payload.sub = value;
-      }
-      get aud() {
-        return this.#payload.aud;
-      }
-      set aud(value) {
-        this.#payload.aud = value;
-      }
-      set jti(value) {
-        this.#payload.jti = value;
-      }
-      set nbf(value) {
-        if (typeof value === "number") {
-          this.#payload.nbf = validateInput("setNotBefore", value);
-        } else if (value instanceof Date) {
-          this.#payload.nbf = validateInput("setNotBefore", epoch(value));
-        } else {
-          this.#payload.nbf = epoch(/* @__PURE__ */ new Date()) + secs(value);
-        }
-      }
-      set exp(value) {
-        if (typeof value === "number") {
-          this.#payload.exp = validateInput("setExpirationTime", value);
-        } else if (value instanceof Date) {
-          this.#payload.exp = validateInput("setExpirationTime", epoch(value));
-        } else {
-          this.#payload.exp = epoch(/* @__PURE__ */ new Date()) + secs(value);
-        }
-      }
-      set iat(value) {
-        if (value === void 0) {
-          this.#payload.iat = epoch(/* @__PURE__ */ new Date());
-        } else if (value instanceof Date) {
-          this.#payload.iat = validateInput("setIssuedAt", epoch(value));
-        } else if (typeof value === "string") {
-          this.#payload.iat = validateInput("setIssuedAt", epoch(/* @__PURE__ */ new Date()) + secs(value));
-        } else {
-          this.#payload.iat = validateInput("setIssuedAt", value);
-        }
-      }
-    };
-  }
-});
-
-// node_modules/jose/dist/webapi/jwt/verify.js
-async function jwtVerify(jwt2, key, options) {
-  const verified = await compactVerify(jwt2, key, options);
-  if (verified.protectedHeader.crit?.includes("b64") && verified.protectedHeader.b64 === false) {
-    throw new JWTInvalid("JWTs MUST NOT use unencoded payload");
-  }
-  const payload = validateClaimsSet(verified.protectedHeader, verified.payload, options);
-  const result = { payload, protectedHeader: verified.protectedHeader };
-  if (typeof key === "function") {
-    return { ...result, key: verified.key };
-  }
-  return result;
-}
-var init_verify4 = __esm({
-  "node_modules/jose/dist/webapi/jwt/verify.js"() {
-    init_verify2();
-    init_jwt_claims_set();
-    init_errors();
-  }
-});
-
-// node_modules/jose/dist/webapi/jwt/decrypt.js
-async function jwtDecrypt(jwt2, key, options) {
-  const decrypted = await compactDecrypt(jwt2, key, options);
-  const payload = validateClaimsSet(decrypted.protectedHeader, decrypted.plaintext, options);
-  const { protectedHeader } = decrypted;
-  if (protectedHeader.iss !== void 0 && protectedHeader.iss !== payload.iss) {
-    throw new JWTClaimValidationFailed('replicated "iss" claim header parameter mismatch', payload, "iss", "mismatch");
-  }
-  if (protectedHeader.sub !== void 0 && protectedHeader.sub !== payload.sub) {
-    throw new JWTClaimValidationFailed('replicated "sub" claim header parameter mismatch', payload, "sub", "mismatch");
-  }
-  if (protectedHeader.aud !== void 0 && JSON.stringify(protectedHeader.aud) !== JSON.stringify(payload.aud)) {
-    throw new JWTClaimValidationFailed('replicated "aud" claim header parameter mismatch', payload, "aud", "mismatch");
-  }
-  const result = { payload, protectedHeader };
-  if (typeof key === "function") {
-    return { ...result, key: decrypted.key };
-  }
-  return result;
-}
-var init_decrypt4 = __esm({
-  "node_modules/jose/dist/webapi/jwt/decrypt.js"() {
-    init_decrypt2();
-    init_jwt_claims_set();
-    init_errors();
-  }
-});
-
-// node_modules/jose/dist/webapi/jwe/compact/encrypt.js
-var CompactEncrypt;
-var init_encrypt3 = __esm({
-  "node_modules/jose/dist/webapi/jwe/compact/encrypt.js"() {
-    init_encrypt();
-    CompactEncrypt = class {
-      #flattened;
-      constructor(plaintext) {
-        this.#flattened = new FlattenedEncrypt(plaintext);
-      }
-      setContentEncryptionKey(cek) {
-        this.#flattened.setContentEncryptionKey(cek);
-        return this;
-      }
-      setInitializationVector(iv) {
-        this.#flattened.setInitializationVector(iv);
-        return this;
-      }
-      setProtectedHeader(protectedHeader) {
-        this.#flattened.setProtectedHeader(protectedHeader);
-        return this;
-      }
-      setKeyManagementParameters(parameters) {
-        this.#flattened.setKeyManagementParameters(parameters);
-        return this;
-      }
-      async encrypt(key, options) {
-        const jwe = await this.#flattened.encrypt(key, options);
-        return [jwe.protected, jwe.encrypted_key, jwe.iv, jwe.ciphertext, jwe.tag].join(".");
-      }
-    };
-  }
-});
-
-// node_modules/jose/dist/webapi/jws/flattened/sign.js
-var FlattenedSign;
-var init_sign = __esm({
-  "node_modules/jose/dist/webapi/jws/flattened/sign.js"() {
-    init_base64url();
-    init_signing();
-    init_type_checks();
-    init_errors();
-    init_buffer_utils();
-    init_check_key_type();
-    init_validate_crit();
-    init_normalize_key();
-    init_helpers();
-    FlattenedSign = class {
-      #payload;
-      #protectedHeader;
-      #unprotectedHeader;
-      constructor(payload) {
-        if (!(payload instanceof Uint8Array)) {
-          throw new TypeError("payload must be an instance of Uint8Array");
-        }
-        this.#payload = payload;
-      }
-      setProtectedHeader(protectedHeader) {
-        assertNotSet(this.#protectedHeader, "setProtectedHeader");
-        this.#protectedHeader = protectedHeader;
-        return this;
-      }
-      setUnprotectedHeader(unprotectedHeader) {
-        assertNotSet(this.#unprotectedHeader, "setUnprotectedHeader");
-        this.#unprotectedHeader = unprotectedHeader;
-        return this;
-      }
-      async sign(key, options) {
-        if (!this.#protectedHeader && !this.#unprotectedHeader) {
-          throw new JWSInvalid("either setProtectedHeader or setUnprotectedHeader must be called before #sign()");
-        }
-        if (!isDisjoint(this.#protectedHeader, this.#unprotectedHeader)) {
-          throw new JWSInvalid("JWS Protected and JWS Unprotected Header Parameter names must be disjoint");
-        }
-        const joseHeader = {
-          ...this.#protectedHeader,
-          ...this.#unprotectedHeader
-        };
-        const extensions = validateCrit(JWSInvalid, /* @__PURE__ */ new Map([["b64", true]]), options?.crit, this.#protectedHeader, joseHeader);
-        let b64 = true;
-        if (extensions.has("b64")) {
-          b64 = this.#protectedHeader.b64;
-          if (typeof b64 !== "boolean") {
-            throw new JWSInvalid('The "b64" (base64url-encode payload) Header Parameter must be a boolean');
-          }
-        }
-        const { alg } = joseHeader;
-        if (typeof alg !== "string" || !alg) {
-          throw new JWSInvalid('JWS "alg" (Algorithm) Header Parameter missing or invalid');
-        }
-        checkKeyType(alg, key, "sign");
-        let payloadS;
-        let payloadB;
-        if (b64) {
-          payloadS = encode2(this.#payload);
-          payloadB = encode(payloadS);
-        } else {
-          payloadB = this.#payload;
-          payloadS = "";
-        }
-        let protectedHeaderString;
-        let protectedHeaderBytes;
-        if (this.#protectedHeader) {
-          protectedHeaderString = encode2(JSON.stringify(this.#protectedHeader));
-          protectedHeaderBytes = encode(protectedHeaderString);
-        } else {
-          protectedHeaderString = "";
-          protectedHeaderBytes = new Uint8Array();
-        }
-        const data = concat(protectedHeaderBytes, encode("."), payloadB);
-        const k = await normalizeKey(key, alg);
-        const signature = await sign(alg, k, data);
-        const jws = {
-          signature: encode2(signature),
-          payload: payloadS
-        };
-        if (this.#unprotectedHeader) {
-          jws.header = this.#unprotectedHeader;
-        }
-        if (this.#protectedHeader) {
-          jws.protected = protectedHeaderString;
-        }
-        return jws;
-      }
-    };
-  }
-});
-
-// node_modules/jose/dist/webapi/jws/compact/sign.js
-var CompactSign;
-var init_sign2 = __esm({
-  "node_modules/jose/dist/webapi/jws/compact/sign.js"() {
-    init_sign();
-    CompactSign = class {
-      #flattened;
-      constructor(payload) {
-        this.#flattened = new FlattenedSign(payload);
-      }
-      setProtectedHeader(protectedHeader) {
-        this.#flattened.setProtectedHeader(protectedHeader);
-        return this;
-      }
-      async sign(key, options) {
-        const jws = await this.#flattened.sign(key, options);
-        if (jws.payload === void 0) {
-          throw new TypeError("use the flattened module for creating JWS with b64: false");
-        }
-        return `${jws.protected}.${jws.payload}.${jws.signature}`;
-      }
-    };
-  }
-});
-
-// node_modules/jose/dist/webapi/jws/general/sign.js
-var IndividualSignature, GeneralSign;
-var init_sign3 = __esm({
-  "node_modules/jose/dist/webapi/jws/general/sign.js"() {
-    init_sign();
-    init_errors();
-    init_helpers();
-    IndividualSignature = class {
-      #parent;
-      protectedHeader;
-      unprotectedHeader;
-      options;
-      key;
-      constructor(sig, key, options) {
-        this.#parent = sig;
-        this.key = key;
-        this.options = options;
-      }
-      setProtectedHeader(protectedHeader) {
-        assertNotSet(this.protectedHeader, "setProtectedHeader");
-        this.protectedHeader = protectedHeader;
-        return this;
-      }
-      setUnprotectedHeader(unprotectedHeader) {
-        assertNotSet(this.unprotectedHeader, "setUnprotectedHeader");
-        this.unprotectedHeader = unprotectedHeader;
-        return this;
-      }
-      addSignature(...args) {
-        return this.#parent.addSignature(...args);
-      }
-      sign(...args) {
-        return this.#parent.sign(...args);
-      }
-      done() {
-        return this.#parent;
-      }
-    };
-    GeneralSign = class {
-      #payload;
-      #signatures = [];
-      constructor(payload) {
-        this.#payload = payload;
-      }
-      addSignature(key, options) {
-        const signature = new IndividualSignature(this, key, options);
-        this.#signatures.push(signature);
-        return signature;
-      }
-      async sign() {
-        if (!this.#signatures.length) {
-          throw new JWSInvalid("at least one signature must be added");
-        }
-        const jws = {
-          signatures: [],
-          payload: ""
-        };
-        for (let i = 0; i < this.#signatures.length; i++) {
-          const signature = this.#signatures[i];
-          const flattened = new FlattenedSign(this.#payload);
-          flattened.setProtectedHeader(signature.protectedHeader);
-          flattened.setUnprotectedHeader(signature.unprotectedHeader);
-          const { payload, ...rest } = await flattened.sign(signature.key, signature.options);
-          if (i === 0) {
-            jws.payload = payload;
-          } else if (jws.payload !== payload) {
-            throw new JWSInvalid("inconsistent use of JWS Unencoded Payload (RFC7797)");
-          }
-          jws.signatures.push(rest);
-        }
-        return jws;
-      }
-    };
-  }
-});
-
-// node_modules/jose/dist/webapi/jwt/sign.js
-var SignJWT;
-var init_sign4 = __esm({
-  "node_modules/jose/dist/webapi/jwt/sign.js"() {
-    init_sign2();
-    init_errors();
-    init_jwt_claims_set();
-    SignJWT = class {
-      #protectedHeader;
-      #jwt;
-      constructor(payload = {}) {
-        this.#jwt = new JWTClaimsBuilder(payload);
-      }
-      setIssuer(issuer) {
-        this.#jwt.iss = issuer;
-        return this;
-      }
-      setSubject(subject) {
-        this.#jwt.sub = subject;
-        return this;
-      }
-      setAudience(audience) {
-        this.#jwt.aud = audience;
-        return this;
-      }
-      setJti(jwtId) {
-        this.#jwt.jti = jwtId;
-        return this;
-      }
-      setNotBefore(input) {
-        this.#jwt.nbf = input;
-        return this;
-      }
-      setExpirationTime(input) {
-        this.#jwt.exp = input;
-        return this;
-      }
-      setIssuedAt(input) {
-        this.#jwt.iat = input;
-        return this;
-      }
-      setProtectedHeader(protectedHeader) {
-        this.#protectedHeader = protectedHeader;
-        return this;
-      }
-      async sign(key, options) {
-        const sig = new CompactSign(this.#jwt.data());
-        sig.setProtectedHeader(this.#protectedHeader);
-        if (Array.isArray(this.#protectedHeader?.crit) && this.#protectedHeader.crit.includes("b64") && this.#protectedHeader.b64 === false) {
-          throw new JWTInvalid("JWTs MUST NOT use unencoded payload");
-        }
-        return sig.sign(key, options);
-      }
-    };
-  }
-});
-
-// node_modules/jose/dist/webapi/jwt/encrypt.js
-var EncryptJWT;
-var init_encrypt4 = __esm({
-  "node_modules/jose/dist/webapi/jwt/encrypt.js"() {
-    init_encrypt3();
-    init_jwt_claims_set();
-    init_helpers();
-    EncryptJWT = class {
-      #cek;
-      #iv;
-      #keyManagementParameters;
-      #protectedHeader;
-      #replicateIssuerAsHeader;
-      #replicateSubjectAsHeader;
-      #replicateAudienceAsHeader;
-      #jwt;
-      constructor(payload = {}) {
-        this.#jwt = new JWTClaimsBuilder(payload);
-      }
-      setIssuer(issuer) {
-        this.#jwt.iss = issuer;
-        return this;
-      }
-      setSubject(subject) {
-        this.#jwt.sub = subject;
-        return this;
-      }
-      setAudience(audience) {
-        this.#jwt.aud = audience;
-        return this;
-      }
-      setJti(jwtId) {
-        this.#jwt.jti = jwtId;
-        return this;
-      }
-      setNotBefore(input) {
-        this.#jwt.nbf = input;
-        return this;
-      }
-      setExpirationTime(input) {
-        this.#jwt.exp = input;
-        return this;
-      }
-      setIssuedAt(input) {
-        this.#jwt.iat = input;
-        return this;
-      }
-      setProtectedHeader(protectedHeader) {
-        assertNotSet(this.#protectedHeader, "setProtectedHeader");
-        this.#protectedHeader = protectedHeader;
-        return this;
-      }
-      setKeyManagementParameters(parameters) {
-        assertNotSet(this.#keyManagementParameters, "setKeyManagementParameters");
-        this.#keyManagementParameters = parameters;
-        return this;
-      }
-      setContentEncryptionKey(cek) {
-        assertNotSet(this.#cek, "setContentEncryptionKey");
-        this.#cek = cek;
-        return this;
-      }
-      setInitializationVector(iv) {
-        assertNotSet(this.#iv, "setInitializationVector");
-        this.#iv = iv;
-        return this;
-      }
-      replicateIssuerAsHeader() {
-        this.#replicateIssuerAsHeader = true;
-        return this;
-      }
-      replicateSubjectAsHeader() {
-        this.#replicateSubjectAsHeader = true;
-        return this;
-      }
-      replicateAudienceAsHeader() {
-        this.#replicateAudienceAsHeader = true;
-        return this;
-      }
-      async encrypt(key, options) {
-        const enc = new CompactEncrypt(this.#jwt.data());
-        if (this.#protectedHeader && (this.#replicateIssuerAsHeader || this.#replicateSubjectAsHeader || this.#replicateAudienceAsHeader)) {
-          this.#protectedHeader = {
-            ...this.#protectedHeader,
-            iss: this.#replicateIssuerAsHeader ? this.#jwt.iss : void 0,
-            sub: this.#replicateSubjectAsHeader ? this.#jwt.sub : void 0,
-            aud: this.#replicateAudienceAsHeader ? this.#jwt.aud : void 0
-          };
-        }
-        enc.setProtectedHeader(this.#protectedHeader);
-        if (this.#iv) {
-          enc.setInitializationVector(this.#iv);
-        }
-        if (this.#cek) {
-          enc.setContentEncryptionKey(this.#cek);
-        }
-        if (this.#keyManagementParameters) {
-          enc.setKeyManagementParameters(this.#keyManagementParameters);
-        }
-        return enc.encrypt(key, options);
-      }
-    };
-  }
-});
-
-// node_modules/jose/dist/webapi/jwk/thumbprint.js
-async function calculateJwkThumbprint(key, digestAlgorithm) {
-  let jwk;
-  if (isJWK(key)) {
-    jwk = key;
-  } else if (isKeyLike(key)) {
-    jwk = await exportJWK(key);
-  } else {
-    throw new TypeError(invalidKeyInput(key, "CryptoKey", "KeyObject", "JSON Web Key"));
-  }
-  digestAlgorithm ??= "sha256";
-  if (digestAlgorithm !== "sha256" && digestAlgorithm !== "sha384" && digestAlgorithm !== "sha512") {
-    throw new TypeError('digestAlgorithm must one of "sha256", "sha384", or "sha512"');
-  }
-  let components;
-  switch (jwk.kty) {
-    case "AKP":
-      check(jwk.alg, '"alg" (Algorithm) Parameter');
-      check(jwk.pub, '"pub" (Public key) Parameter');
-      components = { alg: jwk.alg, kty: jwk.kty, pub: jwk.pub };
-      break;
-    case "EC":
-      check(jwk.crv, '"crv" (Curve) Parameter');
-      check(jwk.x, '"x" (X Coordinate) Parameter');
-      check(jwk.y, '"y" (Y Coordinate) Parameter');
-      components = { crv: jwk.crv, kty: jwk.kty, x: jwk.x, y: jwk.y };
-      break;
-    case "OKP":
-      check(jwk.crv, '"crv" (Subtype of Key Pair) Parameter');
-      check(jwk.x, '"x" (Public Key) Parameter');
-      components = { crv: jwk.crv, kty: jwk.kty, x: jwk.x };
-      break;
-    case "RSA":
-      check(jwk.e, '"e" (Exponent) Parameter');
-      check(jwk.n, '"n" (Modulus) Parameter');
-      components = { e: jwk.e, kty: jwk.kty, n: jwk.n };
-      break;
-    case "oct":
-      check(jwk.k, '"k" (Key Value) Parameter');
-      components = { k: jwk.k, kty: jwk.kty };
-      break;
-    default:
-      throw new JOSENotSupported('"kty" (Key Type) Parameter missing or unsupported');
-  }
-  const data = encode(JSON.stringify(components));
-  return encode2(await digest(digestAlgorithm, data));
-}
-async function calculateJwkThumbprintUri(key, digestAlgorithm) {
-  digestAlgorithm ??= "sha256";
-  const thumbprint = await calculateJwkThumbprint(key, digestAlgorithm);
-  return `urn:ietf:params:oauth:jwk-thumbprint:sha-${digestAlgorithm.slice(-3)}:${thumbprint}`;
-}
-var check;
-var init_thumbprint = __esm({
-  "node_modules/jose/dist/webapi/jwk/thumbprint.js"() {
-    init_helpers();
-    init_base64url();
-    init_errors();
-    init_buffer_utils();
-    init_is_key_like();
-    init_type_checks();
-    init_export();
-    init_invalid_key_input();
-    check = (value, description) => {
-      if (typeof value !== "string" || !value) {
-        throw new JWKInvalid(`${description} missing or invalid`);
-      }
-    };
-  }
-});
-
-// node_modules/jose/dist/webapi/jwk/embedded.js
-async function EmbeddedJWK(protectedHeader, token) {
-  const joseHeader = {
-    ...protectedHeader,
-    ...token?.header
-  };
-  if (!isObject(joseHeader.jwk)) {
-    throw new JWSInvalid('"jwk" (JSON Web Key) Header Parameter must be a JSON object');
-  }
-  const key = await importJWK({ ...joseHeader.jwk, ext: true }, joseHeader.alg);
-  if (key instanceof Uint8Array || key.type !== "public") {
-    throw new JWSInvalid('"jwk" (JSON Web Key) Header Parameter must be a public key');
-  }
-  return key;
-}
-var init_embedded = __esm({
-  "node_modules/jose/dist/webapi/jwk/embedded.js"() {
-    init_import();
-    init_type_checks();
-    init_errors();
-  }
-});
-
-// node_modules/jose/dist/webapi/jwks/local.js
-function getKtyFromAlg(alg) {
-  switch (typeof alg === "string" && alg.slice(0, 2)) {
-    case "RS":
-    case "PS":
-      return "RSA";
-    case "ES":
-      return "EC";
-    case "Ed":
-      return "OKP";
-    case "ML":
-      return "AKP";
-    default:
-      throw new JOSENotSupported('Unsupported "alg" value for a JSON Web Key Set');
-  }
-}
-function isJWKSLike(jwks) {
-  return jwks && typeof jwks === "object" && Array.isArray(jwks.keys) && jwks.keys.every(isJWKLike);
-}
-function isJWKLike(key) {
-  return isObject(key);
-}
-async function importWithAlgCache(cache2, jwk, alg) {
-  const cached = cache2.get(jwk) || cache2.set(jwk, {}).get(jwk);
-  if (cached[alg] === void 0) {
-    const key = await importJWK({ ...jwk, ext: true }, alg);
-    if (key instanceof Uint8Array || key.type !== "public") {
-      throw new JWKSInvalid("JSON Web Key Set members must be public keys");
-    }
-    cached[alg] = key;
-  }
-  return cached[alg];
-}
-function createLocalJWKSet(jwks) {
-  const set = new LocalJWKSet(jwks);
-  const localJWKSet = async (protectedHeader, token) => set.getKey(protectedHeader, token);
-  Object.defineProperties(localJWKSet, {
-    jwks: {
-      value: () => structuredClone(set.jwks()),
-      enumerable: false,
-      configurable: false,
-      writable: false
-    }
-  });
-  return localJWKSet;
-}
-var LocalJWKSet;
-var init_local = __esm({
-  "node_modules/jose/dist/webapi/jwks/local.js"() {
-    init_import();
-    init_errors();
-    init_type_checks();
-    LocalJWKSet = class {
-      #jwks;
-      #cached = /* @__PURE__ */ new WeakMap();
-      constructor(jwks) {
-        if (!isJWKSLike(jwks)) {
-          throw new JWKSInvalid("JSON Web Key Set malformed");
-        }
-        this.#jwks = structuredClone(jwks);
-      }
-      jwks() {
-        return this.#jwks;
-      }
-      async getKey(protectedHeader, token) {
-        const { alg, kid } = { ...protectedHeader, ...token?.header };
-        const kty = getKtyFromAlg(alg);
-        const candidates = this.#jwks.keys.filter((jwk2) => {
-          let candidate = kty === jwk2.kty;
-          if (candidate && typeof kid === "string") {
-            candidate = kid === jwk2.kid;
-          }
-          if (candidate && (typeof jwk2.alg === "string" || kty === "AKP")) {
-            candidate = alg === jwk2.alg;
-          }
-          if (candidate && typeof jwk2.use === "string") {
-            candidate = jwk2.use === "sig";
-          }
-          if (candidate && Array.isArray(jwk2.key_ops)) {
-            candidate = jwk2.key_ops.includes("verify");
-          }
-          if (candidate) {
-            switch (alg) {
-              case "ES256":
-                candidate = jwk2.crv === "P-256";
-                break;
-              case "ES384":
-                candidate = jwk2.crv === "P-384";
-                break;
-              case "ES512":
-                candidate = jwk2.crv === "P-521";
-                break;
-              case "Ed25519":
-              case "EdDSA":
-                candidate = jwk2.crv === "Ed25519";
-                break;
-            }
-          }
-          return candidate;
-        });
-        const { 0: jwk, length } = candidates;
-        if (length === 0) {
-          throw new JWKSNoMatchingKey();
-        }
-        if (length !== 1) {
-          const error = new JWKSMultipleMatchingKeys();
-          const _cached = this.#cached;
-          error[Symbol.asyncIterator] = async function* () {
-            for (const jwk2 of candidates) {
-              try {
-                yield await importWithAlgCache(_cached, jwk2, alg);
-              } catch {
-              }
-            }
-          };
-          throw error;
-        }
-        return importWithAlgCache(this.#cached, jwk, alg);
-      }
-    };
-  }
-});
-
-// node_modules/jose/dist/webapi/jwks/remote.js
-function isCloudflareWorkers() {
-  return typeof WebSocketPair !== "undefined" || typeof navigator !== "undefined" && navigator.userAgent === "Cloudflare-Workers" || typeof EdgeRuntime !== "undefined" && EdgeRuntime === "vercel";
-}
-async function fetchJwks(url, headers, signal, fetchImpl = fetch) {
-  const response = await fetchImpl(url, {
-    method: "GET",
-    signal,
-    redirect: "manual",
-    headers
-  }).catch((err) => {
-    if (err.name === "TimeoutError") {
-      throw new JWKSTimeout();
-    }
-    throw err;
-  });
-  if (response.status !== 200) {
-    throw new JOSEError("Expected 200 OK from the JSON Web Key Set HTTP response");
-  }
-  try {
-    return await response.json();
-  } catch {
-    throw new JOSEError("Failed to parse the JSON Web Key Set HTTP response as JSON");
-  }
-}
-function isFreshJwksCache(input, cacheMaxAge) {
-  if (typeof input !== "object" || input === null) {
-    return false;
-  }
-  if (!("uat" in input) || typeof input.uat !== "number" || Date.now() - input.uat >= cacheMaxAge) {
-    return false;
-  }
-  if (!("jwks" in input) || !isObject(input.jwks) || !Array.isArray(input.jwks.keys) || !Array.prototype.every.call(input.jwks.keys, isObject)) {
-    return false;
-  }
-  return true;
-}
-function createRemoteJWKSet(url, options) {
-  const set = new RemoteJWKSet(url, options);
-  const remoteJWKSet = async (protectedHeader, token) => set.getKey(protectedHeader, token);
-  Object.defineProperties(remoteJWKSet, {
-    coolingDown: {
-      get: () => set.coolingDown(),
-      enumerable: true,
-      configurable: false
-    },
-    fresh: {
-      get: () => set.fresh(),
-      enumerable: true,
-      configurable: false
-    },
-    reload: {
-      value: () => set.reload(),
-      enumerable: true,
-      configurable: false,
-      writable: false
-    },
-    reloading: {
-      get: () => set.pendingFetch(),
-      enumerable: true,
-      configurable: false
-    },
-    jwks: {
-      value: () => set.jwks(),
-      enumerable: true,
-      configurable: false,
-      writable: false
-    }
-  });
-  return remoteJWKSet;
-}
-var USER_AGENT, customFetch, jwksCache, RemoteJWKSet;
-var init_remote = __esm({
-  "node_modules/jose/dist/webapi/jwks/remote.js"() {
-    init_errors();
-    init_local();
-    init_type_checks();
-    if (typeof navigator === "undefined" || !navigator.userAgent?.startsWith?.("Mozilla/5.0 ")) {
-      const NAME = "jose";
-      const VERSION = "v6.2.3";
-      USER_AGENT = `${NAME}/${VERSION}`;
-    }
-    customFetch = Symbol();
-    jwksCache = Symbol();
-    RemoteJWKSet = class {
-      #url;
-      #timeoutDuration;
-      #cooldownDuration;
-      #cacheMaxAge;
-      #jwksTimestamp;
-      #pendingFetch;
-      #headers;
-      #customFetch;
-      #local;
-      #cache;
-      constructor(url, options) {
-        if (!(url instanceof URL)) {
-          throw new TypeError("url must be an instance of URL");
-        }
-        this.#url = new URL(url.href);
-        this.#timeoutDuration = typeof options?.timeoutDuration === "number" ? options?.timeoutDuration : 5e3;
-        this.#cooldownDuration = typeof options?.cooldownDuration === "number" ? options?.cooldownDuration : 3e4;
-        this.#cacheMaxAge = typeof options?.cacheMaxAge === "number" ? options?.cacheMaxAge : 6e5;
-        this.#headers = new Headers(options?.headers);
-        if (USER_AGENT && !this.#headers.has("User-Agent")) {
-          this.#headers.set("User-Agent", USER_AGENT);
-        }
-        if (!this.#headers.has("accept")) {
-          this.#headers.set("accept", "application/json");
-          this.#headers.append("accept", "application/jwk-set+json");
-        }
-        this.#customFetch = options?.[customFetch];
-        if (options?.[jwksCache] !== void 0) {
-          this.#cache = options?.[jwksCache];
-          if (isFreshJwksCache(options?.[jwksCache], this.#cacheMaxAge)) {
-            this.#jwksTimestamp = this.#cache.uat;
-            this.#local = createLocalJWKSet(this.#cache.jwks);
-          }
-        }
-      }
-      pendingFetch() {
-        return !!this.#pendingFetch;
-      }
-      coolingDown() {
-        return typeof this.#jwksTimestamp === "number" ? Date.now() < this.#jwksTimestamp + this.#cooldownDuration : false;
-      }
-      fresh() {
-        return typeof this.#jwksTimestamp === "number" ? Date.now() < this.#jwksTimestamp + this.#cacheMaxAge : false;
-      }
-      jwks() {
-        return this.#local?.jwks();
-      }
-      async getKey(protectedHeader, token) {
-        if (!this.#local || !this.fresh()) {
-          await this.reload();
-        }
-        try {
-          return await this.#local(protectedHeader, token);
-        } catch (err) {
-          if (err instanceof JWKSNoMatchingKey) {
-            if (this.coolingDown() === false) {
-              await this.reload();
-              return this.#local(protectedHeader, token);
-            }
-          }
-          throw err;
-        }
-      }
-      async reload() {
-        if (this.#pendingFetch && isCloudflareWorkers()) {
-          this.#pendingFetch = void 0;
-        }
-        this.#pendingFetch ||= fetchJwks(this.#url.href, this.#headers, AbortSignal.timeout(this.#timeoutDuration), this.#customFetch).then((json) => {
-          this.#local = createLocalJWKSet(json);
-          if (this.#cache) {
-            this.#cache.uat = Date.now();
-            this.#cache.jwks = json;
-          }
-          this.#jwksTimestamp = Date.now();
-          this.#pendingFetch = void 0;
-        }).catch((err) => {
-          this.#pendingFetch = void 0;
-          throw err;
-        });
-        await this.#pendingFetch;
-      }
-    };
-  }
-});
-
-// node_modules/jose/dist/webapi/jwt/unsecured.js
-var UnsecuredJWT;
-var init_unsecured = __esm({
-  "node_modules/jose/dist/webapi/jwt/unsecured.js"() {
-    init_base64url();
-    init_buffer_utils();
-    init_errors();
-    init_jwt_claims_set();
-    UnsecuredJWT = class {
-      #jwt;
-      constructor(payload = {}) {
-        this.#jwt = new JWTClaimsBuilder(payload);
-      }
-      encode() {
-        const header = encode2(JSON.stringify({ alg: "none" }));
-        const payload = encode2(this.#jwt.data());
-        return `${header}.${payload}.`;
-      }
-      setIssuer(issuer) {
-        this.#jwt.iss = issuer;
-        return this;
-      }
-      setSubject(subject) {
-        this.#jwt.sub = subject;
-        return this;
-      }
-      setAudience(audience) {
-        this.#jwt.aud = audience;
-        return this;
-      }
-      setJti(jwtId) {
-        this.#jwt.jti = jwtId;
-        return this;
-      }
-      setNotBefore(input) {
-        this.#jwt.nbf = input;
-        return this;
-      }
-      setExpirationTime(input) {
-        this.#jwt.exp = input;
-        return this;
-      }
-      setIssuedAt(input) {
-        this.#jwt.iat = input;
-        return this;
-      }
-      static decode(jwt2, options) {
-        if (typeof jwt2 !== "string") {
-          throw new JWTInvalid("Unsecured JWT must be a string");
-        }
-        const { 0: encodedHeader, 1: encodedPayload, 2: signature, length } = jwt2.split(".");
-        if (length !== 3 || signature !== "") {
-          throw new JWTInvalid("Invalid Unsecured JWT");
-        }
-        let header;
-        try {
-          header = JSON.parse(decoder.decode(decode(encodedHeader)));
-          if (header.alg !== "none")
-            throw new Error();
-        } catch {
-          throw new JWTInvalid("Invalid Unsecured JWT");
-        }
-        const payload = validateClaimsSet(header, decode(encodedPayload), options);
-        return { payload, header };
-      }
-    };
-  }
-});
-
-// node_modules/jose/dist/webapi/util/decode_protected_header.js
-function decodeProtectedHeader(token) {
-  let protectedB64u;
-  if (typeof token === "string") {
-    const parts = token.split(".");
-    if (parts.length === 3 || parts.length === 5) {
-      ;
-      [protectedB64u] = parts;
-    }
-  } else if (typeof token === "object" && token) {
-    if ("protected" in token) {
-      protectedB64u = token.protected;
-    } else {
-      throw new TypeError("Token does not contain a Protected Header");
-    }
-  }
-  try {
-    if (typeof protectedB64u !== "string" || !protectedB64u) {
-      throw new Error();
-    }
-    const result = JSON.parse(decoder.decode(decode(protectedB64u)));
-    if (!isObject(result)) {
-      throw new Error();
-    }
-    return result;
-  } catch {
-    throw new TypeError("Invalid Token or Protected Header formatting");
-  }
-}
-var init_decode_protected_header = __esm({
-  "node_modules/jose/dist/webapi/util/decode_protected_header.js"() {
-    init_base64url();
-    init_buffer_utils();
-    init_type_checks();
-  }
-});
-
-// node_modules/jose/dist/webapi/util/decode_jwt.js
-function decodeJwt(jwt2) {
-  if (typeof jwt2 !== "string")
-    throw new JWTInvalid("JWTs must use Compact JWS serialization, JWT must be a string");
-  const { 1: payload, length } = jwt2.split(".");
-  if (length === 5)
-    throw new JWTInvalid("Only JWTs using Compact JWS serialization can be decoded");
-  if (length !== 3)
-    throw new JWTInvalid("Invalid JWT");
-  if (!payload)
-    throw new JWTInvalid("JWTs must contain a payload");
-  let decoded;
-  try {
-    decoded = decode(payload);
-  } catch {
-    throw new JWTInvalid("Failed to base64url decode the payload");
-  }
-  let result;
-  try {
-    result = JSON.parse(decoder.decode(decoded));
-  } catch {
-    throw new JWTInvalid("Failed to parse the decoded payload as JSON");
-  }
-  if (!isObject(result))
-    throw new JWTInvalid("Invalid JWT Claims Set");
-  return result;
-}
-var init_decode_jwt = __esm({
-  "node_modules/jose/dist/webapi/util/decode_jwt.js"() {
-    init_base64url();
-    init_buffer_utils();
-    init_type_checks();
-    init_errors();
-  }
-});
-
-// node_modules/jose/dist/webapi/key/generate_key_pair.js
-function getModulusLengthOption(options) {
-  const modulusLength = options?.modulusLength ?? 2048;
-  if (typeof modulusLength !== "number" || modulusLength < 2048) {
-    throw new JOSENotSupported("Invalid or unsupported modulusLength option provided, 2048 bits or larger keys must be used");
-  }
-  return modulusLength;
-}
-async function generateKeyPair(alg, options) {
-  let algorithm;
-  let keyUsages;
-  switch (alg) {
-    case "PS256":
-    case "PS384":
-    case "PS512":
-      algorithm = {
-        name: "RSA-PSS",
-        hash: `SHA-${alg.slice(-3)}`,
-        publicExponent: Uint8Array.of(1, 0, 1),
-        modulusLength: getModulusLengthOption(options)
-      };
-      keyUsages = ["sign", "verify"];
-      break;
-    case "RS256":
-    case "RS384":
-    case "RS512":
-      algorithm = {
-        name: "RSASSA-PKCS1-v1_5",
-        hash: `SHA-${alg.slice(-3)}`,
-        publicExponent: Uint8Array.of(1, 0, 1),
-        modulusLength: getModulusLengthOption(options)
-      };
-      keyUsages = ["sign", "verify"];
-      break;
-    case "RSA-OAEP":
-    case "RSA-OAEP-256":
-    case "RSA-OAEP-384":
-    case "RSA-OAEP-512":
-      algorithm = {
-        name: "RSA-OAEP",
-        hash: `SHA-${parseInt(alg.slice(-3), 10) || 1}`,
-        publicExponent: Uint8Array.of(1, 0, 1),
-        modulusLength: getModulusLengthOption(options)
-      };
-      keyUsages = ["decrypt", "unwrapKey", "encrypt", "wrapKey"];
-      break;
-    case "ES256":
-      algorithm = { name: "ECDSA", namedCurve: "P-256" };
-      keyUsages = ["sign", "verify"];
-      break;
-    case "ES384":
-      algorithm = { name: "ECDSA", namedCurve: "P-384" };
-      keyUsages = ["sign", "verify"];
-      break;
-    case "ES512":
-      algorithm = { name: "ECDSA", namedCurve: "P-521" };
-      keyUsages = ["sign", "verify"];
-      break;
-    case "Ed25519":
-    case "EdDSA": {
-      keyUsages = ["sign", "verify"];
-      algorithm = { name: "Ed25519" };
-      break;
-    }
-    case "ML-DSA-44":
-    case "ML-DSA-65":
-    case "ML-DSA-87": {
-      keyUsages = ["sign", "verify"];
-      algorithm = { name: alg };
-      break;
-    }
-    case "ECDH-ES":
-    case "ECDH-ES+A128KW":
-    case "ECDH-ES+A192KW":
-    case "ECDH-ES+A256KW": {
-      keyUsages = ["deriveBits"];
-      const crv = options?.crv ?? "P-256";
-      switch (crv) {
-        case "P-256":
-        case "P-384":
-        case "P-521": {
-          algorithm = { name: "ECDH", namedCurve: crv };
-          break;
-        }
-        case "X25519":
-          algorithm = { name: "X25519" };
-          break;
-        default:
-          throw new JOSENotSupported("Invalid or unsupported crv option provided, supported values are P-256, P-384, P-521, and X25519");
-      }
-      break;
-    }
-    default:
-      throw new JOSENotSupported('Invalid or unsupported JWK "alg" (Algorithm) Parameter value');
-  }
-  return crypto.subtle.generateKey(algorithm, options?.extractable ?? false, keyUsages);
-}
-var init_generate_key_pair = __esm({
-  "node_modules/jose/dist/webapi/key/generate_key_pair.js"() {
-    init_errors();
-  }
-});
-
-// node_modules/jose/dist/webapi/key/generate_secret.js
-async function generateSecret(alg, options) {
-  let length;
-  let algorithm;
-  let keyUsages;
-  switch (alg) {
-    case "HS256":
-    case "HS384":
-    case "HS512":
-      length = parseInt(alg.slice(-3), 10);
-      algorithm = { name: "HMAC", hash: `SHA-${length}`, length };
-      keyUsages = ["sign", "verify"];
-      break;
-    case "A128CBC-HS256":
-    case "A192CBC-HS384":
-    case "A256CBC-HS512":
-      length = parseInt(alg.slice(-3), 10);
-      return crypto.getRandomValues(new Uint8Array(length >> 3));
-    case "A128KW":
-    case "A192KW":
-    case "A256KW":
-      length = parseInt(alg.slice(1, 4), 10);
-      algorithm = { name: "AES-KW", length };
-      keyUsages = ["wrapKey", "unwrapKey"];
-      break;
-    case "A128GCMKW":
-    case "A192GCMKW":
-    case "A256GCMKW":
-    case "A128GCM":
-    case "A192GCM":
-    case "A256GCM":
-      length = parseInt(alg.slice(1, 4), 10);
-      algorithm = { name: "AES-GCM", length };
-      keyUsages = ["encrypt", "decrypt"];
-      break;
-    default:
-      throw new JOSENotSupported('Invalid or unsupported JWK "alg" (Algorithm) Parameter value');
-  }
-  return crypto.subtle.generateKey(algorithm, options?.extractable ?? false, keyUsages);
-}
-var init_generate_secret = __esm({
-  "node_modules/jose/dist/webapi/key/generate_secret.js"() {
-    init_errors();
-  }
-});
-
-// node_modules/jose/dist/webapi/index.js
-var webapi_exports = {};
-__export(webapi_exports, {
-  CompactEncrypt: () => CompactEncrypt,
-  CompactSign: () => CompactSign,
-  EmbeddedJWK: () => EmbeddedJWK,
-  EncryptJWT: () => EncryptJWT,
-  FlattenedEncrypt: () => FlattenedEncrypt,
-  FlattenedSign: () => FlattenedSign,
-  GeneralEncrypt: () => GeneralEncrypt,
-  GeneralSign: () => GeneralSign,
-  SignJWT: () => SignJWT,
-  UnsecuredJWT: () => UnsecuredJWT,
-  base64url: () => base64url_exports,
-  calculateJwkThumbprint: () => calculateJwkThumbprint,
-  calculateJwkThumbprintUri: () => calculateJwkThumbprintUri,
-  compactDecrypt: () => compactDecrypt,
-  compactVerify: () => compactVerify,
-  createLocalJWKSet: () => createLocalJWKSet,
-  createRemoteJWKSet: () => createRemoteJWKSet,
-  cryptoRuntime: () => cryptoRuntime,
-  customFetch: () => customFetch,
-  decodeJwt: () => decodeJwt,
-  decodeProtectedHeader: () => decodeProtectedHeader,
-  errors: () => errors_exports,
-  exportJWK: () => exportJWK,
-  exportPKCS8: () => exportPKCS8,
-  exportSPKI: () => exportSPKI,
-  flattenedDecrypt: () => flattenedDecrypt,
-  flattenedVerify: () => flattenedVerify,
-  generalDecrypt: () => generalDecrypt,
-  generalVerify: () => generalVerify,
-  generateKeyPair: () => generateKeyPair,
-  generateSecret: () => generateSecret,
-  importJWK: () => importJWK,
-  importPKCS8: () => importPKCS8,
-  importSPKI: () => importSPKI,
-  importX509: () => importX509,
-  jwksCache: () => jwksCache,
-  jwtDecrypt: () => jwtDecrypt,
-  jwtVerify: () => jwtVerify
-});
-var cryptoRuntime;
-var init_webapi = __esm({
-  "node_modules/jose/dist/webapi/index.js"() {
-    init_decrypt2();
-    init_decrypt();
-    init_decrypt3();
-    init_encrypt2();
-    init_verify2();
-    init_verify();
-    init_verify3();
-    init_verify4();
-    init_decrypt4();
-    init_encrypt3();
-    init_encrypt();
-    init_sign2();
-    init_sign();
-    init_sign3();
-    init_sign4();
-    init_encrypt4();
-    init_thumbprint();
-    init_embedded();
-    init_local();
-    init_remote();
-    init_unsecured();
-    init_export();
-    init_import();
-    init_decode_protected_header();
-    init_decode_jwt();
-    init_errors();
-    init_generate_key_pair();
-    init_generate_secret();
-    init_base64url();
-    cryptoRuntime = "WebCryptoAPI";
-  }
-});
-
-// node_modules/jwks-rsa/src/errors/JwksError.js
-var require_JwksError = __commonJS({
-  "node_modules/jwks-rsa/src/errors/JwksError.js"(exports, module) {
-    function JwksError(message2) {
-      Error.call(this, message2);
-      Error.captureStackTrace(this, this.constructor);
-      this.name = "JwksError";
-      this.message = message2;
-    }
-    JwksError.prototype = Object.create(Error.prototype);
-    JwksError.prototype.constructor = JwksError;
-    module.exports = JwksError;
-  }
-});
-
-// node_modules/jwks-rsa/src/utils.js
-var require_utils3 = __commonJS({
-  "node_modules/jwks-rsa/src/utils.js"(exports, module) {
-    var jose = (init_webapi(), __toCommonJS(webapi_exports));
-    var JwksError = require_JwksError();
-    function resolveAlg(jwk) {
-      if (jwk.alg) {
-        return jwk.alg;
-      }
-      if (jwk.kty === "RSA") {
-        return "RS256";
-      }
-      if (jwk.kty === "EC") {
-        switch (jwk.crv) {
-          case "P-256":
-            return "ES256";
-          case "P-384":
-            return "ES384";
-          case "P-521":
-            return "ES512";
-        }
-      }
-      if (jwk.kty === "OKP") {
-        switch (jwk.crv) {
-          case "Ed25519":
-          case "Ed448":
-            return "EdDSA";
-        }
-      }
-      throw new JwksError("Unsupported JWK");
-    }
-    async function retrieveSigningKeys(jwks) {
-      const results = [];
-      jwks = jwks.filter(({ use }) => use === "sig" || use === void 0).filter(({ kty }) => kty === "RSA" || kty === "EC" || kty === "OKP");
-      for (const jwk of jwks) {
-        try {
-          const key = await jose.importJWK({ ...jwk, ext: true }, resolveAlg(jwk));
-          if (key.type !== "public") {
-            continue;
-          }
-          let getSpki;
-          switch (key[Symbol.toStringTag]) {
-            case "CryptoKey": {
-              const spki = await jose.exportSPKI(key);
-              getSpki = () => spki;
-              break;
-            }
-            case "KeyObject":
-            // Assume legacy Node.js version without the Symbol.toStringTag backported
-            // Fall through
-            default:
-              getSpki = () => key.export({ format: "pem", type: "spki" });
-          }
-          results.push({
-            get publicKey() {
-              return getSpki();
-            },
-            get rsaPublicKey() {
-              return getSpki();
-            },
-            getPublicKey() {
-              return getSpki();
-            },
-            ...typeof jwk.kid === "string" && jwk.kid ? { kid: jwk.kid } : void 0,
-            ...typeof jwk.alg === "string" && jwk.alg ? { alg: jwk.alg } : void 0
-          });
-        } catch (err) {
-          continue;
-        }
-      }
-      return results;
-    }
-    module.exports = {
-      retrieveSigningKeys
-    };
-  }
-});
-
-// node_modules/jwks-rsa/src/errors/ArgumentError.js
-var require_ArgumentError = __commonJS({
-  "node_modules/jwks-rsa/src/errors/ArgumentError.js"(exports, module) {
-    function ArgumentError(message2) {
-      Error.call(this, message2);
-      Error.captureStackTrace(this, this.constructor);
-      this.name = "ArgumentError";
-      this.message = message2;
-    }
-    ArgumentError.prototype = Object.create(Error.prototype);
-    ArgumentError.prototype.constructor = ArgumentError;
-    module.exports = ArgumentError;
-  }
-});
-
-// node_modules/jwks-rsa/src/wrappers/request.js
-var require_request2 = __commonJS({
-  "node_modules/jwks-rsa/src/wrappers/request.js"(exports, module) {
-    var http = __require("http");
-    var https = __require("https");
-    var ArgumentError = require_ArgumentError();
-    module.exports.default = (options) => {
-      if (options.fetcher) {
-        return options.fetcher(options.uri);
-      }
-      return new Promise((resolve, reject) => {
-        let url;
-        try {
-          url = new URL(options.uri);
-        } catch (err) {
-          throw new ArgumentError("Invalid JWKS URI: The provided URI is not a valid URL.");
-        }
-        const { hostname, port: port2, protocol, pathname, search } = url;
-        const path2 = pathname + search;
-        const requestOptions = {
-          hostname,
-          path: path2,
-          port: port2,
-          method: "GET",
-          ...options.headers && { headers: { ...options.headers } },
-          ...options.timeout && { timeout: options.timeout },
-          ...options.agent && { agent: options.agent }
-        };
-        const httpRequestLib = protocol === "https:" ? https : http;
-        const httpRequest = httpRequestLib.request(requestOptions, (res) => {
-          let rawData = "";
-          res.setEncoding("utf8");
-          res.on("data", (chunk) => {
-            rawData += chunk;
-          });
-          res.on("end", () => {
-            if (res.statusCode < 200 || res.statusCode >= 300) {
-              const errorMsg = res.body && (res.body.message || res.body) || res.statusMessage || `Http Error ${res.statusCode}`;
-              reject({ errorMsg });
-            } else {
-              try {
-                resolve(rawData && JSON.parse(rawData));
-              } catch (error) {
-                reject(error);
-              }
-            }
-          });
-        });
-        httpRequest.on("timeout", () => httpRequest.destroy()).on("error", (e) => reject(e)).end();
-      });
-    };
-  }
-});
-
-// node_modules/lru-memoizer/node_modules/lru-cache/dist/commonjs/node/index.min.js
-var require_index_min = __commonJS({
-  "node_modules/lru-memoizer/node_modules/lru-cache/dist/commonjs/node/index.min.js"(exports) {
-    "use strict";
-    var j = (c, t) => () => (t || c((t = { exports: {} }).exports, t), t.exports);
-    var I = j((O2) => {
-      "use strict";
-      Object.defineProperty(O2, "__esModule", { value: true });
-      O2.tracing = O2.metrics = void 0;
-      var U2 = __require("node:diagnostics_channel");
-      O2.metrics = (0, U2.channel)("lru-cache:metrics");
-      O2.tracing = (0, U2.tracingChannel)("lru-cache");
-    });
-    var P = j((D) => {
-      "use strict";
-      Object.defineProperty(D, "__esModule", { value: true });
-      D.defaultPerf = void 0;
-      D.defaultPerf = typeof performance == "object" && performance && typeof performance.now == "function" ? performance : Date;
-    });
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.LRUCache = void 0;
-    var g = I();
-    var N = P();
-    var C = () => g.metrics.hasSubscribers || g.tracing.hasSubscribers;
-    var k = /* @__PURE__ */ new Set();
-    var G2 = typeof process == "object" && process ? process : {};
-    var V = (c, t, e, i) => {
-      typeof G2.emitWarning == "function" ? G2.emitWarning(c, t, e, i) : console.error(`[${e}] ${t}: ${c}`);
-    };
-    var q = (c) => !k.has(c);
-    var T2 = (c) => !!c && c === Math.floor(c) && c > 0 && isFinite(c);
-    var H = (c) => T2(c) ? c <= Math.pow(2, 8) ? Uint8Array : c <= Math.pow(2, 16) ? Uint16Array : c <= Math.pow(2, 32) ? Uint32Array : c <= Number.MAX_SAFE_INTEGER ? W : null : null;
-    var W = class extends Array {
-      constructor(t) {
-        super(t), this.fill(0);
-      }
-    };
-    var x2 = class c {
-      heap;
-      length;
-      static #o = false;
-      static create(t) {
-        let e = H(t);
-        if (!e) return [];
-        c.#o = true;
-        let i = new c(t, e);
-        return c.#o = false, i;
-      }
-      constructor(t, e) {
-        if (!c.#o) throw new TypeError("instantiate Stack using Stack.create(n)");
-        this.heap = new e(t), this.length = 0;
-      }
-      push(t) {
-        this.heap[this.length++] = t;
-      }
-      pop() {
-        return this.heap[--this.length];
-      }
-    };
-    var L = class c {
-      #o;
-      #c;
-      #m;
-      #W;
-      #S;
-      #M;
-      #j;
-      #w;
-      get perf() {
-        return this.#w;
-      }
-      ttl;
-      ttlResolution;
-      ttlAutopurge;
-      updateAgeOnGet;
-      updateAgeOnHas;
-      allowStale;
-      noDisposeOnSet;
-      noUpdateTTL;
-      maxEntrySize;
-      sizeCalculation;
-      noDeleteOnFetchRejection;
-      noDeleteOnStaleGet;
-      allowStaleOnFetchAbort;
-      allowStaleOnFetchRejection;
-      ignoreFetchAbort;
-      backgroundFetchSize;
-      #n;
-      #b;
-      #s;
-      #i;
-      #t;
-      #l;
-      #u;
-      #a;
-      #h;
-      #_;
-      #r;
-      #y;
-      #F;
-      #d;
-      #g;
-      #T;
-      #U;
-      #f;
-      #D;
-      static unsafeExposeInternals(t) {
-        return { starts: t.#F, ttls: t.#d, autopurgeTimers: t.#g, sizes: t.#y, keyMap: t.#s, keyList: t.#i, valList: t.#t, next: t.#l, prev: t.#u, get head() {
-          return t.#a;
-        }, get tail() {
-          return t.#h;
-        }, free: t.#_, isBackgroundFetch: (e) => t.#e(e), backgroundFetch: (e, i, s, n) => t.#G(e, i, s, n), moveToTail: (e) => t.#L(e), indexes: (e) => t.#A(e), rindexes: (e) => t.#z(e), isStale: (e) => t.#p(e) };
-      }
-      get max() {
-        return this.#o;
-      }
-      get maxSize() {
-        return this.#c;
-      }
-      get calculatedSize() {
-        return this.#b;
-      }
-      get size() {
-        return this.#n;
-      }
-      get fetchMethod() {
-        return this.#M;
-      }
-      get memoMethod() {
-        return this.#j;
-      }
-      get dispose() {
-        return this.#m;
-      }
-      get onInsert() {
-        return this.#W;
-      }
-      get disposeAfter() {
-        return this.#S;
-      }
-      constructor(t) {
-        let { max: e = 0, ttl: i, ttlResolution: s = 1, ttlAutopurge: n, updateAgeOnGet: r, updateAgeOnHas: h, allowStale: a2, dispose: o, onInsert: d2, disposeAfter: _, noDisposeOnSet: y, noUpdateTTL: u, maxSize: p2 = 0, maxEntrySize: f = 0, sizeCalculation: b2, fetchMethod: l, memoMethod: S2, noDeleteOnFetchRejection: F, noDeleteOnStaleGet: w, allowStaleOnFetchRejection: m2, allowStaleOnFetchAbort: A, ignoreFetchAbort: z, backgroundFetchSize: M = 1, perf: v2 } = t;
-        if (this.backgroundFetchSize = M, v2 !== void 0 && typeof v2?.now != "function") throw new TypeError("perf option must have a now() method if specified");
-        if (this.#w = v2 ?? N.defaultPerf, e !== 0 && !T2(e)) throw new TypeError("max option must be a nonnegative integer");
-        let E2 = e ? H(e) : Array;
-        if (!E2) throw new Error("invalid max value: " + e);
-        if (this.#o = e, this.#c = p2, this.maxEntrySize = f || this.#c, this.sizeCalculation = b2, this.sizeCalculation) {
-          if (!this.#c && !this.maxEntrySize) throw new TypeError("cannot set sizeCalculation without setting maxSize or maxEntrySize");
-          if (typeof this.sizeCalculation != "function") throw new TypeError("sizeCalculation set to non-function");
-        }
-        if (S2 !== void 0 && typeof S2 != "function") throw new TypeError("memoMethod must be a function if defined");
-        if (this.#j = S2, l !== void 0 && typeof l != "function") throw new TypeError("fetchMethod must be a function if specified");
-        if (this.#M = l, this.#U = !!l, this.#s = /* @__PURE__ */ new Map(), this.#i = Array.from({ length: e }).fill(void 0), this.#t = Array.from({ length: e }).fill(void 0), this.#l = new E2(e), this.#u = new E2(e), this.#a = 0, this.#h = 0, this.#_ = x2.create(e), this.#n = 0, this.#b = 0, typeof o == "function" && (this.#m = o), typeof d2 == "function" && (this.#W = d2), typeof _ == "function" ? (this.#S = _, this.#r = []) : (this.#S = void 0, this.#r = void 0), this.#T = !!this.#m, this.#D = !!this.#W, this.#f = !!this.#S, this.noDisposeOnSet = !!y, this.noUpdateTTL = !!u, this.noDeleteOnFetchRejection = !!F, this.allowStaleOnFetchRejection = !!m2, this.allowStaleOnFetchAbort = !!A, this.ignoreFetchAbort = !!z, this.maxEntrySize !== 0) {
-          if (this.#c !== 0 && !T2(this.#c)) throw new TypeError("maxSize must be a positive integer if specified");
-          if (!T2(this.maxEntrySize)) throw new TypeError("maxEntrySize must be a positive integer if specified");
-          this.#X();
-        }
-        if (this.allowStale = !!a2, this.noDeleteOnStaleGet = !!w, this.updateAgeOnGet = !!r, this.updateAgeOnHas = !!h, this.ttlResolution = T2(s) || s === 0 ? s : 1, this.ttlAutopurge = !!n, this.ttl = i || 0, this.ttl) {
-          if (!T2(this.ttl)) throw new TypeError("ttl must be a positive integer if specified");
-          this.#k();
-        }
-        if (this.#o === 0 && this.ttl === 0 && this.#c === 0) throw new TypeError("At least one of max, maxSize, or ttl is required");
-        if (!this.ttlAutopurge && !this.#o && !this.#c) {
-          let R = "LRU_CACHE_UNBOUNDED";
-          q(R) && (k.add(R), V("TTL caching without ttlAutopurge, max, or maxSize can result in unbounded memory consumption.", "UnboundedCacheWarning", R, c));
-        }
-      }
-      getRemainingTTL(t) {
-        return this.#s.has(t) ? 1 / 0 : 0;
-      }
-      #k() {
-        let t = new W(this.#o), e = new W(this.#o);
-        this.#d = t, this.#F = e;
-        let i = this.ttlAutopurge ? Array.from({ length: this.#o }) : void 0;
-        this.#g = i, this.#H = (h, a2, o = this.#w.now()) => {
-          e[h] = a2 !== 0 ? o : 0, t[h] = a2, s(h, a2);
-        }, this.#R = (h) => {
-          e[h] = t[h] !== 0 ? this.#w.now() : 0, s(h, t[h]);
-        };
-        let s = this.ttlAutopurge ? (h, a2) => {
-          if (i?.[h] && (clearTimeout(i[h]), i[h] = void 0), a2 && a2 !== 0 && i) {
-            let o = setTimeout(() => {
-              this.#p(h) && this.#v(this.#i[h], "expire");
-            }, a2 + 1);
-            o.unref && o.unref(), i[h] = o;
-          }
-        } : () => {
-        };
-        this.#E = (h, a2) => {
-          if (t[a2]) {
-            let o = t[a2], d2 = e[a2];
-            if (!o || !d2) return;
-            h.ttl = o, h.start = d2, h.now = n || r();
-            let _ = h.now - d2;
-            h.remainingTTL = o - _;
-          }
-        };
-        let n = 0, r = () => {
-          let h = this.#w.now();
-          if (this.ttlResolution > 0) {
-            n = h;
-            let a2 = setTimeout(() => n = 0, this.ttlResolution);
-            a2.unref && a2.unref();
-          }
-          return h;
-        };
-        this.getRemainingTTL = (h) => {
-          let a2 = this.#s.get(h);
-          if (a2 === void 0) return 0;
-          let o = t[a2], d2 = e[a2];
-          if (!o || !d2) return 1 / 0;
-          let _ = (n || r()) - d2;
-          return o - _;
-        }, this.#p = (h) => {
-          let a2 = e[h], o = t[h];
-          return !!o && !!a2 && (n || r()) - a2 > o;
-        };
-      }
-      #R = () => {
-      };
-      #E = () => {
-      };
-      #H = () => {
-      };
-      #p = () => false;
-      #X() {
-        let t = new W(this.#o);
-        this.#b = 0, this.#y = t, this.#C = (e) => {
-          this.#b -= t[e], t[e] = 0;
-        }, this.#N = (e, i, s, n) => {
-          if (!T2(s)) {
-            if (this.#e(i)) return this.backgroundFetchSize;
-            if (n) {
-              if (typeof n != "function") throw new TypeError("sizeCalculation must be a function");
-              if (s = n(i, e), !T2(s)) throw new TypeError("sizeCalculation return invalid (expect positive integer)");
-            } else throw new TypeError("invalid size value (must be positive integer). When maxSize or maxEntrySize is used, sizeCalculation or size must be set.");
-          }
-          return s;
-        }, this.#I = (e, i, s) => {
-          if (t[e] = i, this.#c) {
-            let n = this.#c - t[e];
-            for (; this.#b > n; ) this.#P(true);
-          }
-          this.#b += t[e], s && (s.entrySize = i, s.totalCalculatedSize = this.#b);
-        };
-      }
-      #C = (t) => {
-      };
-      #I = (t, e, i) => {
-      };
-      #N = (t, e, i, s) => {
-        if (i || s) throw new TypeError("cannot set size without setting maxSize or maxEntrySize on cache");
-        return 0;
-      };
-      *#A({ allowStale: t = this.allowStale } = {}) {
-        if (this.#n) for (let e = this.#h; this.#V(e) && ((t || !this.#p(e)) && (yield e), e !== this.#a); ) e = this.#u[e];
-      }
-      *#z({ allowStale: t = this.allowStale } = {}) {
-        if (this.#n) for (let e = this.#a; this.#V(e) && ((t || !this.#p(e)) && (yield e), e !== this.#h); ) e = this.#l[e];
-      }
-      #V(t) {
-        return t !== void 0 && this.#s.get(this.#i[t]) === t;
-      }
-      *entries() {
-        for (let t of this.#A()) this.#t[t] !== void 0 && this.#i[t] !== void 0 && !this.#e(this.#t[t]) && (yield [this.#i[t], this.#t[t]]);
-      }
-      *rentries() {
-        for (let t of this.#z()) this.#t[t] !== void 0 && this.#i[t] !== void 0 && !this.#e(this.#t[t]) && (yield [this.#i[t], this.#t[t]]);
-      }
-      *keys() {
-        for (let t of this.#A()) {
-          let e = this.#i[t];
-          e !== void 0 && !this.#e(this.#t[t]) && (yield e);
-        }
-      }
-      *rkeys() {
-        for (let t of this.#z()) {
-          let e = this.#i[t];
-          e !== void 0 && !this.#e(this.#t[t]) && (yield e);
-        }
-      }
-      *values() {
-        for (let t of this.#A()) this.#t[t] !== void 0 && !this.#e(this.#t[t]) && (yield this.#t[t]);
-      }
-      *rvalues() {
-        for (let t of this.#z()) this.#t[t] !== void 0 && !this.#e(this.#t[t]) && (yield this.#t[t]);
-      }
-      [Symbol.iterator]() {
-        return this.entries();
-      }
-      [Symbol.toStringTag] = "LRUCache";
-      find(t, e = {}) {
-        for (let i of this.#A()) {
-          let s = this.#t[i], n = this.#e(s) ? s.__staleWhileFetching : s;
-          if (n !== void 0 && t(n, this.#i[i], this)) return this.#x(this.#i[i], e);
-        }
-      }
-      forEach(t, e = this) {
-        for (let i of this.#A()) {
-          let s = this.#t[i], n = this.#e(s) ? s.__staleWhileFetching : s;
-          n !== void 0 && t.call(e, n, this.#i[i], this);
-        }
-      }
-      rforEach(t, e = this) {
-        for (let i of this.#z()) {
-          let s = this.#t[i], n = this.#e(s) ? s.__staleWhileFetching : s;
-          n !== void 0 && t.call(e, n, this.#i[i], this);
-        }
-      }
-      purgeStale() {
-        let t = false;
-        for (let e of this.#z({ allowStale: true })) this.#p(e) && (this.#v(this.#i[e], "expire"), t = true);
-        return t;
-      }
-      info(t) {
-        let e = this.#s.get(t);
-        if (e === void 0) return;
-        let i = this.#t[e], s = this.#e(i) ? i.__staleWhileFetching : i;
-        if (s === void 0) return;
-        let n = { value: s };
-        if (this.#d && this.#F) {
-          let r = this.#d[e], h = this.#F[e];
-          if (r && h) {
-            let a2 = r - (this.#w.now() - h);
-            n.ttl = a2, n.start = Date.now();
-          }
-        }
-        return this.#y && (n.size = this.#y[e]), n;
-      }
-      dump() {
-        let t = [];
-        for (let e of this.#A({ allowStale: true })) {
-          let i = this.#i[e], s = this.#t[e], n = this.#e(s) ? s.__staleWhileFetching : s;
-          if (n === void 0 || i === void 0) continue;
-          let r = { value: n };
-          if (this.#d && this.#F) {
-            r.ttl = this.#d[e];
-            let h = this.#w.now() - this.#F[e];
-            r.start = Math.floor(Date.now() - h);
-          }
-          this.#y && (r.size = this.#y[e]), t.unshift([i, r]);
-        }
-        return t;
-      }
-      load(t) {
-        this.clear();
-        for (let [e, i] of t) {
-          if (i.start) {
-            let s = Date.now() - i.start;
-            i.start = this.#w.now() - s;
-          }
-          this.#O(e, i.value, i);
-        }
-      }
-      set(t, e, i = {}) {
-        let { status: s = g.metrics.hasSubscribers ? {} : void 0 } = i;
-        i.status = s, s && (s.op = "set", s.key = t, e !== void 0 && (s.value = e), s.cache = this);
-        let n = this.#O(t, e, i);
-        return s && g.metrics.hasSubscribers && g.metrics.publish(s), n;
-      }
-      #O(t, e, i, s) {
-        let { ttl: n = this.ttl, start: r, noDisposeOnSet: h = this.noDisposeOnSet, sizeCalculation: a2 = this.sizeCalculation, status: o } = i, d2 = this.#e(e);
-        if (e === void 0) return o && (o.set = "deleted"), this.delete(t), this;
-        let { noUpdateTTL: _ = this.noUpdateTTL } = i;
-        o && !d2 && (o.value = e);
-        let y = this.#N(t, e, i.size || 0, a2, o);
-        if (this.maxEntrySize && y > this.maxEntrySize) return this.#v(t, "set"), o && (o.set = "miss", o.maxEntrySizeExceeded = true), this;
-        let u = this.#n === 0 ? void 0 : this.#s.get(t);
-        if (u === void 0) u = this.#n === 0 ? this.#h : this.#_.length !== 0 ? this.#_.pop() : this.#n === this.#o ? this.#P(false) : this.#n, this.#i[u] = t, this.#t[u] = e, this.#s.set(t, u), this.#l[this.#h] = u, this.#u[u] = this.#h, this.#h = u, this.#n++, this.#I(u, y, o), o && (o.set = "add"), _ = false, this.#D && !d2 && this.#W?.(e, t, "add");
-        else {
-          this.#L(u);
-          let p2 = this.#t[u];
-          if (e !== p2) {
-            if (!h) if (this.#e(p2)) {
-              p2 !== s && p2.__abortController.abort(new Error("replaced"));
-              let { __staleWhileFetching: f } = p2;
-              f !== void 0 && f !== e && (this.#T && this.#m?.(f, t, "set"), this.#f && this.#r?.push([f, t, "set"]));
-            } else this.#T && this.#m?.(p2, t, "set"), this.#f && this.#r?.push([p2, t, "set"]);
-            if (this.#C(u), this.#I(u, y, o), this.#t[u] = e, !d2) {
-              let f = p2 && this.#e(p2) ? p2.__staleWhileFetching : p2, b2 = f === void 0 ? "add" : e !== f ? "replace" : "update";
-              o && (o.set = b2, f !== void 0 && (o.oldValue = f)), this.#D && this.onInsert?.(e, t, b2);
-            }
-          } else d2 || (o && (o.set = "update"), this.#D && this.onInsert?.(e, t, "update"));
-        }
-        if (n !== 0 && !this.#d && this.#k(), this.#d && (_ || this.#H(u, n, r), o && this.#E(o, u)), !h && this.#f && this.#r) {
-          let p2 = this.#r, f;
-          for (; f = p2?.shift(); ) this.#S?.(...f);
-        }
-        return this;
-      }
-      pop() {
-        try {
-          for (; this.#n; ) {
-            let t = this.#t[this.#a];
-            if (this.#P(true), this.#e(t)) {
-              if (t.__staleWhileFetching) return t.__staleWhileFetching;
-            } else if (t !== void 0) return t;
-          }
-        } finally {
-          if (this.#f && this.#r) {
-            let t = this.#r, e;
-            for (; e = t?.shift(); ) this.#S?.(...e);
-          }
-        }
-      }
-      #P(t) {
-        let e = this.#a, i = this.#i[e], s = this.#t[e], n = this.#e(s);
-        n && s.__abortController.abort(new Error("evicted"));
-        let r = n ? s.__staleWhileFetching : s;
-        return (this.#T || this.#f) && r !== void 0 && (this.#T && this.#m?.(r, i, "evict"), this.#f && this.#r?.push([r, i, "evict"])), this.#C(e), this.#g?.[e] && (clearTimeout(this.#g[e]), this.#g[e] = void 0), t && (this.#i[e] = void 0, this.#t[e] = void 0, this.#_.push(e)), this.#n === 1 ? (this.#a = this.#h = 0, this.#_.length = 0) : this.#a = this.#l[e], this.#s.delete(i), this.#n--, e;
-      }
-      has(t, e = {}) {
-        let { status: i = g.metrics.hasSubscribers ? {} : void 0 } = e;
-        e.status = i, i && (i.op = "has", i.key = t, i.cache = this);
-        let s = this.#Y(t, e);
-        return g.metrics.hasSubscribers && g.metrics.publish(i), s;
-      }
-      #Y(t, e = {}) {
-        let { updateAgeOnHas: i = this.updateAgeOnHas, status: s } = e, n = this.#s.get(t);
-        if (n !== void 0) {
-          let r = this.#t[n];
-          if (this.#e(r) && r.__staleWhileFetching === void 0) return false;
-          if (this.#p(n)) s && (s.has = "stale", this.#E(s, n));
-          else return i && this.#R(n), s && (s.has = "hit", this.#E(s, n)), true;
-        } else s && (s.has = "miss");
-        return false;
-      }
-      peek(t, e = {}) {
-        let { status: i = C() ? {} : void 0 } = e;
-        i && (i.op = "peek", i.key = t, i.cache = this), e.status = i;
-        let s = this.#J(t, e);
-        return g.metrics.hasSubscribers && g.metrics.publish(i), s;
-      }
-      #J(t, e) {
-        let { status: i, allowStale: s = this.allowStale } = e, n = this.#s.get(t);
-        if (n === void 0 || !s && this.#p(n)) {
-          i && (i.peek = n === void 0 ? "miss" : "stale");
-          return;
-        }
-        let r = this.#t[n], h = this.#e(r) ? r.__staleWhileFetching : r;
-        return i && (h !== void 0 ? (i.peek = "hit", i.value = h) : i.peek = "miss"), h;
-      }
-      #G(t, e, i, s) {
-        let n = e === void 0 ? void 0 : this.#t[e];
-        if (this.#e(n)) return n;
-        let r = new AbortController(), { signal: h } = i;
-        h?.addEventListener("abort", () => r.abort(h.reason), { signal: r.signal });
-        let a2 = { signal: r.signal, options: i, context: s }, o = (f, b2 = false) => {
-          let { aborted: l } = r.signal, S2 = i.ignoreFetchAbort && f !== void 0, F = i.ignoreFetchAbort || !!(i.allowStaleOnFetchAbort && f !== void 0);
-          if (i.status && (l && !b2 ? (i.status.fetchAborted = true, i.status.fetchError = r.signal.reason, S2 && (i.status.fetchAbortIgnored = true)) : i.status.fetchResolved = true), l && !S2 && !b2) return _(r.signal.reason, F);
-          let w = u, m2 = this.#t[e];
-          return (m2 === u || m2 === void 0 && S2 && b2) && (f === void 0 ? w.__staleWhileFetching !== void 0 ? this.#t[e] = w.__staleWhileFetching : this.#v(t, "fetch") : (i.status && (i.status.fetchUpdated = true), this.#O(t, f, a2.options, w))), f;
-        }, d2 = (f) => (i.status && (i.status.fetchRejected = true, i.status.fetchError = f), _(f, false)), _ = (f, b2) => {
-          let { aborted: l } = r.signal, S2 = l && i.allowStaleOnFetchAbort, F = S2 || i.allowStaleOnFetchRejection, w = F || i.noDeleteOnFetchRejection, m2 = u;
-          if (this.#t[e] === u && (!w || !b2 && m2.__staleWhileFetching === void 0 ? this.#v(t, "fetch") : S2 || (this.#t[e] = m2.__staleWhileFetching)), F) return i.status && m2.__staleWhileFetching !== void 0 && (i.status.returnedStale = true), m2.__staleWhileFetching;
-          if (m2.__returned === m2) throw f;
-        }, y = (f, b2) => {
-          let l = this.#M?.(t, n, a2);
-          r.signal.addEventListener("abort", () => {
-            (!i.ignoreFetchAbort || i.allowStaleOnFetchAbort) && (f(void 0), i.allowStaleOnFetchAbort && (f = (S2) => o(S2, true)));
-          }), l && l instanceof Promise ? l.then((S2) => f(S2 === void 0 ? void 0 : S2), b2) : l !== void 0 && f(l);
-        };
-        i.status && (i.status.fetchDispatched = true);
-        let u = new Promise(y).then(o, d2), p2 = Object.assign(u, { __abortController: r, __staleWhileFetching: n, __returned: void 0 });
-        return e === void 0 ? (this.#O(t, p2, { ...a2.options, status: void 0 }), e = this.#s.get(t)) : this.#t[e] = p2, p2;
-      }
-      #e(t) {
-        if (!this.#U) return false;
-        let e = t;
-        return !!e && e instanceof Promise && e.hasOwnProperty("__staleWhileFetching") && e.__abortController instanceof AbortController;
-      }
-      fetch(t, e = {}) {
-        let i = g.tracing.hasSubscribers, { status: s = C() ? {} : void 0 } = e;
-        e.status = s, s && e.context && (s.context = e.context);
-        let n = this.#q(t, e);
-        return s && i && (s.trace = true, g.tracing.tracePromise(() => n, s).catch(() => {
-        })), n;
-      }
-      async #q(t, e = {}) {
-        let { allowStale: i = this.allowStale, updateAgeOnGet: s = this.updateAgeOnGet, noDeleteOnStaleGet: n = this.noDeleteOnStaleGet, ttl: r = this.ttl, noDisposeOnSet: h = this.noDisposeOnSet, size: a2 = 0, sizeCalculation: o = this.sizeCalculation, noUpdateTTL: d2 = this.noUpdateTTL, noDeleteOnFetchRejection: _ = this.noDeleteOnFetchRejection, allowStaleOnFetchRejection: y = this.allowStaleOnFetchRejection, ignoreFetchAbort: u = this.ignoreFetchAbort, allowStaleOnFetchAbort: p2 = this.allowStaleOnFetchAbort, context: f, forceRefresh: b2 = false, status: l, signal: S2 } = e;
-        if (l && (l.op = "fetch", l.key = t, b2 && (l.forceRefresh = true), l.cache = this), !this.#U) return l && (l.fetch = "get"), this.#x(t, { allowStale: i, updateAgeOnGet: s, noDeleteOnStaleGet: n, status: l });
-        let F = { allowStale: i, updateAgeOnGet: s, noDeleteOnStaleGet: n, ttl: r, noDisposeOnSet: h, size: a2, sizeCalculation: o, noUpdateTTL: d2, noDeleteOnFetchRejection: _, allowStaleOnFetchRejection: y, allowStaleOnFetchAbort: p2, ignoreFetchAbort: u, status: l, signal: S2 }, w = this.#s.get(t);
-        if (w === void 0) {
-          l && (l.fetch = "miss");
-          let m2 = this.#G(t, w, F, f);
-          return m2.__returned = m2;
-        } else {
-          let m2 = this.#t[w];
-          if (this.#e(m2)) {
-            let E2 = i && m2.__staleWhileFetching !== void 0;
-            return l && (l.fetch = "inflight", E2 && (l.returnedStale = true)), E2 ? m2.__staleWhileFetching : m2.__returned = m2;
-          }
-          let A = this.#p(w);
-          if (!b2 && !A) return l && (l.fetch = "hit"), this.#L(w), s && this.#R(w), l && this.#E(l, w), m2;
-          let z = this.#G(t, w, F, f), v2 = z.__staleWhileFetching !== void 0 && i;
-          return l && (l.fetch = A ? "stale" : "refresh", v2 && A && (l.returnedStale = true)), v2 ? z.__staleWhileFetching : z.__returned = z;
-        }
-      }
-      forceFetch(t, e = {}) {
-        let i = g.tracing.hasSubscribers, { status: s = C() ? {} : void 0 } = e;
-        e.status = s, s && e.context && (s.context = e.context);
-        let n = this.#K(t, e);
-        return s && i && (s.trace = true, g.tracing.tracePromise(() => n, s).catch(() => {
-        })), n;
-      }
-      async #K(t, e = {}) {
-        let i = await this.#q(t, e);
-        if (i === void 0) throw new Error("fetch() returned undefined");
-        return i;
-      }
-      memo(t, e = {}) {
-        let { status: i = g.metrics.hasSubscribers ? {} : void 0 } = e;
-        e.status = i, i && (i.op = "memo", i.key = t, e.context && (i.context = e.context), i.cache = this);
-        let s = this.#Q(t, e);
-        return i && (i.value = s), g.metrics.hasSubscribers && g.metrics.publish(i), s;
-      }
-      #Q(t, e = {}) {
-        let i = this.#j;
-        if (!i) throw new Error("no memoMethod provided to constructor");
-        let { context: s, status: n, forceRefresh: r, ...h } = e;
-        n && r && (n.forceRefresh = true);
-        let a2 = this.#x(t, h), o = r || a2 === void 0;
-        if (n && (n.memo = o ? "miss" : "hit", o || (n.value = a2)), !o) return a2;
-        let d2 = i(t, a2, { options: h, context: s });
-        return n && (n.value = d2), this.#O(t, d2, h), d2;
-      }
-      get(t, e = {}) {
-        let { status: i = g.metrics.hasSubscribers ? {} : void 0 } = e;
-        e.status = i, i && (i.op = "get", i.key = t, i.cache = this);
-        let s = this.#x(t, e);
-        return i && (s !== void 0 && (i.value = s), g.metrics.hasSubscribers && g.metrics.publish(i)), s;
-      }
-      #x(t, e = {}) {
-        let { allowStale: i = this.allowStale, updateAgeOnGet: s = this.updateAgeOnGet, noDeleteOnStaleGet: n = this.noDeleteOnStaleGet, status: r } = e, h = this.#s.get(t);
-        if (h === void 0) {
-          r && (r.get = "miss");
-          return;
-        }
-        let a2 = this.#t[h], o = this.#e(a2);
-        return r && this.#E(r, h), this.#p(h) ? o ? (r && (r.get = "stale-fetching"), i && a2.__staleWhileFetching !== void 0 ? (r && (r.returnedStale = true), a2.__staleWhileFetching) : void 0) : (n || this.#v(t, "expire"), r && (r.get = "stale"), i ? (r && (r.returnedStale = true), a2) : void 0) : (r && (r.get = o ? "fetching" : "hit"), this.#L(h), s && this.#R(h), o ? a2.__staleWhileFetching : a2);
-      }
-      #B(t, e) {
-        this.#u[e] = t, this.#l[t] = e;
-      }
-      #L(t) {
-        t !== this.#h && (t === this.#a ? this.#a = this.#l[t] : this.#B(this.#u[t], this.#l[t]), this.#B(this.#h, t), this.#h = t);
-      }
-      delete(t) {
-        return this.#v(t, "delete");
-      }
-      #v(t, e) {
-        g.metrics.hasSubscribers && g.metrics.publish({ op: "delete", delete: e, key: t, cache: this });
-        let i = false;
-        if (this.#n !== 0) {
-          let s = this.#s.get(t);
-          if (s !== void 0) if (this.#g?.[s] && (clearTimeout(this.#g?.[s]), this.#g[s] = void 0), i = true, this.#n === 1) this.#$(e);
-          else {
-            this.#C(s);
-            let n = this.#t[s];
-            if (this.#e(n) ? n.__abortController.abort(new Error("deleted")) : (this.#T || this.#f) && (this.#T && this.#m?.(n, t, e), this.#f && this.#r?.push([n, t, e])), this.#s.delete(t), this.#i[s] = void 0, this.#t[s] = void 0, s === this.#h) this.#h = this.#u[s];
-            else if (s === this.#a) this.#a = this.#l[s];
-            else {
-              let r = this.#u[s];
-              this.#l[r] = this.#l[s];
-              let h = this.#l[s];
-              this.#u[h] = this.#u[s];
-            }
-            this.#n--, this.#_.push(s);
-          }
-        }
-        if (this.#f && this.#r?.length) {
-          let s = this.#r, n;
-          for (; n = s?.shift(); ) this.#S?.(...n);
-        }
-        return i;
-      }
-      clear() {
-        return this.#$("delete");
-      }
-      #$(t) {
-        for (let e of this.#z({ allowStale: true })) {
-          let i = this.#t[e];
-          if (this.#e(i)) i.__abortController.abort(new Error("deleted"));
-          else {
-            let s = this.#i[e];
-            this.#T && this.#m?.(i, s, t), this.#f && this.#r?.push([i, s, t]);
-          }
-        }
-        if (this.#s.clear(), this.#t.fill(void 0), this.#i.fill(void 0), this.#d && this.#F) {
-          this.#d.fill(0), this.#F.fill(0);
-          for (let e of this.#g ?? []) e !== void 0 && clearTimeout(e);
-          this.#g?.fill(void 0);
-        }
-        if (this.#y && this.#y.fill(0), this.#a = 0, this.#h = 0, this.#_.length = 0, this.#b = 0, this.#n = 0, this.#f && this.#r) {
-          let e = this.#r, i;
-          for (; i = e?.shift(); ) this.#S?.(...i);
-        }
-      }
-    };
-    exports.LRUCache = L;
-  }
-});
-
-// node_modules/lodash.clonedeep/index.js
-var require_lodash8 = __commonJS({
-  "node_modules/lodash.clonedeep/index.js"(exports, module) {
-    var LARGE_ARRAY_SIZE = 200;
-    var HASH_UNDEFINED = "__lodash_hash_undefined__";
-    var MAX_SAFE_INTEGER = 9007199254740991;
-    var argsTag = "[object Arguments]";
-    var arrayTag = "[object Array]";
-    var boolTag = "[object Boolean]";
-    var dateTag = "[object Date]";
-    var errorTag = "[object Error]";
-    var funcTag = "[object Function]";
-    var genTag = "[object GeneratorFunction]";
-    var mapTag = "[object Map]";
-    var numberTag = "[object Number]";
-    var objectTag = "[object Object]";
-    var promiseTag = "[object Promise]";
-    var regexpTag = "[object RegExp]";
-    var setTag = "[object Set]";
-    var stringTag = "[object String]";
-    var symbolTag = "[object Symbol]";
-    var weakMapTag = "[object WeakMap]";
-    var arrayBufferTag = "[object ArrayBuffer]";
-    var dataViewTag = "[object DataView]";
-    var float32Tag = "[object Float32Array]";
-    var float64Tag = "[object Float64Array]";
-    var int8Tag = "[object Int8Array]";
-    var int16Tag = "[object Int16Array]";
-    var int32Tag = "[object Int32Array]";
-    var uint8Tag = "[object Uint8Array]";
-    var uint8ClampedTag = "[object Uint8ClampedArray]";
-    var uint16Tag = "[object Uint16Array]";
-    var uint32Tag = "[object Uint32Array]";
-    var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
-    var reFlags = /\w*$/;
-    var reIsHostCtor = /^\[object .+?Constructor\]$/;
-    var reIsUint = /^(?:0|[1-9]\d*)$/;
-    var cloneableTags = {};
-    cloneableTags[argsTag] = cloneableTags[arrayTag] = cloneableTags[arrayBufferTag] = cloneableTags[dataViewTag] = cloneableTags[boolTag] = cloneableTags[dateTag] = cloneableTags[float32Tag] = cloneableTags[float64Tag] = cloneableTags[int8Tag] = cloneableTags[int16Tag] = cloneableTags[int32Tag] = cloneableTags[mapTag] = cloneableTags[numberTag] = cloneableTags[objectTag] = cloneableTags[regexpTag] = cloneableTags[setTag] = cloneableTags[stringTag] = cloneableTags[symbolTag] = cloneableTags[uint8Tag] = cloneableTags[uint8ClampedTag] = cloneableTags[uint16Tag] = cloneableTags[uint32Tag] = true;
-    cloneableTags[errorTag] = cloneableTags[funcTag] = cloneableTags[weakMapTag] = false;
-    var freeGlobal = typeof global == "object" && global && global.Object === Object && global;
-    var freeSelf = typeof self == "object" && self && self.Object === Object && self;
-    var root = freeGlobal || freeSelf || Function("return this")();
-    var freeExports = typeof exports == "object" && exports && !exports.nodeType && exports;
-    var freeModule = freeExports && typeof module == "object" && module && !module.nodeType && module;
-    var moduleExports = freeModule && freeModule.exports === freeExports;
-    function addMapEntry(map, pair) {
-      map.set(pair[0], pair[1]);
-      return map;
-    }
-    function addSetEntry(set, value) {
-      set.add(value);
-      return set;
-    }
-    function arrayEach(array, iteratee) {
-      var index = -1, length = array ? array.length : 0;
-      while (++index < length) {
-        if (iteratee(array[index], index, array) === false) {
-          break;
-        }
-      }
-      return array;
-    }
-    function arrayPush(array, values) {
-      var index = -1, length = values.length, offset = array.length;
-      while (++index < length) {
-        array[offset + index] = values[index];
-      }
-      return array;
-    }
-    function arrayReduce(array, iteratee, accumulator, initAccum) {
-      var index = -1, length = array ? array.length : 0;
-      if (initAccum && length) {
-        accumulator = array[++index];
-      }
-      while (++index < length) {
-        accumulator = iteratee(accumulator, array[index], index, array);
-      }
-      return accumulator;
-    }
-    function baseTimes(n, iteratee) {
-      var index = -1, result = Array(n);
-      while (++index < n) {
-        result[index] = iteratee(index);
-      }
-      return result;
-    }
-    function getValue(object, key) {
-      return object == null ? void 0 : object[key];
-    }
-    function isHostObject(value) {
-      var result = false;
-      if (value != null && typeof value.toString != "function") {
-        try {
-          result = !!(value + "");
-        } catch (e) {
-        }
-      }
-      return result;
-    }
-    function mapToArray(map) {
-      var index = -1, result = Array(map.size);
-      map.forEach(function(value, key) {
-        result[++index] = [key, value];
-      });
-      return result;
-    }
-    function overArg(func, transform) {
-      return function(arg) {
-        return func(transform(arg));
-      };
-    }
-    function setToArray(set) {
-      var index = -1, result = Array(set.size);
-      set.forEach(function(value) {
-        result[++index] = value;
-      });
-      return result;
-    }
-    var arrayProto = Array.prototype;
-    var funcProto = Function.prototype;
-    var objectProto = Object.prototype;
-    var coreJsData = root["__core-js_shared__"];
-    var maskSrcKey = (function() {
-      var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || "");
-      return uid ? "Symbol(src)_1." + uid : "";
-    })();
-    var funcToString = funcProto.toString;
-    var hasOwnProperty = objectProto.hasOwnProperty;
-    var objectToString = objectProto.toString;
-    var reIsNative = RegExp(
-      "^" + funcToString.call(hasOwnProperty).replace(reRegExpChar, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$"
-    );
-    var Buffer2 = moduleExports ? root.Buffer : void 0;
-    var Symbol2 = root.Symbol;
-    var Uint8Array2 = root.Uint8Array;
-    var getPrototype = overArg(Object.getPrototypeOf, Object);
-    var objectCreate = Object.create;
-    var propertyIsEnumerable = objectProto.propertyIsEnumerable;
-    var splice = arrayProto.splice;
-    var nativeGetSymbols = Object.getOwnPropertySymbols;
-    var nativeIsBuffer = Buffer2 ? Buffer2.isBuffer : void 0;
-    var nativeKeys = overArg(Object.keys, Object);
-    var DataView2 = getNative(root, "DataView");
-    var Map2 = getNative(root, "Map");
-    var Promise2 = getNative(root, "Promise");
-    var Set2 = getNative(root, "Set");
-    var WeakMap2 = getNative(root, "WeakMap");
-    var nativeCreate = getNative(Object, "create");
-    var dataViewCtorString = toSource(DataView2);
-    var mapCtorString = toSource(Map2);
-    var promiseCtorString = toSource(Promise2);
-    var setCtorString = toSource(Set2);
-    var weakMapCtorString = toSource(WeakMap2);
-    var symbolProto = Symbol2 ? Symbol2.prototype : void 0;
-    var symbolValueOf = symbolProto ? symbolProto.valueOf : void 0;
-    function Hash(entries) {
-      var index = -1, length = entries ? entries.length : 0;
-      this.clear();
-      while (++index < length) {
-        var entry = entries[index];
-        this.set(entry[0], entry[1]);
-      }
-    }
-    function hashClear() {
-      this.__data__ = nativeCreate ? nativeCreate(null) : {};
-    }
-    function hashDelete(key) {
-      return this.has(key) && delete this.__data__[key];
-    }
-    function hashGet(key) {
-      var data = this.__data__;
-      if (nativeCreate) {
-        var result = data[key];
-        return result === HASH_UNDEFINED ? void 0 : result;
-      }
-      return hasOwnProperty.call(data, key) ? data[key] : void 0;
-    }
-    function hashHas(key) {
-      var data = this.__data__;
-      return nativeCreate ? data[key] !== void 0 : hasOwnProperty.call(data, key);
-    }
-    function hashSet(key, value) {
-      var data = this.__data__;
-      data[key] = nativeCreate && value === void 0 ? HASH_UNDEFINED : value;
-      return this;
-    }
-    Hash.prototype.clear = hashClear;
-    Hash.prototype["delete"] = hashDelete;
-    Hash.prototype.get = hashGet;
-    Hash.prototype.has = hashHas;
-    Hash.prototype.set = hashSet;
-    function ListCache(entries) {
-      var index = -1, length = entries ? entries.length : 0;
-      this.clear();
-      while (++index < length) {
-        var entry = entries[index];
-        this.set(entry[0], entry[1]);
-      }
-    }
-    function listCacheClear() {
-      this.__data__ = [];
-    }
-    function listCacheDelete(key) {
-      var data = this.__data__, index = assocIndexOf(data, key);
-      if (index < 0) {
-        return false;
-      }
-      var lastIndex = data.length - 1;
-      if (index == lastIndex) {
-        data.pop();
-      } else {
-        splice.call(data, index, 1);
-      }
-      return true;
-    }
-    function listCacheGet(key) {
-      var data = this.__data__, index = assocIndexOf(data, key);
-      return index < 0 ? void 0 : data[index][1];
-    }
-    function listCacheHas(key) {
-      return assocIndexOf(this.__data__, key) > -1;
-    }
-    function listCacheSet(key, value) {
-      var data = this.__data__, index = assocIndexOf(data, key);
-      if (index < 0) {
-        data.push([key, value]);
-      } else {
-        data[index][1] = value;
-      }
-      return this;
-    }
-    ListCache.prototype.clear = listCacheClear;
-    ListCache.prototype["delete"] = listCacheDelete;
-    ListCache.prototype.get = listCacheGet;
-    ListCache.prototype.has = listCacheHas;
-    ListCache.prototype.set = listCacheSet;
-    function MapCache(entries) {
-      var index = -1, length = entries ? entries.length : 0;
-      this.clear();
-      while (++index < length) {
-        var entry = entries[index];
-        this.set(entry[0], entry[1]);
-      }
-    }
-    function mapCacheClear() {
-      this.__data__ = {
-        "hash": new Hash(),
-        "map": new (Map2 || ListCache)(),
-        "string": new Hash()
-      };
-    }
-    function mapCacheDelete(key) {
-      return getMapData(this, key)["delete"](key);
-    }
-    function mapCacheGet(key) {
-      return getMapData(this, key).get(key);
-    }
-    function mapCacheHas(key) {
-      return getMapData(this, key).has(key);
-    }
-    function mapCacheSet(key, value) {
-      getMapData(this, key).set(key, value);
-      return this;
-    }
-    MapCache.prototype.clear = mapCacheClear;
-    MapCache.prototype["delete"] = mapCacheDelete;
-    MapCache.prototype.get = mapCacheGet;
-    MapCache.prototype.has = mapCacheHas;
-    MapCache.prototype.set = mapCacheSet;
-    function Stack(entries) {
-      this.__data__ = new ListCache(entries);
-    }
-    function stackClear() {
-      this.__data__ = new ListCache();
-    }
-    function stackDelete(key) {
-      return this.__data__["delete"](key);
-    }
-    function stackGet(key) {
-      return this.__data__.get(key);
-    }
-    function stackHas(key) {
-      return this.__data__.has(key);
-    }
-    function stackSet(key, value) {
-      var cache2 = this.__data__;
-      if (cache2 instanceof ListCache) {
-        var pairs = cache2.__data__;
-        if (!Map2 || pairs.length < LARGE_ARRAY_SIZE - 1) {
-          pairs.push([key, value]);
-          return this;
-        }
-        cache2 = this.__data__ = new MapCache(pairs);
-      }
-      cache2.set(key, value);
-      return this;
-    }
-    Stack.prototype.clear = stackClear;
-    Stack.prototype["delete"] = stackDelete;
-    Stack.prototype.get = stackGet;
-    Stack.prototype.has = stackHas;
-    Stack.prototype.set = stackSet;
-    function arrayLikeKeys(value, inherited) {
-      var result = isArray(value) || isArguments(value) ? baseTimes(value.length, String) : [];
-      var length = result.length, skipIndexes = !!length;
-      for (var key in value) {
-        if ((inherited || hasOwnProperty.call(value, key)) && !(skipIndexes && (key == "length" || isIndex(key, length)))) {
-          result.push(key);
-        }
-      }
-      return result;
-    }
-    function assignValue(object, key, value) {
-      var objValue = object[key];
-      if (!(hasOwnProperty.call(object, key) && eq(objValue, value)) || value === void 0 && !(key in object)) {
-        object[key] = value;
-      }
-    }
-    function assocIndexOf(array, key) {
-      var length = array.length;
-      while (length--) {
-        if (eq(array[length][0], key)) {
-          return length;
-        }
-      }
-      return -1;
-    }
-    function baseAssign(object, source) {
-      return object && copyObject(source, keys(source), object);
-    }
-    function baseClone(value, isDeep, isFull, customizer, key, object, stack) {
-      var result;
-      if (customizer) {
-        result = object ? customizer(value, key, object, stack) : customizer(value);
-      }
-      if (result !== void 0) {
-        return result;
-      }
-      if (!isObject2(value)) {
-        return value;
-      }
-      var isArr = isArray(value);
-      if (isArr) {
-        result = initCloneArray(value);
-        if (!isDeep) {
-          return copyArray(value, result);
-        }
-      } else {
-        var tag2 = getTag(value), isFunc = tag2 == funcTag || tag2 == genTag;
-        if (isBuffer(value)) {
-          return cloneBuffer(value, isDeep);
-        }
-        if (tag2 == objectTag || tag2 == argsTag || isFunc && !object) {
-          if (isHostObject(value)) {
-            return object ? value : {};
-          }
-          result = initCloneObject(isFunc ? {} : value);
-          if (!isDeep) {
-            return copySymbols(value, baseAssign(result, value));
-          }
-        } else {
-          if (!cloneableTags[tag2]) {
-            return object ? value : {};
-          }
-          result = initCloneByTag(value, tag2, baseClone, isDeep);
-        }
-      }
-      stack || (stack = new Stack());
-      var stacked = stack.get(value);
-      if (stacked) {
-        return stacked;
-      }
-      stack.set(value, result);
-      if (!isArr) {
-        var props = isFull ? getAllKeys(value) : keys(value);
-      }
-      arrayEach(props || value, function(subValue, key2) {
-        if (props) {
-          key2 = subValue;
-          subValue = value[key2];
-        }
-        assignValue(result, key2, baseClone(subValue, isDeep, isFull, customizer, key2, value, stack));
-      });
-      return result;
-    }
-    function baseCreate(proto) {
-      return isObject2(proto) ? objectCreate(proto) : {};
-    }
-    function baseGetAllKeys(object, keysFunc, symbolsFunc) {
-      var result = keysFunc(object);
-      return isArray(object) ? result : arrayPush(result, symbolsFunc(object));
-    }
-    function baseGetTag(value) {
-      return objectToString.call(value);
-    }
-    function baseIsNative(value) {
-      if (!isObject2(value) || isMasked(value)) {
-        return false;
-      }
-      var pattern = isFunction(value) || isHostObject(value) ? reIsNative : reIsHostCtor;
-      return pattern.test(toSource(value));
-    }
-    function baseKeys(object) {
-      if (!isPrototype(object)) {
-        return nativeKeys(object);
-      }
-      var result = [];
-      for (var key in Object(object)) {
-        if (hasOwnProperty.call(object, key) && key != "constructor") {
-          result.push(key);
-        }
-      }
-      return result;
-    }
-    function cloneBuffer(buffer, isDeep) {
-      if (isDeep) {
-        return buffer.slice();
-      }
-      var result = new buffer.constructor(buffer.length);
-      buffer.copy(result);
-      return result;
-    }
-    function cloneArrayBuffer(arrayBuffer) {
-      var result = new arrayBuffer.constructor(arrayBuffer.byteLength);
-      new Uint8Array2(result).set(new Uint8Array2(arrayBuffer));
-      return result;
-    }
-    function cloneDataView(dataView, isDeep) {
-      var buffer = isDeep ? cloneArrayBuffer(dataView.buffer) : dataView.buffer;
-      return new dataView.constructor(buffer, dataView.byteOffset, dataView.byteLength);
-    }
-    function cloneMap(map, isDeep, cloneFunc) {
-      var array = isDeep ? cloneFunc(mapToArray(map), true) : mapToArray(map);
-      return arrayReduce(array, addMapEntry, new map.constructor());
-    }
-    function cloneRegExp(regexp) {
-      var result = new regexp.constructor(regexp.source, reFlags.exec(regexp));
-      result.lastIndex = regexp.lastIndex;
-      return result;
-    }
-    function cloneSet(set, isDeep, cloneFunc) {
-      var array = isDeep ? cloneFunc(setToArray(set), true) : setToArray(set);
-      return arrayReduce(array, addSetEntry, new set.constructor());
-    }
-    function cloneSymbol(symbol) {
-      return symbolValueOf ? Object(symbolValueOf.call(symbol)) : {};
-    }
-    function cloneTypedArray(typedArray, isDeep) {
-      var buffer = isDeep ? cloneArrayBuffer(typedArray.buffer) : typedArray.buffer;
-      return new typedArray.constructor(buffer, typedArray.byteOffset, typedArray.length);
-    }
-    function copyArray(source, array) {
-      var index = -1, length = source.length;
-      array || (array = Array(length));
-      while (++index < length) {
-        array[index] = source[index];
-      }
-      return array;
-    }
-    function copyObject(source, props, object, customizer) {
-      object || (object = {});
-      var index = -1, length = props.length;
-      while (++index < length) {
-        var key = props[index];
-        var newValue = customizer ? customizer(object[key], source[key], key, object, source) : void 0;
-        assignValue(object, key, newValue === void 0 ? source[key] : newValue);
-      }
-      return object;
-    }
-    function copySymbols(source, object) {
-      return copyObject(source, getSymbols(source), object);
-    }
-    function getAllKeys(object) {
-      return baseGetAllKeys(object, keys, getSymbols);
-    }
-    function getMapData(map, key) {
-      var data = map.__data__;
-      return isKeyable(key) ? data[typeof key == "string" ? "string" : "hash"] : data.map;
-    }
-    function getNative(object, key) {
-      var value = getValue(object, key);
-      return baseIsNative(value) ? value : void 0;
-    }
-    var getSymbols = nativeGetSymbols ? overArg(nativeGetSymbols, Object) : stubArray;
-    var getTag = baseGetTag;
-    if (DataView2 && getTag(new DataView2(new ArrayBuffer(1))) != dataViewTag || Map2 && getTag(new Map2()) != mapTag || Promise2 && getTag(Promise2.resolve()) != promiseTag || Set2 && getTag(new Set2()) != setTag || WeakMap2 && getTag(new WeakMap2()) != weakMapTag) {
-      getTag = function(value) {
-        var result = objectToString.call(value), Ctor = result == objectTag ? value.constructor : void 0, ctorString = Ctor ? toSource(Ctor) : void 0;
-        if (ctorString) {
-          switch (ctorString) {
-            case dataViewCtorString:
-              return dataViewTag;
-            case mapCtorString:
-              return mapTag;
-            case promiseCtorString:
-              return promiseTag;
-            case setCtorString:
-              return setTag;
-            case weakMapCtorString:
-              return weakMapTag;
-          }
-        }
-        return result;
-      };
-    }
-    function initCloneArray(array) {
-      var length = array.length, result = array.constructor(length);
-      if (length && typeof array[0] == "string" && hasOwnProperty.call(array, "index")) {
-        result.index = array.index;
-        result.input = array.input;
-      }
-      return result;
-    }
-    function initCloneObject(object) {
-      return typeof object.constructor == "function" && !isPrototype(object) ? baseCreate(getPrototype(object)) : {};
-    }
-    function initCloneByTag(object, tag2, cloneFunc, isDeep) {
-      var Ctor = object.constructor;
-      switch (tag2) {
-        case arrayBufferTag:
-          return cloneArrayBuffer(object);
-        case boolTag:
-        case dateTag:
-          return new Ctor(+object);
-        case dataViewTag:
-          return cloneDataView(object, isDeep);
-        case float32Tag:
-        case float64Tag:
-        case int8Tag:
-        case int16Tag:
-        case int32Tag:
-        case uint8Tag:
-        case uint8ClampedTag:
-        case uint16Tag:
-        case uint32Tag:
-          return cloneTypedArray(object, isDeep);
-        case mapTag:
-          return cloneMap(object, isDeep, cloneFunc);
-        case numberTag:
-        case stringTag:
-          return new Ctor(object);
-        case regexpTag:
-          return cloneRegExp(object);
-        case setTag:
-          return cloneSet(object, isDeep, cloneFunc);
-        case symbolTag:
-          return cloneSymbol(object);
-      }
-    }
-    function isIndex(value, length) {
-      length = length == null ? MAX_SAFE_INTEGER : length;
-      return !!length && (typeof value == "number" || reIsUint.test(value)) && (value > -1 && value % 1 == 0 && value < length);
-    }
-    function isKeyable(value) {
-      var type = typeof value;
-      return type == "string" || type == "number" || type == "symbol" || type == "boolean" ? value !== "__proto__" : value === null;
-    }
-    function isMasked(func) {
-      return !!maskSrcKey && maskSrcKey in func;
-    }
-    function isPrototype(value) {
-      var Ctor = value && value.constructor, proto = typeof Ctor == "function" && Ctor.prototype || objectProto;
-      return value === proto;
-    }
-    function toSource(func) {
-      if (func != null) {
-        try {
-          return funcToString.call(func);
-        } catch (e) {
-        }
-        try {
-          return func + "";
-        } catch (e) {
-        }
-      }
-      return "";
-    }
-    function cloneDeep(value) {
-      return baseClone(value, true, true);
-    }
-    function eq(value, other) {
-      return value === other || value !== value && other !== other;
-    }
-    function isArguments(value) {
-      return isArrayLikeObject(value) && hasOwnProperty.call(value, "callee") && (!propertyIsEnumerable.call(value, "callee") || objectToString.call(value) == argsTag);
-    }
-    var isArray = Array.isArray;
-    function isArrayLike(value) {
-      return value != null && isLength(value.length) && !isFunction(value);
-    }
-    function isArrayLikeObject(value) {
-      return isObjectLike2(value) && isArrayLike(value);
-    }
-    var isBuffer = nativeIsBuffer || stubFalse;
-    function isFunction(value) {
-      var tag2 = isObject2(value) ? objectToString.call(value) : "";
-      return tag2 == funcTag || tag2 == genTag;
-    }
-    function isLength(value) {
-      return typeof value == "number" && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
-    }
-    function isObject2(value) {
-      var type = typeof value;
-      return !!value && (type == "object" || type == "function");
-    }
-    function isObjectLike2(value) {
-      return !!value && typeof value == "object";
-    }
-    function keys(object) {
-      return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object);
-    }
-    function stubArray() {
-      return [];
-    }
-    function stubFalse() {
-      return false;
-    }
-    module.exports = cloneDeep;
-  }
-});
-
-// node_modules/lru-memoizer/lib/freeze.js
-var require_freeze = __commonJS({
-  "node_modules/lru-memoizer/lib/freeze.js"(exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.deepFreeze = void 0;
-    function deepFreeze(o) {
-      if (o) {
-        Object.freeze(o);
-        Object.getOwnPropertyNames(o).forEach(function(prop) {
-          if (o.hasOwnProperty(prop) && o[prop] !== null && (typeof o[prop] === "object" || typeof o[prop] === "function") && o[prop].constructor !== Buffer && !Object.isFrozen(o[prop])) {
-            deepFreeze(o[prop]);
-          }
-        });
-      }
-      return o;
-    }
-    exports.deepFreeze = deepFreeze;
-  }
-});
-
-// node_modules/lru-memoizer/lib/sync.js
-var require_sync = __commonJS({
-  "node_modules/lru-memoizer/lib/sync.js"(exports) {
-    "use strict";
-    var __importDefault = exports && exports.__importDefault || function(mod) {
-      return mod && mod.__esModule ? mod : { "default": mod };
-    };
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.syncMemoizer = void 0;
-    var lru_cache_1 = require_index_min();
-    var events_1 = __require("events");
-    var lodash_clonedeep_1 = __importDefault(require_lodash8());
-    var freeze_1 = require_freeze();
-    function syncMemoizer(options) {
-      const cache2 = new lru_cache_1.LRUCache(options);
-      const load = options.load;
-      const hash = options.hash;
-      const bypass = options.bypass;
-      const itemTTL = options.itemTTL;
-      const freeze = options.freeze;
-      const clone = options.clone;
-      const emitter = new events_1.EventEmitter();
-      const defaultResult = Object.assign({
-        del,
-        reset: () => cache2.clear(),
-        keys: () => [...cache2.keys()],
-        on: emitter.on.bind(emitter),
-        once: emitter.once.bind(emitter)
-      }, options);
-      if (options.disable) {
-        return Object.assign(load, defaultResult);
-      }
-      function del() {
-        const key = hash(...arguments);
-        cache2.delete(key);
-      }
-      function emit(event, ...parameters) {
-        emitter.emit(event, ...parameters);
-      }
-      function isPromise(result2) {
-        return result2 && result2.then && typeof result2.then === "function";
-      }
-      function processResult(result2) {
-        let res = result2;
-        if (clone) {
-          if (isPromise(res)) {
-            res = res.then(lodash_clonedeep_1.default);
-          } else {
-            res = (0, lodash_clonedeep_1.default)(res);
-          }
-        }
-        if (freeze) {
-          if (isPromise(res)) {
-            res = res.then(freeze_1.deepFreeze);
-          } else {
-            (0, freeze_1.deepFreeze)(res);
-          }
-        }
-        return res;
-      }
-      const result = function(...args) {
-        if (bypass && bypass(...args)) {
-          emit("miss", ...args);
-          return load(...args);
-        }
-        var key = hash(...args);
-        var fromCache = cache2.get(key);
-        if (fromCache) {
-          emit("hit", ...args);
-          return processResult(fromCache);
-        }
-        emit("miss", ...args);
-        const result2 = load(...args);
-        if (itemTTL) {
-          cache2.set(key, result2, { ttl: itemTTL(...args.concat([result2])) });
-        } else {
-          cache2.set(key, result2);
-        }
-        return processResult(result2);
-      };
-      return Object.assign(result, defaultResult);
-    }
-    exports.syncMemoizer = syncMemoizer;
-  }
-});
-
-// node_modules/lru-memoizer/lib/async.js
-var require_async = __commonJS({
-  "node_modules/lru-memoizer/lib/async.js"(exports) {
-    "use strict";
-    var __importDefault = exports && exports.__importDefault || function(mod) {
-      return mod && mod.__esModule ? mod : { "default": mod };
-    };
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.asyncMemoizer = void 0;
-    var lru_cache_1 = require_index_min();
-    var events_1 = __require("events");
-    var lodash_clonedeep_1 = __importDefault(require_lodash8());
-    var freeze_1 = require_freeze();
-    var sync_1 = require_sync();
-    function asyncMemoizer(options) {
-      const cache2 = new lru_cache_1.LRUCache(options);
-      const load = options.load;
-      const hash = options.hash;
-      const bypass = options.bypass;
-      const itemTTL = options.itemTTL;
-      const freeze = options.freeze;
-      const clone = options.clone;
-      const queueTTL = options.queueTTL || 1e3;
-      const loading = /* @__PURE__ */ new Map();
-      const emitter = new events_1.EventEmitter();
-      const memoizerMethods = Object.assign({
-        del,
-        reset: () => cache2.clear(),
-        keys: () => [...cache2.keys()],
-        on: emitter.on.bind(emitter),
-        once: emitter.once.bind(emitter)
-      }, options);
-      if (options.disable) {
-        return Object.assign(load, memoizerMethods);
-      }
-      function del(...args) {
-        const key = hash(...args);
-        cache2.delete(key);
-      }
-      function add(key, parameters, result) {
-        if (freeze) {
-          result.forEach(freeze_1.deepFreeze);
-        }
-        if (itemTTL) {
-          cache2.set(key, result, { ttl: itemTTL(...parameters.concat(result)) });
-        } else {
-          cache2.set(key, result);
-        }
-      }
-      function runCallbacks(callbacks, args) {
-        for (const callback of callbacks) {
-          if (clone) {
-            setImmediate(callback, ...args.map(lodash_clonedeep_1.default));
-          } else {
-            setImmediate(callback, ...args);
-          }
-        }
-      }
-      function emit(event, ...parameters) {
-        emitter.emit(event, ...parameters);
-      }
-      function memoizedFunction(...args) {
-        const parameters = args.slice(0, -1);
-        const callback = args.slice(-1).pop();
-        let key;
-        if (bypass && bypass(...parameters)) {
-          emit("miss", ...parameters);
-          return load(...args);
-        }
-        if (parameters.length === 0 && !hash) {
-          key = "_";
-        } else {
-          key = hash(...parameters);
-        }
-        const fromCache = cache2.get(key);
-        if (fromCache) {
-          emit("hit", ...parameters);
-          return runCallbacks([callback], [null].concat(fromCache));
-        }
-        const pendingLoad = loading.get(key);
-        if (pendingLoad && pendingLoad.expiresAt > Date.now()) {
-          pendingLoad.queue.push(callback);
-          emit("queue", ...parameters);
-          return;
-        }
-        emit("miss", ...parameters);
-        const started = Date.now();
-        const queue = [callback];
-        loading.set(key, {
-          queue,
-          expiresAt: started + queueTTL
-        });
-        const loadHandler = (...args2) => {
-          const err = args2[0];
-          if (!err) {
-            add(key, parameters, args2.slice(1));
-          }
-          loading.delete(key);
-          emit("loaded", Date.now() - started, ...parameters);
-          runCallbacks(queue, args2);
-        };
-        load(...parameters, loadHandler);
-      }
-      ;
-      return Object.assign(memoizedFunction, memoizerMethods);
-    }
-    exports.asyncMemoizer = asyncMemoizer;
-    asyncMemoizer.sync = sync_1.syncMemoizer;
-  }
-});
-
-// node_modules/lru-memoizer/lib/index.js
-var require_lib4 = __commonJS({
-  "node_modules/lru-memoizer/lib/index.js"(exports, module) {
-    "use strict";
-    var async_1 = require_async();
-    module.exports = async_1.asyncMemoizer;
-  }
-});
-
-// node_modules/jwks-rsa/node_modules/lru-cache/dist/commonjs/node/index.min.js
-var require_index_min2 = __commonJS({
-  "node_modules/jwks-rsa/node_modules/lru-cache/dist/commonjs/node/index.min.js"(exports) {
-    "use strict";
-    var j = (c, t) => () => (t || c((t = { exports: {} }).exports, t), t.exports);
-    var I = j((O2) => {
-      "use strict";
-      Object.defineProperty(O2, "__esModule", { value: true });
-      O2.tracing = O2.metrics = void 0;
-      var U2 = __require("node:diagnostics_channel");
-      O2.metrics = (0, U2.channel)("lru-cache:metrics");
-      O2.tracing = (0, U2.tracingChannel)("lru-cache");
-    });
-    var P = j((D) => {
-      "use strict";
-      Object.defineProperty(D, "__esModule", { value: true });
-      D.defaultPerf = void 0;
-      D.defaultPerf = typeof performance == "object" && performance && typeof performance.now == "function" ? performance : Date;
-    });
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.LRUCache = void 0;
-    var g = I();
-    var N = P();
-    var C = () => g.metrics.hasSubscribers || g.tracing.hasSubscribers;
-    var k = /* @__PURE__ */ new Set();
-    var G2 = typeof process == "object" && process ? process : {};
-    var V = (c, t, e, i) => {
-      typeof G2.emitWarning == "function" ? G2.emitWarning(c, t, e, i) : console.error(`[${e}] ${t}: ${c}`);
-    };
-    var q = (c) => !k.has(c);
-    var T2 = (c) => !!c && c === Math.floor(c) && c > 0 && isFinite(c);
-    var H = (c) => T2(c) ? c <= Math.pow(2, 8) ? Uint8Array : c <= Math.pow(2, 16) ? Uint16Array : c <= Math.pow(2, 32) ? Uint32Array : c <= Number.MAX_SAFE_INTEGER ? W : null : null;
-    var W = class extends Array {
-      constructor(t) {
-        super(t), this.fill(0);
-      }
-    };
-    var x2 = class c {
-      heap;
-      length;
-      static #o = false;
-      static create(t) {
-        let e = H(t);
-        if (!e) return [];
-        c.#o = true;
-        let i = new c(t, e);
-        return c.#o = false, i;
-      }
-      constructor(t, e) {
-        if (!c.#o) throw new TypeError("instantiate Stack using Stack.create(n)");
-        this.heap = new e(t), this.length = 0;
-      }
-      push(t) {
-        this.heap[this.length++] = t;
-      }
-      pop() {
-        return this.heap[--this.length];
-      }
-    };
-    var L = class c {
-      #o;
-      #c;
-      #m;
-      #W;
-      #S;
-      #M;
-      #j;
-      #w;
-      get perf() {
-        return this.#w;
-      }
-      ttl;
-      ttlResolution;
-      ttlAutopurge;
-      updateAgeOnGet;
-      updateAgeOnHas;
-      allowStale;
-      noDisposeOnSet;
-      noUpdateTTL;
-      maxEntrySize;
-      sizeCalculation;
-      noDeleteOnFetchRejection;
-      noDeleteOnStaleGet;
-      allowStaleOnFetchAbort;
-      allowStaleOnFetchRejection;
-      ignoreFetchAbort;
-      backgroundFetchSize;
-      #n;
-      #b;
-      #s;
-      #i;
-      #t;
-      #l;
-      #u;
-      #a;
-      #h;
-      #_;
-      #r;
-      #y;
-      #F;
-      #d;
-      #g;
-      #T;
-      #U;
-      #f;
-      #D;
-      static unsafeExposeInternals(t) {
-        return { starts: t.#F, ttls: t.#d, autopurgeTimers: t.#g, sizes: t.#y, keyMap: t.#s, keyList: t.#i, valList: t.#t, next: t.#l, prev: t.#u, get head() {
-          return t.#a;
-        }, get tail() {
-          return t.#h;
-        }, free: t.#_, isBackgroundFetch: (e) => t.#e(e), backgroundFetch: (e, i, s, n) => t.#G(e, i, s, n), moveToTail: (e) => t.#L(e), indexes: (e) => t.#A(e), rindexes: (e) => t.#z(e), isStale: (e) => t.#p(e) };
-      }
-      get max() {
-        return this.#o;
-      }
-      get maxSize() {
-        return this.#c;
-      }
-      get calculatedSize() {
-        return this.#b;
-      }
-      get size() {
-        return this.#n;
-      }
-      get fetchMethod() {
-        return this.#M;
-      }
-      get memoMethod() {
-        return this.#j;
-      }
-      get dispose() {
-        return this.#m;
-      }
-      get onInsert() {
-        return this.#W;
-      }
-      get disposeAfter() {
-        return this.#S;
-      }
-      constructor(t) {
-        let { max: e = 0, ttl: i, ttlResolution: s = 1, ttlAutopurge: n, updateAgeOnGet: r, updateAgeOnHas: h, allowStale: a2, dispose: o, onInsert: d2, disposeAfter: _, noDisposeOnSet: y, noUpdateTTL: u, maxSize: p2 = 0, maxEntrySize: f = 0, sizeCalculation: b2, fetchMethod: l, memoMethod: S2, noDeleteOnFetchRejection: F, noDeleteOnStaleGet: w, allowStaleOnFetchRejection: m2, allowStaleOnFetchAbort: A, ignoreFetchAbort: z, backgroundFetchSize: M = 1, perf: v2 } = t;
-        if (this.backgroundFetchSize = M, v2 !== void 0 && typeof v2?.now != "function") throw new TypeError("perf option must have a now() method if specified");
-        if (this.#w = v2 ?? N.defaultPerf, e !== 0 && !T2(e)) throw new TypeError("max option must be a nonnegative integer");
-        let E2 = e ? H(e) : Array;
-        if (!E2) throw new Error("invalid max value: " + e);
-        if (this.#o = e, this.#c = p2, this.maxEntrySize = f || this.#c, this.sizeCalculation = b2, this.sizeCalculation) {
-          if (!this.#c && !this.maxEntrySize) throw new TypeError("cannot set sizeCalculation without setting maxSize or maxEntrySize");
-          if (typeof this.sizeCalculation != "function") throw new TypeError("sizeCalculation set to non-function");
-        }
-        if (S2 !== void 0 && typeof S2 != "function") throw new TypeError("memoMethod must be a function if defined");
-        if (this.#j = S2, l !== void 0 && typeof l != "function") throw new TypeError("fetchMethod must be a function if specified");
-        if (this.#M = l, this.#U = !!l, this.#s = /* @__PURE__ */ new Map(), this.#i = Array.from({ length: e }).fill(void 0), this.#t = Array.from({ length: e }).fill(void 0), this.#l = new E2(e), this.#u = new E2(e), this.#a = 0, this.#h = 0, this.#_ = x2.create(e), this.#n = 0, this.#b = 0, typeof o == "function" && (this.#m = o), typeof d2 == "function" && (this.#W = d2), typeof _ == "function" ? (this.#S = _, this.#r = []) : (this.#S = void 0, this.#r = void 0), this.#T = !!this.#m, this.#D = !!this.#W, this.#f = !!this.#S, this.noDisposeOnSet = !!y, this.noUpdateTTL = !!u, this.noDeleteOnFetchRejection = !!F, this.allowStaleOnFetchRejection = !!m2, this.allowStaleOnFetchAbort = !!A, this.ignoreFetchAbort = !!z, this.maxEntrySize !== 0) {
-          if (this.#c !== 0 && !T2(this.#c)) throw new TypeError("maxSize must be a positive integer if specified");
-          if (!T2(this.maxEntrySize)) throw new TypeError("maxEntrySize must be a positive integer if specified");
-          this.#X();
-        }
-        if (this.allowStale = !!a2, this.noDeleteOnStaleGet = !!w, this.updateAgeOnGet = !!r, this.updateAgeOnHas = !!h, this.ttlResolution = T2(s) || s === 0 ? s : 1, this.ttlAutopurge = !!n, this.ttl = i || 0, this.ttl) {
-          if (!T2(this.ttl)) throw new TypeError("ttl must be a positive integer if specified");
-          this.#k();
-        }
-        if (this.#o === 0 && this.ttl === 0 && this.#c === 0) throw new TypeError("At least one of max, maxSize, or ttl is required");
-        if (!this.ttlAutopurge && !this.#o && !this.#c) {
-          let R = "LRU_CACHE_UNBOUNDED";
-          q(R) && (k.add(R), V("TTL caching without ttlAutopurge, max, or maxSize can result in unbounded memory consumption.", "UnboundedCacheWarning", R, c));
-        }
-      }
-      getRemainingTTL(t) {
-        return this.#s.has(t) ? 1 / 0 : 0;
-      }
-      #k() {
-        let t = new W(this.#o), e = new W(this.#o);
-        this.#d = t, this.#F = e;
-        let i = this.ttlAutopurge ? Array.from({ length: this.#o }) : void 0;
-        this.#g = i, this.#H = (h, a2, o = this.#w.now()) => {
-          e[h] = a2 !== 0 ? o : 0, t[h] = a2, s(h, a2);
-        }, this.#R = (h) => {
-          e[h] = t[h] !== 0 ? this.#w.now() : 0, s(h, t[h]);
-        };
-        let s = this.ttlAutopurge ? (h, a2) => {
-          if (i?.[h] && (clearTimeout(i[h]), i[h] = void 0), a2 && a2 !== 0 && i) {
-            let o = setTimeout(() => {
-              this.#p(h) && this.#v(this.#i[h], "expire");
-            }, a2 + 1);
-            o.unref && o.unref(), i[h] = o;
-          }
-        } : () => {
-        };
-        this.#E = (h, a2) => {
-          if (t[a2]) {
-            let o = t[a2], d2 = e[a2];
-            if (!o || !d2) return;
-            h.ttl = o, h.start = d2, h.now = n || r();
-            let _ = h.now - d2;
-            h.remainingTTL = o - _;
-          }
-        };
-        let n = 0, r = () => {
-          let h = this.#w.now();
-          if (this.ttlResolution > 0) {
-            n = h;
-            let a2 = setTimeout(() => n = 0, this.ttlResolution);
-            a2.unref && a2.unref();
-          }
-          return h;
-        };
-        this.getRemainingTTL = (h) => {
-          let a2 = this.#s.get(h);
-          if (a2 === void 0) return 0;
-          let o = t[a2], d2 = e[a2];
-          if (!o || !d2) return 1 / 0;
-          let _ = (n || r()) - d2;
-          return o - _;
-        }, this.#p = (h) => {
-          let a2 = e[h], o = t[h];
-          return !!o && !!a2 && (n || r()) - a2 > o;
-        };
-      }
-      #R = () => {
-      };
-      #E = () => {
-      };
-      #H = () => {
-      };
-      #p = () => false;
-      #X() {
-        let t = new W(this.#o);
-        this.#b = 0, this.#y = t, this.#C = (e) => {
-          this.#b -= t[e], t[e] = 0;
-        }, this.#N = (e, i, s, n) => {
-          if (!T2(s)) {
-            if (this.#e(i)) return this.backgroundFetchSize;
-            if (n) {
-              if (typeof n != "function") throw new TypeError("sizeCalculation must be a function");
-              if (s = n(i, e), !T2(s)) throw new TypeError("sizeCalculation return invalid (expect positive integer)");
-            } else throw new TypeError("invalid size value (must be positive integer). When maxSize or maxEntrySize is used, sizeCalculation or size must be set.");
-          }
-          return s;
-        }, this.#I = (e, i, s) => {
-          if (t[e] = i, this.#c) {
-            let n = this.#c - t[e];
-            for (; this.#b > n; ) this.#P(true);
-          }
-          this.#b += t[e], s && (s.entrySize = i, s.totalCalculatedSize = this.#b);
-        };
-      }
-      #C = (t) => {
-      };
-      #I = (t, e, i) => {
-      };
-      #N = (t, e, i, s) => {
-        if (i || s) throw new TypeError("cannot set size without setting maxSize or maxEntrySize on cache");
-        return 0;
-      };
-      *#A({ allowStale: t = this.allowStale } = {}) {
-        if (this.#n) for (let e = this.#h; this.#V(e) && ((t || !this.#p(e)) && (yield e), e !== this.#a); ) e = this.#u[e];
-      }
-      *#z({ allowStale: t = this.allowStale } = {}) {
-        if (this.#n) for (let e = this.#a; this.#V(e) && ((t || !this.#p(e)) && (yield e), e !== this.#h); ) e = this.#l[e];
-      }
-      #V(t) {
-        return t !== void 0 && this.#s.get(this.#i[t]) === t;
-      }
-      *entries() {
-        for (let t of this.#A()) this.#t[t] !== void 0 && this.#i[t] !== void 0 && !this.#e(this.#t[t]) && (yield [this.#i[t], this.#t[t]]);
-      }
-      *rentries() {
-        for (let t of this.#z()) this.#t[t] !== void 0 && this.#i[t] !== void 0 && !this.#e(this.#t[t]) && (yield [this.#i[t], this.#t[t]]);
-      }
-      *keys() {
-        for (let t of this.#A()) {
-          let e = this.#i[t];
-          e !== void 0 && !this.#e(this.#t[t]) && (yield e);
-        }
-      }
-      *rkeys() {
-        for (let t of this.#z()) {
-          let e = this.#i[t];
-          e !== void 0 && !this.#e(this.#t[t]) && (yield e);
-        }
-      }
-      *values() {
-        for (let t of this.#A()) this.#t[t] !== void 0 && !this.#e(this.#t[t]) && (yield this.#t[t]);
-      }
-      *rvalues() {
-        for (let t of this.#z()) this.#t[t] !== void 0 && !this.#e(this.#t[t]) && (yield this.#t[t]);
-      }
-      [Symbol.iterator]() {
-        return this.entries();
-      }
-      [Symbol.toStringTag] = "LRUCache";
-      find(t, e = {}) {
-        for (let i of this.#A()) {
-          let s = this.#t[i], n = this.#e(s) ? s.__staleWhileFetching : s;
-          if (n !== void 0 && t(n, this.#i[i], this)) return this.#x(this.#i[i], e);
-        }
-      }
-      forEach(t, e = this) {
-        for (let i of this.#A()) {
-          let s = this.#t[i], n = this.#e(s) ? s.__staleWhileFetching : s;
-          n !== void 0 && t.call(e, n, this.#i[i], this);
-        }
-      }
-      rforEach(t, e = this) {
-        for (let i of this.#z()) {
-          let s = this.#t[i], n = this.#e(s) ? s.__staleWhileFetching : s;
-          n !== void 0 && t.call(e, n, this.#i[i], this);
-        }
-      }
-      purgeStale() {
-        let t = false;
-        for (let e of this.#z({ allowStale: true })) this.#p(e) && (this.#v(this.#i[e], "expire"), t = true);
-        return t;
-      }
-      info(t) {
-        let e = this.#s.get(t);
-        if (e === void 0) return;
-        let i = this.#t[e], s = this.#e(i) ? i.__staleWhileFetching : i;
-        if (s === void 0) return;
-        let n = { value: s };
-        if (this.#d && this.#F) {
-          let r = this.#d[e], h = this.#F[e];
-          if (r && h) {
-            let a2 = r - (this.#w.now() - h);
-            n.ttl = a2, n.start = Date.now();
-          }
-        }
-        return this.#y && (n.size = this.#y[e]), n;
-      }
-      dump() {
-        let t = [];
-        for (let e of this.#A({ allowStale: true })) {
-          let i = this.#i[e], s = this.#t[e], n = this.#e(s) ? s.__staleWhileFetching : s;
-          if (n === void 0 || i === void 0) continue;
-          let r = { value: n };
-          if (this.#d && this.#F) {
-            r.ttl = this.#d[e];
-            let h = this.#w.now() - this.#F[e];
-            r.start = Math.floor(Date.now() - h);
-          }
-          this.#y && (r.size = this.#y[e]), t.unshift([i, r]);
-        }
-        return t;
-      }
-      load(t) {
-        this.clear();
-        for (let [e, i] of t) {
-          if (i.start) {
-            let s = Date.now() - i.start;
-            i.start = this.#w.now() - s;
-          }
-          this.#O(e, i.value, i);
-        }
-      }
-      set(t, e, i = {}) {
-        let { status: s = g.metrics.hasSubscribers ? {} : void 0 } = i;
-        i.status = s, s && (s.op = "set", s.key = t, e !== void 0 && (s.value = e), s.cache = this);
-        let n = this.#O(t, e, i);
-        return s && g.metrics.hasSubscribers && g.metrics.publish(s), n;
-      }
-      #O(t, e, i, s) {
-        let { ttl: n = this.ttl, start: r, noDisposeOnSet: h = this.noDisposeOnSet, sizeCalculation: a2 = this.sizeCalculation, status: o } = i, d2 = this.#e(e);
-        if (e === void 0) return o && (o.set = "deleted"), this.delete(t), this;
-        let { noUpdateTTL: _ = this.noUpdateTTL } = i;
-        o && !d2 && (o.value = e);
-        let y = this.#N(t, e, i.size || 0, a2, o);
-        if (this.maxEntrySize && y > this.maxEntrySize) return this.#v(t, "set"), o && (o.set = "miss", o.maxEntrySizeExceeded = true), this;
-        let u = this.#n === 0 ? void 0 : this.#s.get(t);
-        if (u === void 0) u = this.#n === 0 ? this.#h : this.#_.length !== 0 ? this.#_.pop() : this.#n === this.#o ? this.#P(false) : this.#n, this.#i[u] = t, this.#t[u] = e, this.#s.set(t, u), this.#l[this.#h] = u, this.#u[u] = this.#h, this.#h = u, this.#n++, this.#I(u, y, o), o && (o.set = "add"), _ = false, this.#D && !d2 && this.#W?.(e, t, "add");
-        else {
-          this.#L(u);
-          let p2 = this.#t[u];
-          if (e !== p2) {
-            if (!h) if (this.#e(p2)) {
-              p2 !== s && p2.__abortController.abort(new Error("replaced"));
-              let { __staleWhileFetching: f } = p2;
-              f !== void 0 && f !== e && (this.#T && this.#m?.(f, t, "set"), this.#f && this.#r?.push([f, t, "set"]));
-            } else this.#T && this.#m?.(p2, t, "set"), this.#f && this.#r?.push([p2, t, "set"]);
-            if (this.#C(u), this.#I(u, y, o), this.#t[u] = e, !d2) {
-              let f = p2 && this.#e(p2) ? p2.__staleWhileFetching : p2, b2 = f === void 0 ? "add" : e !== f ? "replace" : "update";
-              o && (o.set = b2, f !== void 0 && (o.oldValue = f)), this.#D && this.onInsert?.(e, t, b2);
-            }
-          } else d2 || (o && (o.set = "update"), this.#D && this.onInsert?.(e, t, "update"));
-        }
-        if (n !== 0 && !this.#d && this.#k(), this.#d && (_ || this.#H(u, n, r), o && this.#E(o, u)), !h && this.#f && this.#r) {
-          let p2 = this.#r, f;
-          for (; f = p2?.shift(); ) this.#S?.(...f);
-        }
-        return this;
-      }
-      pop() {
-        try {
-          for (; this.#n; ) {
-            let t = this.#t[this.#a];
-            if (this.#P(true), this.#e(t)) {
-              if (t.__staleWhileFetching) return t.__staleWhileFetching;
-            } else if (t !== void 0) return t;
-          }
-        } finally {
-          if (this.#f && this.#r) {
-            let t = this.#r, e;
-            for (; e = t?.shift(); ) this.#S?.(...e);
-          }
-        }
-      }
-      #P(t) {
-        let e = this.#a, i = this.#i[e], s = this.#t[e], n = this.#e(s);
-        n && s.__abortController.abort(new Error("evicted"));
-        let r = n ? s.__staleWhileFetching : s;
-        return (this.#T || this.#f) && r !== void 0 && (this.#T && this.#m?.(r, i, "evict"), this.#f && this.#r?.push([r, i, "evict"])), this.#C(e), this.#g?.[e] && (clearTimeout(this.#g[e]), this.#g[e] = void 0), t && (this.#i[e] = void 0, this.#t[e] = void 0, this.#_.push(e)), this.#n === 1 ? (this.#a = this.#h = 0, this.#_.length = 0) : this.#a = this.#l[e], this.#s.delete(i), this.#n--, e;
-      }
-      has(t, e = {}) {
-        let { status: i = g.metrics.hasSubscribers ? {} : void 0 } = e;
-        e.status = i, i && (i.op = "has", i.key = t, i.cache = this);
-        let s = this.#Y(t, e);
-        return g.metrics.hasSubscribers && g.metrics.publish(i), s;
-      }
-      #Y(t, e = {}) {
-        let { updateAgeOnHas: i = this.updateAgeOnHas, status: s } = e, n = this.#s.get(t);
-        if (n !== void 0) {
-          let r = this.#t[n];
-          if (this.#e(r) && r.__staleWhileFetching === void 0) return false;
-          if (this.#p(n)) s && (s.has = "stale", this.#E(s, n));
-          else return i && this.#R(n), s && (s.has = "hit", this.#E(s, n)), true;
-        } else s && (s.has = "miss");
-        return false;
-      }
-      peek(t, e = {}) {
-        let { status: i = C() ? {} : void 0 } = e;
-        i && (i.op = "peek", i.key = t, i.cache = this), e.status = i;
-        let s = this.#J(t, e);
-        return g.metrics.hasSubscribers && g.metrics.publish(i), s;
-      }
-      #J(t, e) {
-        let { status: i, allowStale: s = this.allowStale } = e, n = this.#s.get(t);
-        if (n === void 0 || !s && this.#p(n)) {
-          i && (i.peek = n === void 0 ? "miss" : "stale");
-          return;
-        }
-        let r = this.#t[n], h = this.#e(r) ? r.__staleWhileFetching : r;
-        return i && (h !== void 0 ? (i.peek = "hit", i.value = h) : i.peek = "miss"), h;
-      }
-      #G(t, e, i, s) {
-        let n = e === void 0 ? void 0 : this.#t[e];
-        if (this.#e(n)) return n;
-        let r = new AbortController(), { signal: h } = i;
-        h?.addEventListener("abort", () => r.abort(h.reason), { signal: r.signal });
-        let a2 = { signal: r.signal, options: i, context: s }, o = (f, b2 = false) => {
-          let { aborted: l } = r.signal, S2 = i.ignoreFetchAbort && f !== void 0, F = i.ignoreFetchAbort || !!(i.allowStaleOnFetchAbort && f !== void 0);
-          if (i.status && (l && !b2 ? (i.status.fetchAborted = true, i.status.fetchError = r.signal.reason, S2 && (i.status.fetchAbortIgnored = true)) : i.status.fetchResolved = true), l && !S2 && !b2) return _(r.signal.reason, F);
-          let w = u, m2 = this.#t[e];
-          return (m2 === u || m2 === void 0 && S2 && b2) && (f === void 0 ? w.__staleWhileFetching !== void 0 ? this.#t[e] = w.__staleWhileFetching : this.#v(t, "fetch") : (i.status && (i.status.fetchUpdated = true), this.#O(t, f, a2.options, w))), f;
-        }, d2 = (f) => (i.status && (i.status.fetchRejected = true, i.status.fetchError = f), _(f, false)), _ = (f, b2) => {
-          let { aborted: l } = r.signal, S2 = l && i.allowStaleOnFetchAbort, F = S2 || i.allowStaleOnFetchRejection, w = F || i.noDeleteOnFetchRejection, m2 = u;
-          if (this.#t[e] === u && (!w || !b2 && m2.__staleWhileFetching === void 0 ? this.#v(t, "fetch") : S2 || (this.#t[e] = m2.__staleWhileFetching)), F) return i.status && m2.__staleWhileFetching !== void 0 && (i.status.returnedStale = true), m2.__staleWhileFetching;
-          if (m2.__returned === m2) throw f;
-        }, y = (f, b2) => {
-          let l = this.#M?.(t, n, a2);
-          r.signal.addEventListener("abort", () => {
-            (!i.ignoreFetchAbort || i.allowStaleOnFetchAbort) && (f(void 0), i.allowStaleOnFetchAbort && (f = (S2) => o(S2, true)));
-          }), l && l instanceof Promise ? l.then((S2) => f(S2 === void 0 ? void 0 : S2), b2) : l !== void 0 && f(l);
-        };
-        i.status && (i.status.fetchDispatched = true);
-        let u = new Promise(y).then(o, d2), p2 = Object.assign(u, { __abortController: r, __staleWhileFetching: n, __returned: void 0 });
-        return e === void 0 ? (this.#O(t, p2, { ...a2.options, status: void 0 }), e = this.#s.get(t)) : this.#t[e] = p2, p2;
-      }
-      #e(t) {
-        if (!this.#U) return false;
-        let e = t;
-        return !!e && e instanceof Promise && e.hasOwnProperty("__staleWhileFetching") && e.__abortController instanceof AbortController;
-      }
-      fetch(t, e = {}) {
-        let i = g.tracing.hasSubscribers, { status: s = C() ? {} : void 0 } = e;
-        e.status = s, s && e.context && (s.context = e.context);
-        let n = this.#q(t, e);
-        return s && i && (s.trace = true, g.tracing.tracePromise(() => n, s).catch(() => {
-        })), n;
-      }
-      async #q(t, e = {}) {
-        let { allowStale: i = this.allowStale, updateAgeOnGet: s = this.updateAgeOnGet, noDeleteOnStaleGet: n = this.noDeleteOnStaleGet, ttl: r = this.ttl, noDisposeOnSet: h = this.noDisposeOnSet, size: a2 = 0, sizeCalculation: o = this.sizeCalculation, noUpdateTTL: d2 = this.noUpdateTTL, noDeleteOnFetchRejection: _ = this.noDeleteOnFetchRejection, allowStaleOnFetchRejection: y = this.allowStaleOnFetchRejection, ignoreFetchAbort: u = this.ignoreFetchAbort, allowStaleOnFetchAbort: p2 = this.allowStaleOnFetchAbort, context: f, forceRefresh: b2 = false, status: l, signal: S2 } = e;
-        if (l && (l.op = "fetch", l.key = t, b2 && (l.forceRefresh = true), l.cache = this), !this.#U) return l && (l.fetch = "get"), this.#x(t, { allowStale: i, updateAgeOnGet: s, noDeleteOnStaleGet: n, status: l });
-        let F = { allowStale: i, updateAgeOnGet: s, noDeleteOnStaleGet: n, ttl: r, noDisposeOnSet: h, size: a2, sizeCalculation: o, noUpdateTTL: d2, noDeleteOnFetchRejection: _, allowStaleOnFetchRejection: y, allowStaleOnFetchAbort: p2, ignoreFetchAbort: u, status: l, signal: S2 }, w = this.#s.get(t);
-        if (w === void 0) {
-          l && (l.fetch = "miss");
-          let m2 = this.#G(t, w, F, f);
-          return m2.__returned = m2;
-        } else {
-          let m2 = this.#t[w];
-          if (this.#e(m2)) {
-            let E2 = i && m2.__staleWhileFetching !== void 0;
-            return l && (l.fetch = "inflight", E2 && (l.returnedStale = true)), E2 ? m2.__staleWhileFetching : m2.__returned = m2;
-          }
-          let A = this.#p(w);
-          if (!b2 && !A) return l && (l.fetch = "hit"), this.#L(w), s && this.#R(w), l && this.#E(l, w), m2;
-          let z = this.#G(t, w, F, f), v2 = z.__staleWhileFetching !== void 0 && i;
-          return l && (l.fetch = A ? "stale" : "refresh", v2 && A && (l.returnedStale = true)), v2 ? z.__staleWhileFetching : z.__returned = z;
-        }
-      }
-      forceFetch(t, e = {}) {
-        let i = g.tracing.hasSubscribers, { status: s = C() ? {} : void 0 } = e;
-        e.status = s, s && e.context && (s.context = e.context);
-        let n = this.#K(t, e);
-        return s && i && (s.trace = true, g.tracing.tracePromise(() => n, s).catch(() => {
-        })), n;
-      }
-      async #K(t, e = {}) {
-        let i = await this.#q(t, e);
-        if (i === void 0) throw new Error("fetch() returned undefined");
-        return i;
-      }
-      memo(t, e = {}) {
-        let { status: i = g.metrics.hasSubscribers ? {} : void 0 } = e;
-        e.status = i, i && (i.op = "memo", i.key = t, e.context && (i.context = e.context), i.cache = this);
-        let s = this.#Q(t, e);
-        return i && (i.value = s), g.metrics.hasSubscribers && g.metrics.publish(i), s;
-      }
-      #Q(t, e = {}) {
-        let i = this.#j;
-        if (!i) throw new Error("no memoMethod provided to constructor");
-        let { context: s, status: n, forceRefresh: r, ...h } = e;
-        n && r && (n.forceRefresh = true);
-        let a2 = this.#x(t, h), o = r || a2 === void 0;
-        if (n && (n.memo = o ? "miss" : "hit", o || (n.value = a2)), !o) return a2;
-        let d2 = i(t, a2, { options: h, context: s });
-        return n && (n.value = d2), this.#O(t, d2, h), d2;
-      }
-      get(t, e = {}) {
-        let { status: i = g.metrics.hasSubscribers ? {} : void 0 } = e;
-        e.status = i, i && (i.op = "get", i.key = t, i.cache = this);
-        let s = this.#x(t, e);
-        return i && (s !== void 0 && (i.value = s), g.metrics.hasSubscribers && g.metrics.publish(i)), s;
-      }
-      #x(t, e = {}) {
-        let { allowStale: i = this.allowStale, updateAgeOnGet: s = this.updateAgeOnGet, noDeleteOnStaleGet: n = this.noDeleteOnStaleGet, status: r } = e, h = this.#s.get(t);
-        if (h === void 0) {
-          r && (r.get = "miss");
-          return;
-        }
-        let a2 = this.#t[h], o = this.#e(a2);
-        return r && this.#E(r, h), this.#p(h) ? o ? (r && (r.get = "stale-fetching"), i && a2.__staleWhileFetching !== void 0 ? (r && (r.returnedStale = true), a2.__staleWhileFetching) : void 0) : (n || this.#v(t, "expire"), r && (r.get = "stale"), i ? (r && (r.returnedStale = true), a2) : void 0) : (r && (r.get = o ? "fetching" : "hit"), this.#L(h), s && this.#R(h), o ? a2.__staleWhileFetching : a2);
-      }
-      #B(t, e) {
-        this.#u[e] = t, this.#l[t] = e;
-      }
-      #L(t) {
-        t !== this.#h && (t === this.#a ? this.#a = this.#l[t] : this.#B(this.#u[t], this.#l[t]), this.#B(this.#h, t), this.#h = t);
-      }
-      delete(t) {
-        return this.#v(t, "delete");
-      }
-      #v(t, e) {
-        g.metrics.hasSubscribers && g.metrics.publish({ op: "delete", delete: e, key: t, cache: this });
-        let i = false;
-        if (this.#n !== 0) {
-          let s = this.#s.get(t);
-          if (s !== void 0) if (this.#g?.[s] && (clearTimeout(this.#g?.[s]), this.#g[s] = void 0), i = true, this.#n === 1) this.#$(e);
-          else {
-            this.#C(s);
-            let n = this.#t[s];
-            if (this.#e(n) ? n.__abortController.abort(new Error("deleted")) : (this.#T || this.#f) && (this.#T && this.#m?.(n, t, e), this.#f && this.#r?.push([n, t, e])), this.#s.delete(t), this.#i[s] = void 0, this.#t[s] = void 0, s === this.#h) this.#h = this.#u[s];
-            else if (s === this.#a) this.#a = this.#l[s];
-            else {
-              let r = this.#u[s];
-              this.#l[r] = this.#l[s];
-              let h = this.#l[s];
-              this.#u[h] = this.#u[s];
-            }
-            this.#n--, this.#_.push(s);
-          }
-        }
-        if (this.#f && this.#r?.length) {
-          let s = this.#r, n;
-          for (; n = s?.shift(); ) this.#S?.(...n);
-        }
-        return i;
-      }
-      clear() {
-        return this.#$("delete");
-      }
-      #$(t) {
-        for (let e of this.#z({ allowStale: true })) {
-          let i = this.#t[e];
-          if (this.#e(i)) i.__abortController.abort(new Error("deleted"));
-          else {
-            let s = this.#i[e];
-            this.#T && this.#m?.(i, s, t), this.#f && this.#r?.push([i, s, t]);
-          }
-        }
-        if (this.#s.clear(), this.#t.fill(void 0), this.#i.fill(void 0), this.#d && this.#F) {
-          this.#d.fill(0), this.#F.fill(0);
-          for (let e of this.#g ?? []) e !== void 0 && clearTimeout(e);
-          this.#g?.fill(void 0);
-        }
-        if (this.#y && this.#y.fill(0), this.#a = 0, this.#h = 0, this.#_.length = 0, this.#b = 0, this.#n = 0, this.#f && this.#r) {
-          let e = this.#r, i;
-          for (; i = e?.shift(); ) this.#S?.(...i);
-        }
-      }
-    };
-    exports.LRUCache = L;
-  }
-});
-
-// node_modules/jwks-rsa/src/wrappers/cache.js
-var require_cache = __commonJS({
-  "node_modules/jwks-rsa/src/wrappers/cache.js"(exports, module) {
-    var logger = require_src5()("jwks");
-    var memoizer = require_lib4();
-    var { LRUCache } = require_index_min2();
-    var { promisify, callbackify } = __require("util");
-    function cacheWrapper(client2, { cacheMaxEntries = 5, cacheMaxAge = 6e5, cacheMaxAgeFallback, onStaleCacheFallback }) {
-      logger(`Configured caching of signing keys. Max: ${cacheMaxEntries} / Age: ${cacheMaxAge}${cacheMaxAgeFallback ? ` / Fallback: ${cacheMaxAgeFallback}` : ""}`);
-      let load;
-      if (cacheMaxAgeFallback) {
-        const staleCache = new LRUCache({ max: cacheMaxEntries });
-        const getSigningKey = client2.getSigningKey.bind(client2);
-        load = callbackify(async (kid) => {
-          try {
-            const key = await getSigningKey(kid);
-            staleCache.set(kid, { key, fetchedAt: Date.now() });
-            return key;
-          } catch (err) {
-            if (err.isEndpointUnavailable) {
-              const stale = staleCache.get(kid);
-              if (stale && Date.now() - stale.fetchedAt < cacheMaxAge + cacheMaxAgeFallback) {
-                logger(`JWKS endpoint unavailable, serving stale signing key for '${kid}': ${err.message}`);
-                if (onStaleCacheFallback) {
-                  onStaleCacheFallback(err, kid, stale.key);
-                }
-                return stale.key;
-              }
-              logger(`JWKS endpoint unavailable and no valid stale entry for '${kid}', fallback window expired or key never fetched`);
-            }
-            throw err;
-          }
-        });
-      } else {
-        load = callbackify(client2.getSigningKey.bind(client2));
-      }
-      return promisify(memoizer({
-        hash: (kid) => kid,
-        load,
-        ttl: cacheMaxAge,
-        max: cacheMaxEntries
-      }));
-    }
-    module.exports.default = cacheWrapper;
-  }
-});
-
-// node_modules/limiter/lib/tokenBucket.js
-var require_tokenBucket = __commonJS({
-  "node_modules/limiter/lib/tokenBucket.js"(exports, module) {
-    var TokenBucket = function(bucketSize, tokensPerInterval, interval, parentBucket) {
-      this.bucketSize = bucketSize;
-      this.tokensPerInterval = tokensPerInterval;
-      if (typeof interval === "string") {
-        switch (interval) {
-          case "sec":
-          case "second":
-            this.interval = 1e3;
-            break;
-          case "min":
-          case "minute":
-            this.interval = 1e3 * 60;
-            break;
-          case "hr":
-          case "hour":
-            this.interval = 1e3 * 60 * 60;
-            break;
-          case "day":
-            this.interval = 1e3 * 60 * 60 * 24;
-            break;
-          default:
-            throw new Error("Invaid interval " + interval);
-        }
-      } else {
-        this.interval = interval;
-      }
-      this.parentBucket = parentBucket;
-      this.content = 0;
-      this.lastDrip = +/* @__PURE__ */ new Date();
-    };
-    TokenBucket.prototype = {
-      bucketSize: 1,
-      tokensPerInterval: 1,
-      interval: 1e3,
-      parentBucket: null,
-      content: 0,
-      lastDrip: 0,
-      /**
-       * Remove the requested number of tokens and fire the given callback. If the
-       * bucket (and any parent buckets) contains enough tokens this will happen
-       * immediately. Otherwise, the removal and callback will happen when enough
-       * tokens become available.
-       * @param {Number} count The number of tokens to remove.
-       * @param {Function} callback(err, remainingTokens)
-       * @returns {Boolean} True if the callback was fired immediately, otherwise
-       *  false.
-       */
-      removeTokens: function(count, callback) {
-        var self2 = this;
-        if (!this.bucketSize) {
-          process.nextTick(callback.bind(null, null, count, Number.POSITIVE_INFINITY));
-          return true;
-        }
-        if (count > this.bucketSize) {
-          process.nextTick(callback.bind(null, "Requested tokens " + count + " exceeds bucket size " + this.bucketSize, null));
-          return false;
-        }
-        this.drip();
-        if (count > this.content)
-          return comeBackLater();
-        if (this.parentBucket) {
-          return this.parentBucket.removeTokens(count, function(err, remainingTokens) {
-            if (err) return callback(err, null);
-            if (count > self2.content)
-              return comeBackLater();
-            self2.content -= count;
-            callback(null, Math.min(remainingTokens, self2.content));
-          });
-        } else {
-          this.content -= count;
-          process.nextTick(callback.bind(null, null, this.content));
-          return true;
-        }
-        function comeBackLater() {
-          var waitInterval = Math.ceil(
-            (count - self2.content) * (self2.interval / self2.tokensPerInterval)
-          );
-          setTimeout(function() {
-            self2.removeTokens(count, callback);
-          }, waitInterval);
-          return false;
-        }
-      },
-      /**
-       * Attempt to remove the requested number of tokens and return immediately.
-       * If the bucket (and any parent buckets) contains enough tokens this will
-       * return true, otherwise false is returned.
-       * @param {Number} count The number of tokens to remove.
-       * @param {Boolean} True if the tokens were successfully removed, otherwise
-       *  false.
-       */
-      tryRemoveTokens: function(count) {
-        if (!this.bucketSize)
-          return true;
-        if (count > this.bucketSize)
-          return false;
-        this.drip();
-        if (count > this.content)
-          return false;
-        if (this.parentBucket && !this.parentBucket.tryRemoveTokens(count))
-          return false;
-        this.content -= count;
-        return true;
-      },
-      /**
-       * Add any new tokens to the bucket since the last drip.
-       * @returns {Boolean} True if new tokens were added, otherwise false.
-       */
-      drip: function() {
-        if (!this.tokensPerInterval) {
-          this.content = this.bucketSize;
-          return;
-        }
-        var now = +/* @__PURE__ */ new Date();
-        var deltaMS = Math.max(now - this.lastDrip, 0);
-        this.lastDrip = now;
-        var dripAmount = deltaMS * (this.tokensPerInterval / this.interval);
-        this.content = Math.min(this.content + dripAmount, this.bucketSize);
-      }
-    };
-    module.exports = TokenBucket;
-  }
-});
-
-// node_modules/limiter/lib/clock.js
-var require_clock = __commonJS({
-  "node_modules/limiter/lib/clock.js"(exports, module) {
-    var getMilliseconds = function() {
-      if (typeof process !== "undefined" && process.hrtime) {
-        var hrtime = process.hrtime();
-        var seconds = hrtime[0];
-        var nanoseconds = hrtime[1];
-        return seconds * 1e3 + Math.floor(nanoseconds / 1e6);
-      }
-      return (/* @__PURE__ */ new Date()).getTime();
-    };
-    module.exports = getMilliseconds;
-  }
-});
-
-// node_modules/limiter/lib/rateLimiter.js
-var require_rateLimiter = __commonJS({
-  "node_modules/limiter/lib/rateLimiter.js"(exports, module) {
-    var TokenBucket = require_tokenBucket();
-    var getMilliseconds = require_clock();
-    var RateLimiter = function(tokensPerInterval, interval, fireImmediately) {
-      this.tokenBucket = new TokenBucket(
-        tokensPerInterval,
-        tokensPerInterval,
-        interval,
-        null
-      );
-      this.tokenBucket.content = tokensPerInterval;
-      this.curIntervalStart = getMilliseconds();
-      this.tokensThisInterval = 0;
-      this.fireImmediately = fireImmediately;
-    };
-    RateLimiter.prototype = {
-      tokenBucket: null,
-      curIntervalStart: 0,
-      tokensThisInterval: 0,
-      fireImmediately: false,
-      /**
-       * Remove the requested number of tokens and fire the given callback. If the
-       * rate limiter contains enough tokens and we haven't spent too many tokens
-       * in this interval already, this will happen immediately. Otherwise, the
-       * removal and callback will happen when enough tokens become available.
-       * @param {Number} count The number of tokens to remove.
-       * @param {Function} callback(err, remainingTokens)
-       * @returns {Boolean} True if the callback was fired immediately, otherwise
-       *  false.
-       */
-      removeTokens: function(count, callback) {
-        if (count > this.tokenBucket.bucketSize) {
-          process.nextTick(callback.bind(
-            null,
-            "Requested tokens " + count + " exceeds maximum tokens per interval " + this.tokenBucket.bucketSize,
-            null
-          ));
-          return false;
-        }
-        var self2 = this;
-        var now = getMilliseconds();
-        if (now < this.curIntervalStart || now - this.curIntervalStart >= this.tokenBucket.interval) {
-          this.curIntervalStart = now;
-          this.tokensThisInterval = 0;
-        }
-        if (count > this.tokenBucket.tokensPerInterval - this.tokensThisInterval) {
-          if (this.fireImmediately) {
-            process.nextTick(callback.bind(null, null, -1));
-          } else {
-            var waitInterval = Math.ceil(
-              this.curIntervalStart + this.tokenBucket.interval - now
-            );
-            setTimeout(function() {
-              self2.tokenBucket.removeTokens(count, afterTokensRemoved);
-            }, waitInterval);
-          }
-          return false;
-        }
-        return this.tokenBucket.removeTokens(count, afterTokensRemoved);
-        function afterTokensRemoved(err, tokensRemaining) {
-          if (err) return callback(err, null);
-          self2.tokensThisInterval += count;
-          callback(null, tokensRemaining);
-        }
-      },
-      /**
-       * Attempt to remove the requested number of tokens and return immediately.
-       * If the bucket (and any parent buckets) contains enough tokens and we
-       * haven't spent too many tokens in this interval already, this will return
-       * true. Otherwise, false is returned.
-       * @param {Number} count The number of tokens to remove.
-       * @param {Boolean} True if the tokens were successfully removed, otherwise
-       *  false.
-       */
-      tryRemoveTokens: function(count) {
-        if (count > this.tokenBucket.bucketSize)
-          return false;
-        var now = getMilliseconds();
-        if (now < this.curIntervalStart || now - this.curIntervalStart >= this.tokenBucket.interval) {
-          this.curIntervalStart = now;
-          this.tokensThisInterval = 0;
-        }
-        if (count > this.tokenBucket.tokensPerInterval - this.tokensThisInterval)
-          return false;
-        var removed = this.tokenBucket.tryRemoveTokens(count);
-        if (removed) {
-          this.tokensThisInterval += count;
-        }
-        return removed;
-      },
-      /**
-       * Returns the number of tokens remaining in the TokenBucket.
-       * @returns {Number} The number of tokens remaining.
-       */
-      getTokensRemaining: function() {
-        this.tokenBucket.drip();
-        return this.tokenBucket.content;
-      }
-    };
-    module.exports = RateLimiter;
-  }
-});
-
-// node_modules/limiter/index.js
-var require_limiter = __commonJS({
-  "node_modules/limiter/index.js"(exports) {
-    exports.RateLimiter = require_rateLimiter();
-    exports.TokenBucket = require_tokenBucket();
-  }
-});
-
-// node_modules/jwks-rsa/src/errors/JwksRateLimitError.js
-var require_JwksRateLimitError = __commonJS({
-  "node_modules/jwks-rsa/src/errors/JwksRateLimitError.js"(exports, module) {
-    function JwksRateLimitError(message2) {
-      Error.call(this, message2);
-      Error.captureStackTrace(this, this.constructor);
-      this.name = "JwksRateLimitError";
-      this.message = message2;
-    }
-    JwksRateLimitError.prototype = Object.create(Error.prototype);
-    JwksRateLimitError.prototype.constructor = JwksRateLimitError;
-    module.exports = JwksRateLimitError;
-  }
-});
-
-// node_modules/jwks-rsa/src/wrappers/rateLimit.js
-var require_rateLimit = __commonJS({
-  "node_modules/jwks-rsa/src/wrappers/rateLimit.js"(exports, module) {
-    var logger = require_src5()("jwks");
-    var { RateLimiter } = require_limiter();
-    var JwksRateLimitError = require_JwksRateLimitError();
-    function rateLimitWrapper(client2, { jwksRequestsPerMinute = 10 }) {
-      const getSigningKey = client2.getSigningKey.bind(client2);
-      const limiter = new RateLimiter(jwksRequestsPerMinute, "minute", true);
-      logger(`Configured rate limiting to JWKS endpoint at ${jwksRequestsPerMinute}/minute`);
-      return async (kid) => await new Promise((resolve, reject) => {
-        limiter.removeTokens(1, async (err, remaining) => {
-          if (err) {
-            reject(err);
-          }
-          logger("Requests to the JWKS endpoint available for the next minute:", remaining);
-          if (remaining < 0) {
-            logger("Too many requests to the JWKS endpoint");
-            reject(new JwksRateLimitError("Too many requests to the JWKS endpoint"));
-          } else {
-            try {
-              const key = await getSigningKey(kid);
-              resolve(key);
-            } catch (error) {
-              reject(error);
-            }
-          }
-        });
-      });
-    }
-    module.exports.default = rateLimitWrapper;
-  }
-});
-
-// node_modules/jwks-rsa/src/wrappers/interceptor.js
-var require_interceptor = __commonJS({
-  "node_modules/jwks-rsa/src/wrappers/interceptor.js"(exports, module) {
-    var retrieveSigningKeys = require_utils3().retrieveSigningKeys;
-    function getKeysInterceptor(client2, { getKeysInterceptor: getKeysInterceptor2 }) {
-      const getSigningKey = client2.getSigningKey.bind(client2);
-      return async (kid) => {
-        const keys = await getKeysInterceptor2();
-        let signingKeys;
-        if (keys && keys.length) {
-          signingKeys = await retrieveSigningKeys(keys);
-        }
-        if (signingKeys && signingKeys.length) {
-          const key = signingKeys.find((k) => !kid || k.kid === kid);
-          if (key) {
-            return key;
-          }
-        }
-        return getSigningKey(kid);
-      };
-    }
-    module.exports.default = getKeysInterceptor;
-  }
-});
-
-// node_modules/jwks-rsa/src/wrappers/callbackSupport.js
-var require_callbackSupport = __commonJS({
-  "node_modules/jwks-rsa/src/wrappers/callbackSupport.js"(exports, module) {
-    var { callbackify } = __require("util");
-    var callbackSupport = (client2) => {
-      const getSigningKey = client2.getSigningKey.bind(client2);
-      return (kid, cb) => {
-        if (cb) {
-          const callbackFunc = callbackify(getSigningKey);
-          return callbackFunc(kid, cb);
-        }
-        return getSigningKey(kid);
-      };
-    };
-    module.exports.default = callbackSupport;
-  }
-});
-
-// node_modules/jwks-rsa/src/wrappers/index.js
-var require_wrappers = __commonJS({
-  "node_modules/jwks-rsa/src/wrappers/index.js"(exports, module) {
-    module.exports = {
-      request: require_request2().default,
-      cacheSigningKey: require_cache().default,
-      rateLimitSigningKey: require_rateLimit().default,
-      getKeysInterceptor: require_interceptor().default,
-      callbackSupport: require_callbackSupport().default
-    };
-  }
-});
-
-// node_modules/jwks-rsa/src/errors/SigningKeyNotFoundError.js
-var require_SigningKeyNotFoundError = __commonJS({
-  "node_modules/jwks-rsa/src/errors/SigningKeyNotFoundError.js"(exports, module) {
-    function SigningKeyNotFoundError(message2) {
-      Error.call(this, message2);
-      Error.captureStackTrace(this, this.constructor);
-      this.name = "SigningKeyNotFoundError";
-      this.message = message2;
-    }
-    SigningKeyNotFoundError.prototype = Object.create(Error.prototype);
-    SigningKeyNotFoundError.prototype.constructor = SigningKeyNotFoundError;
-    module.exports = SigningKeyNotFoundError;
-  }
-});
-
-// node_modules/jwks-rsa/src/JwksClient.js
-var require_JwksClient = __commonJS({
-  "node_modules/jwks-rsa/src/JwksClient.js"(exports, module) {
-    var logger = require_src5()("jwks");
-    var { retrieveSigningKeys } = require_utils3();
-    var { request, cacheSigningKey, rateLimitSigningKey, getKeysInterceptor, callbackSupport } = require_wrappers();
-    var JwksError = require_JwksError();
-    var SigningKeyNotFoundError = require_SigningKeyNotFoundError();
-    var JwksClient = class {
-      constructor(options) {
-        this.options = {
-          rateLimit: false,
-          cache: true,
-          timeout: 3e4,
-          ...options
-        };
-        if (this.options.getKeysInterceptor) {
-          this.getSigningKey = getKeysInterceptor(this, options);
-        }
-        if (this.options.rateLimit) {
-          this.getSigningKey = rateLimitSigningKey(this, options);
-        }
-        if (this.options.cache) {
-          this.getSigningKey = cacheSigningKey(this, options);
-        }
-        this.getSigningKey = callbackSupport(this, options);
-      }
-      async getKeys() {
-        logger(`Fetching keys from '${this.options.jwksUri}'`);
-        try {
-          const res = await request({
-            uri: this.options.jwksUri,
-            headers: this.options.requestHeaders,
-            agent: this.options.requestAgent,
-            timeout: this.options.timeout,
-            fetcher: this.options.fetcher
-          });
-          logger("Keys:", res.keys);
-          return res.keys;
-        } catch (err) {
-          const { errorMsg } = err;
-          logger("Failure:", errorMsg || err);
-          const error = errorMsg ? new JwksError(errorMsg) : err;
-          error.isEndpointUnavailable = true;
-          throw error;
-        }
-      }
-      async getSigningKeys() {
-        const keys = await this.getKeys();
-        if (!keys || !keys.length) {
-          throw new JwksError("The JWKS endpoint did not contain any keys");
-        }
-        const signingKeys = await retrieveSigningKeys(keys);
-        if (!signingKeys.length) {
-          throw new JwksError("The JWKS endpoint did not contain any signing keys");
-        }
-        logger("Signing Keys:", signingKeys);
-        return signingKeys;
-      }
-      async getSigningKey(kid) {
-        logger(`Fetching signing key for '${kid}'`);
-        const keys = await this.getSigningKeys();
-        const kidDefined = kid !== void 0 && kid !== null;
-        if (!kidDefined && keys.length > 1) {
-          logger("No KID specified and JWKS endpoint returned more than 1 key");
-          throw new SigningKeyNotFoundError("No KID specified and JWKS endpoint returned more than 1 key");
-        }
-        const key = keys.find((k) => !kidDefined || k.kid === kid);
-        if (key) {
-          return key;
-        } else {
-          logger(`Unable to find a signing key that matches '${kid}'`);
-          throw new SigningKeyNotFoundError(`Unable to find a signing key that matches '${kid}'`);
-        }
-      }
-    };
-    module.exports = {
-      JwksClient
-    };
-  }
-});
-
-// node_modules/jwks-rsa/src/errors/index.js
-var require_errors = __commonJS({
-  "node_modules/jwks-rsa/src/errors/index.js"(exports, module) {
-    module.exports = {
-      ArgumentError: require_ArgumentError(),
-      JwksError: require_JwksError(),
-      JwksRateLimitError: require_JwksRateLimitError(),
-      SigningKeyNotFoundError: require_SigningKeyNotFoundError()
-    };
-  }
-});
-
-// node_modules/jwks-rsa/src/integrations/config.js
-var require_config = __commonJS({
-  "node_modules/jwks-rsa/src/integrations/config.js"(exports, module) {
-    var allowedSignatureAlg = [
-      "RS256",
-      "RS384",
-      "RS512",
-      "PS256",
-      "PS384",
-      "PS512",
-      "ES256",
-      "ES384",
-      "ES512",
-      "EdDSA"
-    ];
-    module.exports = allowedSignatureAlg;
-  }
-});
-
-// node_modules/jwks-rsa/src/integrations/hapi.js
-var require_hapi = __commonJS({
-  "node_modules/jwks-rsa/src/integrations/hapi.js"(exports, module) {
-    var { ArgumentError } = require_errors();
-    var { JwksClient } = require_JwksClient();
-    var supportedAlg = require_config();
-    var handleSigningKeyError = (err, cb) => {
-      if (err && err.name === "SigningKeyNotFoundError") {
-        return cb(err, null, null);
-      }
-      if (err) {
-        return cb(err, null, null);
-      }
-    };
-    module.exports.hapiJwt2KeyAsync = (options) => {
-      const secretProvider = module.exports.hapiJwt2Key(options);
-      return function(decoded) {
-        return new Promise((resolve, reject) => {
-          const cb = (err, key) => {
-            !key || err ? reject(err) : resolve({ key });
-          };
-          secretProvider(decoded, cb);
-        });
-      };
-    };
-    module.exports.hapiJwt2Key = function(options) {
-      if (options === null || options === void 0) {
-        throw new ArgumentError("An options object must be provided when initializing hapiJwt2Key");
-      }
-      const client2 = new JwksClient(options);
-      const onError = options.handleSigningKeyError || handleSigningKeyError;
-      return function secretProvider(decoded, cb) {
-        if (!decoded || !decoded.header) {
-          return cb(new Error("Cannot find a signing certificate if there is no header"), null, null);
-        }
-        if (!supportedAlg.includes(decoded.header.alg)) {
-          return cb(new Error("Unsupported algorithm " + decoded.header.alg + " supplied."), null, null);
-        }
-        client2.getSigningKey(decoded.header.kid).then((key) => {
-          return cb(null, key.publicKey || key.rsaPublicKey, key);
-        }).catch((err) => {
-          return onError(err, (newError) => cb(newError, null, null));
-        });
-      };
-    };
-  }
-});
-
-// node_modules/jwks-rsa/src/integrations/express.js
-var require_express3 = __commonJS({
-  "node_modules/jwks-rsa/src/integrations/express.js"(exports, module) {
-    var { ArgumentError } = require_errors();
-    var { JwksClient } = require_JwksClient();
-    var supportedAlg = require_config();
-    var handleSigningKeyError = (err, cb) => {
-      if (err && err.name === "SigningKeyNotFoundError") {
-        return cb(null);
-      }
-      if (err) {
-        return cb(err);
-      }
-    };
-    module.exports.expressJwtSecret = function(options) {
-      if (options === null || options === void 0) {
-        throw new ArgumentError("An options object must be provided when initializing expressJwtSecret");
-      }
-      const client2 = new JwksClient(options);
-      const onError = options.handleSigningKeyError || handleSigningKeyError;
-      const expressJwt7Provider = async (req, token) => {
-        if (!token) {
-          return;
-        }
-        const header = token.header;
-        if (!header || !supportedAlg.includes(header.alg)) {
-          return;
-        }
-        try {
-          const key = await client2.getSigningKey(header.kid);
-          return key.publicKey || key.rsaPublicKey;
-        } catch (err) {
-          return new Promise((resolve, reject) => {
-            onError(err, (newError) => {
-              if (!newError) {
-                return resolve();
-              }
-              reject(newError);
-            });
-          });
-        }
-      };
-      return function secretProvider(req, header, payload, cb) {
-        if (arguments.length === 4) {
-          expressJwt7Provider(req, { header }).then((key) => {
-            setImmediate(cb, null, key);
-          }).catch((err) => {
-            setImmediate(cb, err);
-          });
-          return;
-        }
-        return expressJwt7Provider(req, arguments[1]);
-      };
-    };
-  }
-});
-
-// node_modules/jwks-rsa/src/integrations/koa.js
-var require_koa = __commonJS({
-  "node_modules/jwks-rsa/src/integrations/koa.js"(exports, module) {
-    var { ArgumentError } = require_errors();
-    var { JwksClient } = require_JwksClient();
-    var supportedAlg = require_config();
-    module.exports.koaJwtSecret = function(options = {}) {
-      if (!options.jwksUri) {
-        throw new ArgumentError("No JWKS provided. Please provide a jwksUri");
-      }
-      const client2 = new JwksClient(options);
-      return function secretProvider({ alg, kid } = {}) {
-        return new Promise((resolve, reject) => {
-          if (!supportedAlg.includes(alg)) {
-            return reject(new Error("Missing / invalid token algorithm"));
-          }
-          client2.getSigningKey(kid).then((key) => {
-            resolve(key.publicKey || key.rsaPublicKey);
-          }).catch((err) => {
-            if (options.handleSigningKeyError) {
-              return options.handleSigningKeyError(err).then(reject);
-            }
-            return reject(err);
-          });
-        });
-      };
-    };
-  }
-});
-
-// node_modules/jwks-rsa/src/integrations/passport.js
-var require_passport = __commonJS({
-  "node_modules/jwks-rsa/src/integrations/passport.js"(exports, module) {
-    var jose = (init_webapi(), __toCommonJS(webapi_exports));
-    var { ArgumentError } = require_errors();
-    var { JwksClient } = require_JwksClient();
-    var supportedAlg = require_config();
-    var handleSigningKeyError = (err, cb) => {
-      if (err && err.name === "SigningKeyNotFoundError") {
-        return cb(null);
-      }
-      if (err) {
-        return cb(err);
-      }
-    };
-    module.exports.passportJwtSecret = function(options) {
-      if (options === null || options === void 0) {
-        throw new ArgumentError("An options object must be provided when initializing passportJwtSecret");
-      }
-      if (!options.jwksUri) {
-        throw new ArgumentError("No JWKS provided. Please provide a jwksUri");
-      }
-      const client2 = new JwksClient(options);
-      const onError = options.handleSigningKeyError || handleSigningKeyError;
-      return function secretProvider(req, rawJwtToken, cb) {
-        let decoded;
-        try {
-          decoded = {
-            payload: jose.decodeJwt(rawJwtToken),
-            header: jose.decodeProtectedHeader(rawJwtToken)
-          };
-        } catch (err) {
-          decoded = null;
-        }
-        if (!decoded || !supportedAlg.includes(decoded.header.alg)) {
-          return cb(null, null);
-        }
-        client2.getSigningKey(decoded.header.kid).then((key) => {
-          cb(null, key.publicKey || key.rsaPublicKey);
-        }).catch((err) => {
-          onError(err, (newError) => cb(newError, null));
-        });
-      };
-    };
-  }
-});
-
-// node_modules/jwks-rsa/src/index.js
-var require_src6 = __commonJS({
-  "node_modules/jwks-rsa/src/index.js"(exports, module) {
-    var { JwksClient } = require_JwksClient();
-    var errors = require_errors();
-    var { hapiJwt2Key, hapiJwt2KeyAsync } = require_hapi();
-    var { expressJwtSecret } = require_express3();
-    var { koaJwtSecret } = require_koa();
-    var { passportJwtSecret } = require_passport();
-    module.exports = (options) => {
-      return new JwksClient(options);
-    };
-    module.exports.JwksClient = JwksClient;
-    module.exports.ArgumentError = errors.ArgumentError;
-    module.exports.JwksError = errors.JwksError;
-    module.exports.JwksRateLimitError = errors.JwksRateLimitError;
-    module.exports.SigningKeyNotFoundError = errors.SigningKeyNotFoundError;
-    module.exports.expressJwtSecret = expressJwtSecret;
-    module.exports.hapiJwt2Key = hapiJwt2Key;
-    module.exports.hapiJwt2KeyAsync = hapiJwt2KeyAsync;
-    module.exports.koaJwtSecret = koaJwtSecret;
-    module.exports.passportJwtSecret = passportJwtSecret;
-  }
-});
-
-// server.ts
+// api/index.ts
 var import_express = __toESM(require_express2(), 1);
 var import_cors = __toESM(require_lib3(), 1);
 var import_dotenv = __toESM(require_main(), 1);
@@ -38766,7 +31039,7 @@ var ds = T((th, ps) => {
     return /^(?:[a-zA-Z0-9+/]{4})*(?:[a-zA-Z0-9+/]{2}==|[a-zA-Z0-9+/]{3}=)?$/.test(r);
   }
   a(ls, "isBase64");
-  function fs(r) {
+  function fs2(r) {
     if (typeof r != "string") throw new TypeError("SASL: attribute pairs text must be a string");
     return new Map(r.split(",").map((e) => {
       if (!/^.=/.test(e)) throw new Error("SASL: Invalid attribute pair entry");
@@ -38774,9 +31047,9 @@ var ds = T((th, ps) => {
       return [t, n];
     }));
   }
-  a(fs, "parseAttributePairs");
+  a(fs2, "parseAttributePairs");
   function qu(r) {
-    let e = fs(r), t = e.get("r");
+    let e = fs2(r), t = e.get("r");
     if (t) {
       if (!Ou(t)) throw new Error("SASL: SCRAM-SERVER-FIRST-MESSAGE: nonce must only contain printable characters");
     } else throw new Error("SASL: SCRAM-SERVER-FIRST-MESSAGE: nonce missing");
@@ -38793,7 +31066,7 @@ var ds = T((th, ps) => {
   }
   a(qu, "parseServerFirstMessage");
   function Qu(r) {
-    let t = fs(r).get("v");
+    let t = fs2(r).get("v");
     if (t) {
       if (!ls(t)) throw new Error("SASL: SCRAM-SERVER-FINAL-MESSAGE: server signature must be base64");
     } else throw new Error("SASL: SCRAM-SERVER-FINAL-MESSAGE: server signature is missing");
@@ -41250,23 +33523,11 @@ var export_escapeIdentifier = ct.escapeIdentifier;
 var export_escapeLiteral = ct.escapeLiteral;
 var export_types = ct.types;
 
-// server.ts
+// api/index.ts
 var import_jsonwebtoken = __toESM(require_jsonwebtoken(), 1);
-var import_jwks_rsa = __toESM(require_src6(), 1);
-
-// firebase-applet-config.json
-var firebase_applet_config_default = {
-  projectId: "gen-lang-client-0674458993",
-  appId: "1:394057931494:web:bbe9e2b29741b8fd087927",
-  apiKey: "AIzaSyB3DV6RcNkffWPxupVA9yCnQ0OTrQGPl4k",
-  authDomain: "gen-lang-client-0674458993.firebaseapp.com",
-  firestoreDatabaseId: "ai-studio-3502ecf0-8e00-4bda-8eeb-b85529f5bbf0",
-  storageBucket: "gen-lang-client-0674458993.firebasestorage.app",
-  messagingSenderId: "394057931494",
-  measurementId: ""
-};
-
-// server.ts
+import fs from "fs";
+var configPath = path.resolve(process.cwd(), "firebase-applet-config.json");
+var firebaseConfig = JSON.parse(fs.readFileSync(configPath, "utf8"));
 import_dotenv.default.config();
 var app = (0, import_express.default)();
 var port = process.env.PORT || 3001;
@@ -41296,20 +33557,25 @@ async function initDb() {
     console.error("Failed to initialize database schema:", error);
   }
 }
-var client = (0, import_jwks_rsa.default)({
-  jwksUri: "https://www.googleapis.com/service-accounts/keys/securetoken@system.gserviceaccount.com"
-});
-function getKey(header, callback) {
-  client.getSigningKey(header.kid, (err, key) => {
-    if (err) {
-      callback(err);
-    } else {
-      const signingKey = key?.getPublicKey();
-      callback(null, signingKey);
+var googlePublicKeys = {};
+var keysExpiryTime = 0;
+async function getGooglePublicKey(kid) {
+  const now = Date.now();
+  if (!googlePublicKeys[kid] || now > keysExpiryTime) {
+    const res = await fetch("https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com");
+    if (!res.ok) {
+      throw new Error("Failed to fetch Google public keys");
     }
-  });
+    googlePublicKeys = await res.json();
+    keysExpiryTime = now + 6 * 60 * 60 * 1e3;
+  }
+  const cert = googlePublicKeys[kid];
+  if (!cert) {
+    throw new Error(`Public key not found for kid: ${kid}`);
+  }
+  return cert;
 }
-var authenticate = (req, res, next) => {
+var authenticate = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ error: "Unauthorized: No token provided" });
@@ -41324,23 +33590,34 @@ var authenticate = (req, res, next) => {
     };
     return next();
   }
-  const projectId = firebase_applet_config_default.projectId;
-  import_jsonwebtoken.default.verify(
-    token,
-    getKey,
-    {
-      audience: projectId,
-      issuer: `https://securetoken.google.com/${projectId}`,
-      algorithms: ["RS256"]
-    },
-    (err, decoded) => {
-      if (err) {
-        return res.status(401).json({ error: "Unauthorized: Invalid token", details: err.message });
-      }
-      req.user = decoded;
-      next();
+  const projectId = firebaseConfig.projectId;
+  try {
+    const decodedToken = import_jsonwebtoken.default.decode(token, { complete: true });
+    if (!decodedToken || typeof decodedToken === "string" || !decodedToken.header || !decodedToken.header.kid) {
+      return res.status(401).json({ error: "Unauthorized: Invalid token format" });
     }
-  );
+    const kid = decodedToken.header.kid;
+    const publicKey = await getGooglePublicKey(kid);
+    import_jsonwebtoken.default.verify(
+      token,
+      publicKey,
+      {
+        audience: projectId,
+        issuer: `https://securetoken.google.com/${projectId}`,
+        algorithms: ["RS256"]
+      },
+      (err, decoded) => {
+        if (err) {
+          return res.status(401).json({ error: "Unauthorized: Invalid token", details: err.message });
+        }
+        req.user = decoded;
+        next();
+      }
+    );
+  } catch (error) {
+    console.error("Auth verification error:", error);
+    return res.status(401).json({ error: "Unauthorized", details: error.message });
+  }
 };
 app.get("/api/notes", authenticate, async (req, res) => {
   try {
@@ -41481,11 +33758,19 @@ app.use(import_express.default.static(distPath));
 app.get("*", (req, res) => {
   res.sendFile(path.join(distPath, "index.html"));
 });
-initDb().then(() => {
-  app.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
+if (process.env.NODE_ENV !== "production" || !process.env.VERCEL) {
+  initDb().then(() => {
+    app.listen(port, () => {
+      console.log(`Server listening on port ${port}`);
+    });
   });
-});
+} else {
+  initDb();
+}
+var index_default = app;
+export {
+  index_default as default
+};
 /*! Bundled license information:
 
 depd/index.js:

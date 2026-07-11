@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { neon } from '@neondatabase/serverless';
 import jwt from 'jsonwebtoken';
-import jwksClient from 'jwks-rsa';
 import fs from 'fs';
 
 // Read config safely avoiding ESM assert/with type constraints
@@ -49,20 +48,25 @@ async function initDb() {
   }
 }
 
-// JWKS Client for Google secure token
-const client = jwksClient({
-  jwksUri: 'https://www.googleapis.com/service-accounts/keys/securetoken@system.gserviceaccount.com'
-});
+// Cache Google public keys in memory to optimize performance
+let googlePublicKeys: Record<string, string> = {};
+let keysExpiryTime = 0;
 
-function getKey(header: jwt.JwtHeader, callback: jwt.SigningKeyCallback) {
-  client.getSigningKey(header.kid, (err, key) => {
-    if (err) {
-      callback(err);
-    } else {
-      const signingKey = key?.getPublicKey();
-      callback(null, signingKey);
+async function getGooglePublicKey(kid: string): Promise<string> {
+  const now = Date.now();
+  if (!googlePublicKeys[kid] || now > keysExpiryTime) {
+    const res = await fetch('https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com');
+    if (!res.ok) {
+      throw new Error('Failed to fetch Google public keys');
     }
-  });
+    googlePublicKeys = await res.json() as Record<string, string>;
+    keysExpiryTime = now + 6 * 60 * 60 * 1000; // Cache for 6 hours
+  }
+  const cert = googlePublicKeys[kid];
+  if (!cert) {
+    throw new Error(`Public key not found for kid: ${kid}`);
+  }
+  return cert;
 }
 
 // Auth Middleware to verify Firebase JWT tokens
@@ -70,7 +74,7 @@ interface AuthenticatedRequest extends Request {
   user?: any;
 }
 
-const authenticate = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+const authenticate = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Unauthorized: No token provided' });
@@ -92,22 +96,35 @@ const authenticate = (req: AuthenticatedRequest, res: Response, next: NextFuncti
 
   const projectId = firebaseConfig.projectId;
 
-  jwt.verify(
-    token,
-    getKey,
-    {
-      audience: projectId,
-      issuer: `https://securetoken.google.com/${projectId}`,
-      algorithms: ['RS256']
-    },
-    (err, decoded) => {
-      if (err) {
-        return res.status(401).json({ error: 'Unauthorized: Invalid token', details: err.message });
-      }
-      req.user = decoded;
-      next();
+  try {
+    const decodedToken = jwt.decode(token, { complete: true });
+    if (!decodedToken || typeof decodedToken === 'string' || !decodedToken.header || !decodedToken.header.kid) {
+      return res.status(401).json({ error: 'Unauthorized: Invalid token format' });
     }
-  );
+
+    const kid = decodedToken.header.kid;
+    const publicKey = await getGooglePublicKey(kid);
+
+    jwt.verify(
+      token,
+      publicKey,
+      {
+        audience: projectId,
+        issuer: `https://securetoken.google.com/${projectId}`,
+        algorithms: ['RS256']
+      },
+      (err, decoded) => {
+        if (err) {
+          return res.status(401).json({ error: 'Unauthorized: Invalid token', details: err.message });
+        }
+        req.user = decoded;
+        next();
+      }
+    );
+  } catch (error: any) {
+    console.error('Auth verification error:', error);
+    return res.status(401).json({ error: 'Unauthorized', details: error.message });
+  }
 };
 
 // --- CRUD Endpoints ---
