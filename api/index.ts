@@ -5,7 +5,11 @@ import path from 'path';
 import { neon } from '@neondatabase/serverless';
 import jwt from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
-import firebaseConfig from '../firebase-applet-config.json';
+import fs from 'fs';
+
+// Read config safely avoiding ESM assert/with type constraints
+const configPath = path.resolve(process.cwd(), 'firebase-applet-config.json');
+const firebaseConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 
 dotenv.config();
 
