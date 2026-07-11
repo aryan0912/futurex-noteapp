@@ -1,0 +1,6 @@
+{
+  "name": "Simple Note-Taking App",
+  "description": "A clean, fast, and minimal note-taking web app inspired by Notion, featuring Google Sign-In, auto-saving, rich formatting, search, and pinning, powered by Firestore.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

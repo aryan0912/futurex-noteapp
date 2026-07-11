@@ -1,0 +1,124 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Custom classes for editor contents */
+[contenteditable]:empty::before {
+  content: attr(placeholder);
+  color: #a1a1aa; /* text-zinc-400 */
+  pointer-events: none;
+  display: block; /* For Firefox/Safari compatibility */
+}
+
+.dark [contenteditable]:empty::before {
+  color: #52525b; /* text-zinc-600 */
+}
+
+/* Checklist / Todo styling */
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.todo-checkbox {
+  cursor: pointer;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0.25rem;
+  border-color: #d1d5db;
+}
+
+.dark .todo-checkbox {
+  border-color: #3f3f46;
+  background-color: #18181b;
+}
+
+.todo-text {
+  flex: 1 1 0%;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+/* Text editor formatting overrides inside rich-text contentEditable */
+#editor-rich-textarea h1 {
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-zinc-900);
+}
+
+.dark #editor-rich-textarea h1 {
+  color: var(--color-zinc-50);
+}
+
+#editor-rich-textarea h2 {
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  margin-top: 1.25rem;
+  margin-bottom: 0.375rem;
+  color: var(--color-zinc-900);
+}
+
+.dark #editor-rich-textarea h2 {
+  color: var(--color-zinc-100);
+}
+
+#editor-rich-textarea h3 {
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  margin-top: 1rem;
+  margin-bottom: 0.25rem;
+  color: var(--color-zinc-900);
+}
+
+.dark #editor-rich-textarea h3 {
+  color: var(--color-zinc-200);
+}
+
+#editor-rich-textarea ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+#editor-rich-textarea ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+#editor-rich-textarea a {
+  color: #4f46e5; /* indigo-600 */
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.dark #editor-rich-textarea a {
+  color: #a78bfa; /* violet-400 */
+}
+
+#editor-rich-textarea p {
+  margin-top: 0.375rem;
+  margin-bottom: 0.375rem;
+}
+
+/* Utility to hide scrollbars */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

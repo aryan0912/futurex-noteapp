@@ -1,0 +1,44 @@
+{
+  "entities": {
+    "Note": {
+      "title": "Note",
+      "description": "Represents a single user note with content, pinning status, and timestamps.",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "The title of the note."
+        },
+        "content": {
+          "type": "string",
+          "description": "The rich text or plain text content of the note."
+        },
+        "userId": {
+          "type": "string",
+          "description": "The UID of the user who owns this note."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the note was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the note was last updated."
+        },
+        "pinned": {
+          "type": "boolean",
+          "description": "Whether the note is pinned by the user."
+        }
+      },
+      "required": ["title", "content", "userId", "createdAt", "updatedAt", "pinned"]
+    }
+  },
+  "firestore": {
+    "/notes/{noteId}": {
+      "schema": "Note",
+      "description": "Collection of notes stored in the database."
+    }
+  }
+}
